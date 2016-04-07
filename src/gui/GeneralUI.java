@@ -8,7 +8,7 @@ package gui;
 
 /**
  *
- * @author Guillaume Hartenstein
+ * @author Paul Givel and Guillaume Hartenstein
  */
 public class GeneralUI extends javax.swing.JFrame {
 

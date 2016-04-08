@@ -5,8 +5,8 @@
  */
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,13 +14,13 @@ import java.util.Set;
  */
 public class Action {
     private final String name;
-    private final Set<Condition> preConditions;
-    private final Set<Condition> postConditions;
+    private final List<Condition> preConditions;
+    private final List<Condition> postConditions;
     
     public Action(String name) {
         this.name = name;
-        preConditions = new HashSet<>();
-        postConditions = new HashSet<>();
+        preConditions = new ArrayList<>();
+        postConditions = new ArrayList<>();
     }
     
     public boolean preConditionsVerified() {

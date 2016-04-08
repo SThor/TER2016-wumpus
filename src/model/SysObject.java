@@ -5,8 +5,8 @@
  */
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -14,12 +14,12 @@ import java.util.Set;
  */
 public class SysObject {
     private final String name;
-    private final Set<State> states; // TODO Maybe a class dedicated to Object states ?
+    private final List<State> states; // TODO Maybe a class dedicated to Object states ?
     private State currentState;
 
     public SysObject(String name) {
         this.name = name;
-        states = new HashSet<>();
+        states = new ArrayList<>();
         currentState = State.UNDEFINED;
     }
     
@@ -51,7 +51,7 @@ public class SysObject {
         return states.contains(state);
     }
     
-    public Set<State> getPossibleStates() {
+    public List<State> getPossibleStates() {
         return states;
     }
 }

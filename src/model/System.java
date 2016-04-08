@@ -5,20 +5,20 @@
  */
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class System {
-    private final Set<SysObject> systemObjects;
-    private final Set<Action> possibleActions;
+    private final List<SysObject> systemObjects;
+    private final List<Action> possibleActions;
     
     public System() {
-        systemObjects = new HashSet<>();
-        possibleActions = new HashSet<>();
+        systemObjects = new ArrayList<>();
+        possibleActions = new ArrayList<>();
     }
     
     public void addObject(SysObject object) {
@@ -37,7 +37,7 @@ public class System {
         possibleActions.remove(action);
     }
     
-    public Set<SysObject> getObjects() {
+    public List<SysObject> getObjects() {
         return systemObjects;
     }
 }

@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Observation {
-    private Map<SysObject, State> system;
+    private final Map<SysObject, State> system;
         
     public Observation(System s) {
         system = new HashMap<>();

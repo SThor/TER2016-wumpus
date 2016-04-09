@@ -1,24 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
-import java.util.Objects;
-
 /**
- *
+ * Represents an object state.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class State {
-    public static final State UNDEFINED = new State("Undefined");
+    /**
+     * Undifined object state.
+     */
+    public static final State UNDEFINED = new State("-");
     
+    /**
+     * Name of the state.
+     */
     private final String name;
     
+    /**
+     * Constructs a state.
+     * @param name The name of the state
+     * @throws NullPointerException If the name is <tt>null</tt>
+     */
     public State(String name) {
         if(name == null)
-            throw new IllegalArgumentException("Null");
+            throw new NullPointerException();
         
         this.name = name;
     }
@@ -26,10 +30,13 @@ public class State {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + name.hashCode();
         return hash;
     }
 
+    /**
+     * Two states are equels if they have the same name.
+     */
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof State)) 

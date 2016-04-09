@@ -1,45 +1,88 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
-import java.util.ArrayList;
+import model.exceptions.UnknownObjectStateException;
 import java.util.List;
+import model.exceptions.DuplicateElementException;
 
 /**
- *
+ * Represent an object of a sytem.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class SysObject {
+    /**
+     * Name of the object
+     */
     private final String name;
-    private final List<State> states; // TODO Maybe a class dedicated to Object states ?
+    
+    /**
+     * List of the possible possible states.
+     */
+    private final UniqueList<State> possibleStates;
+    
+    /**
+     * Current state of the object.
+     */
     private State currentState;
+    
+    /**
+     * Reference to the system this object is in
+     */
+    private System system;
 
-    public SysObject(String name) {
+    /**
+     * Constructs a new system object.
+     * @param name Teh name of the object.
+     * @param system The system this object is in
+     * @throws NullPointerException If the name is <tt>null</tt>
+     */
+    public SysObject(String name, System system) {
+        if(name == null)
+            throw new NullPointerException();
+        
         this.name = name;
-        states = new ArrayList<>();
+        this.system = system;
+        possibleStates = new UniqueList<>();
         currentState = State.UNDEFINED;
     }
     
+    /**
+     * Change the state of this object.
+     * @param newState The new state of the object
+     * @throws UnknownObjectStateException
+     *  If the new state is not one of this object's possible states.
+     */
     public final void changeState(State newState) {
-        if(!states.contains(newState))
+        if(!isValidState(newState))
             throw new UnknownObjectStateException();
         
         currentState = newState;
     }
     
+    /**
+     * Access the curretn state of this object.
+     * @return The current state of this object.
+     */
     public State getCurrentState() {
         return currentState;
     }
     
-    public void addState(State state) {
-        states.add(state);
+    /**
+     * Add a possible state to this object.
+     * @param state The new possible state
+     * @throws DuplicateElementException
+     *  If the new state is already a possible state.
+     */
+    public void addPossibleState(State state) {
+        possibleStates.add(state);
     }
     
-    public void removeState(State state) {
-        states.remove(state);
+    /**
+     * Remove a possible state.
+     * @param index The index of the state to remove 
+     */
+    public void removePossibleState(int index) {
+        system.updateSystem(this, possibleStates.get(index));
+        possibleStates.remove(index);
     }
 
     @Override
@@ -47,11 +90,21 @@ public class SysObject {
         return name;
     }
     
+    /**
+     * Check wether a state is a possible state of this object.
+     * @param state The state to check
+     * @return <tt>true</tt> if the state is a possible state of this object,
+     *         <tt>false</tt> otherwise.
+     */
     public boolean isValidState(State state) {
-        return states.contains(state);
+        return possibleStates.contains(state);
     }
     
+    /**
+     * Access the possible states.
+     * @return An unmodifiable list of this object's possible states.
+     */
     public List<State> getPossibleStates() {
-        return states;
+        return possibleStates.asList();
     }
 }

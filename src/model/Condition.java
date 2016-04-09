@@ -1,18 +1,30 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
+import model.exceptions.UnknownObjectStateException;
+
 /**
- *
+ * Represents a condition as a <tt>SysObject</tt> and a <tt>State</tt>.
+ * The condition is verified if the <tt>SysObject</tt>'s current state is the <tt>State</tt>.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Condition {
+    /**
+     * The concerned object.
+     */
     private SysObject object;
+    
+    /**
+     * The wanted state.
+     */
     private State state;
     
+    /**
+     * Constructs a condition.
+     * @param object The concerned object.
+     * @param state The wanted state.
+     * @throws UnknownObjectStateException 
+     *  If <tt>state</tt> is not a possible state of <tt>object</tt>.
+     */
     public Condition(SysObject object, State state) {
         if(!object.isValidState(state))
             throw new UnknownObjectStateException();
@@ -21,15 +33,42 @@ public class Condition {
         this.state = state;
     }
     
+    /**
+     * Check wether this condition is verified.
+     * @return <tt>true</tt> if the object is currently in the wanted state,
+     *         <tt>false</tt> otherwise
+     */
     public boolean isVerified() {
         return object.getCurrentState().equals(state);
     }
-    
-    public String getObjectName() {
-        return object.toString();
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + object.hashCode();
+        hash = 43 * hash + state.hashCode();
+        return hash;
     }
-    
-    public String getStateName() {
-        return state.toString();
+
+    /**
+     * Two <tt>Conditions</tt> are equals if they have the same
+     * object and the same wanted state.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Condition))
+            return false;
+        
+        Condition c = (Condition) obj;
+        
+        return c.state.equals(state) && c.object.equals(object);
+    }
+
+    public SysObject getObject() {
+        return object;
+    }
+
+    public State getState() {
+        return state;
     }
 }

@@ -1,21 +1,16 @@
 package gui.general;
 
-import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.DefaultCellEditor;
-import javax.swing.table.TableModel;
-import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import model.Action;
 import model.State;
-import model.SysObject;
 import model.World;
 
 /**
@@ -50,10 +45,12 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         // In the observation table :
         
         // For each editable column, set the editor to correspond to abject states
+        TableColumn column;
+        Vector states;
         TableColumnModel obsColumnModel = tableObs.getColumnModel();
         for(int i=1; i<obsColumnModel.getColumnCount(); i++) {
-            TableColumn column = obsColumnModel.getColumn(i);
-            Vector states = new Vector(world.getObjects().get(i-1).getPossibleStates());
+            column = obsColumnModel.getColumn(i);
+            states = new Vector(world.getObjects().get(i-1).getPossibleStates());
             states.add(0, State.UNDEFINED);
             column.setCellEditor(new DefaultCellEditor(new JComboBox(states)));
         }
@@ -208,6 +205,7 @@ public class WorldBuilderUI extends javax.swing.JFrame {
 
         tablePreCond.setModel(new DefaultTableModel());
         tablePreCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tablePreCond.getTableHeader().setReorderingAllowed(false);
         scrollTablePre.setViewportView(tablePreCond);
 
         panelPre.add(scrollTablePre, java.awt.BorderLayout.CENTER);
@@ -228,6 +226,7 @@ public class WorldBuilderUI extends javax.swing.JFrame {
 
         tablePostCond.setModel(new DefaultTableModel());
         tablePostCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tablePostCond.getTableHeader().setReorderingAllowed(false);
         scrollTablePost.setViewportView(tablePostCond);
 
         panelPost.add(scrollTablePost, java.awt.BorderLayout.CENTER);
@@ -276,6 +275,7 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         panelObservations.setLayout(new java.awt.BorderLayout());
 
         tableObs.setModel(new ObservationTableModel(world));
+        tableObs.getTableHeader().setReorderingAllowed(false);
         scrollTableObs.setViewportView(tableObs);
 
         panelObservations.add(scrollTableObs, java.awt.BorderLayout.CENTER);

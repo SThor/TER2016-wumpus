@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.ComboBoxModel;
 
 /**
  * Collection use to restrain the ArrayList collection.
  * This collection does not accept duplicate elements or <tt>null</tt> elements.
  * @author Paul Givel and Guillaume Hartenstein
+ * @param <E> Generic type of the list
  * @see ArrayList
  */
 public class UniqueList<E> {

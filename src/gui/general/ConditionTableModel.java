@@ -7,8 +7,6 @@ package gui.general;
 
 import javax.swing.table.AbstractTableModel;
 import model.Condition;
-import model.State;
-import model.SysObject;
 import model.UniqueList;
 
 /**

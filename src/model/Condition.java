@@ -1,5 +1,6 @@
 package model;
 
+import java.util.List;
 import model.exceptions.UnknownObjectStateException;
 
 /**
@@ -64,11 +65,42 @@ public class Condition {
         return c.state.equals(state) && c.object.equals(object);
     }
 
+    /**
+     * Access the object
+     * @return The object concerned by this condition
+     */
     public SysObject getObject() {
         return object;
     }
 
+    /**
+     * Access the state
+     * @return The state concerned by this condition
+     */
     public State getState() {
         return state;
+    }
+
+    /**
+     * Change the object. The new state will be <tt>State.UNDEFINED</tt>
+     * @param object The new object
+     */
+    public void setObject(SysObject object) {
+        this.object = object;
+        state = State.UNDEFINED;
+    }
+
+    /**
+     * Chnage the wanted state of this condition
+     * @param state The new state
+     * @throws UnknownObjectStateException
+     * @throws UnknownObjectStateException 
+     *  If <tt>state</tt> is not a possible state of the object
+     */
+    public void setState(State state) {
+        if(!object.isValidState(state))
+            throw new UnknownObjectStateException();
+        
+        this.state = state;
     }
 }

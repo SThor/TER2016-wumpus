@@ -1,8 +1,16 @@
 package gui.general;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.DefaultCellEditor;
+import javax.swing.table.TableModel;
+import javax.swing.JTable;
 import model.Action;
+import model.SysObject;
 import model.World;
 
 /**
@@ -31,7 +39,23 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         preCondIndex = -1;
         postCondIndex = -1;
         observationIndex = -1;
+        
         initComponents();
+        
+        tablePreCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tablePreValueChanged(e);
+            }
+        });
+        
+        tablePostCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tablePostValueChanged(e);
+            }
+        });
+        
         setLocationRelativeTo(null);
     }
 
@@ -48,7 +72,7 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         splitTabObjects = new javax.swing.JSplitPane();
         panelStates = new javax.swing.JPanel();
         scrollListProp = new javax.swing.JScrollPane();
-        listProperties = new javax.swing.JList<>();
+        listStates = new javax.swing.JList<>();
         panelBtnStates = new javax.swing.JPanel();
         btnAddState = new javax.swing.JButton();
         btnRemState = new javax.swing.JButton();
@@ -62,13 +86,13 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         panelLaws = new javax.swing.JPanel();
         panelPre = new javax.swing.JPanel();
         scrollTablePre = new javax.swing.JScrollPane();
-        tablePre = new javax.swing.JTable();
+        tablePreCond = new ConditionTable();
         panelBtnPre = new javax.swing.JPanel();
         btnAddPre = new javax.swing.JButton();
         btnRemPre = new javax.swing.JButton();
         panelPost = new javax.swing.JPanel();
         scrollTablePost = new javax.swing.JScrollPane();
-        tablePost = new javax.swing.JTable();
+        tablePostCond = new ConditionTable();
         panelBtnPost = new javax.swing.JPanel();
         btnAddPost = new javax.swing.JButton();
         btnRemPost = new javax.swing.JButton();
@@ -99,9 +123,14 @@ public class WorldBuilderUI extends javax.swing.JFrame {
 
         panelStates.setLayout(new java.awt.BorderLayout());
 
-        listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Object states", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
-        listProperties.setOpaque(false);
-        scrollListProp.setViewportView(listProperties);
+        listStates.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Object states", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
+        listStates.setOpaque(false);
+        listStates.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listStatesValueChanged(evt);
+            }
+        });
+        scrollListProp.setViewportView(listStates);
 
         panelStates.add(scrollListProp, java.awt.BorderLayout.CENTER);
 
@@ -152,8 +181,9 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         panelPre.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pre-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPre.setLayout(new java.awt.BorderLayout());
 
-        tablePre.setModel(new DefaultTableModel());
-        scrollTablePre.setViewportView(tablePre);
+        tablePreCond.setModel(new DefaultTableModel());
+        tablePreCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollTablePre.setViewportView(tablePreCond);
 
         panelPre.add(scrollTablePre, java.awt.BorderLayout.CENTER);
 
@@ -171,8 +201,9 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         panelPost.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Post-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPost.setLayout(new java.awt.BorderLayout());
 
-        tablePost.setModel(new DefaultTableModel());
-        scrollTablePost.setViewportView(tablePost);
+        tablePostCond.setModel(new DefaultTableModel());
+        tablePostCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollTablePost.setViewportView(tablePostCond);
 
         panelPost.add(scrollTablePost, java.awt.BorderLayout.CENTER);
 
@@ -296,10 +327,10 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         objectIndex = listObjects.getSelectedIndex();
         if(objectIndex != -1) {
             btnRemObject.setEnabled(true);
-            listProperties.setModel(new WorldListModel(world.getObjects().get(objectIndex).getPossibleStates()));
+            listStates.setModel(new WorldListModel(world.getObjects().get(objectIndex).getPossibleStates()));
         } else {
             btnRemObject.setEnabled(false);
-            listProperties.setModel(new DefaultListModel<String>());
+            listStates.setModel(new DefaultListModel<String>());
         }
     }//GEN-LAST:event_listObjectsValueChanged
 
@@ -308,15 +339,30 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         if(actionIndex != -1) {
             Action selected = world.getPossibleActions().get(actionIndex);
             btnRemAction.setEnabled(true);
-            tablePre.setModel(new ConditionTableModel(selected.getPreConditions()));
-            tablePost.setModel(new ConditionTableModel(selected.getPostConditions()));
+            tablePreCond.setModel(new ConditionTableModel(selected.getPreConditions()));
+            tablePostCond.setModel(new ConditionTableModel(selected.getPostConditions()));
         } else {
             btnRemAction.setEnabled(false);
-            tablePre.setModel(new DefaultTableModel());
-            tablePost.setModel(new DefaultTableModel());
+            tablePreCond.setModel(new DefaultTableModel());
+            tablePostCond.setModel(new DefaultTableModel());
         }
     }//GEN-LAST:event_listActionsValueChanged
 
+    private void listStatesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listStatesValueChanged
+        stateIndex = listStates.getSelectedIndex();
+        btnRemState.setEnabled(stateIndex != -1);
+    }//GEN-LAST:event_listStatesValueChanged
+
+    private void tablePreValueChanged(ListSelectionEvent e) {
+        preCondIndex = tablePreCond.getSelectedRow();
+        btnRemPre.setEnabled(preCondIndex != -1);
+    }
+
+    private void tablePostValueChanged(ListSelectionEvent e) {
+        postCondIndex = tablePostCond.getSelectedRow();
+        btnRemPost.setEnabled(postCondIndex != -1);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
     private javax.swing.JButton btnAddObject;
@@ -337,7 +383,7 @@ public class WorldBuilderUI extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JList<String> listActions;
     private javax.swing.JList<String> listObjects;
-    private javax.swing.JList<String> listProperties;
+    private javax.swing.JList<String> listStates;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JPanel panelActions;
     private javax.swing.JPanel panelBtnActions;
@@ -362,7 +408,21 @@ public class WorldBuilderUI extends javax.swing.JFrame {
     private javax.swing.JSplitPane splitTabObjects;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tableObs;
-    private javax.swing.JTable tablePost;
-    private javax.swing.JTable tablePre;
+    private javax.swing.JTable tablePostCond;
+    private javax.swing.JTable tablePreCond;
     // End of variables declaration//GEN-END:variables
+    
+    private class ConditionTable extends JTable {
+        @Override
+        public TableCellEditor getCellEditor(int row, int column) {
+            int modelColumn = convertColumnIndexToModel(column);
+
+            if(modelColumn == 0)
+                return new DefaultCellEditor(new JComboBox(world.getObjects().toArray()));
+            
+            int modelRow = convertColumnIndexToModel(row);
+            SysObject object = (SysObject) getValueAt(modelRow, 0);
+            return new DefaultCellEditor(new JComboBox(object.getPossibleStates().toArray()));
+        }
+    }
 }

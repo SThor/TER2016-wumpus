@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.ComboBoxModel;
 
 /**
  * Collection use to restrain the ArrayList collection.
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Paul Givel and Guillaume Hartenstein
  * @see ArrayList
  */
-class UniqueList<E> {
+public class UniqueList<E> {
     /**
      * The list used to restrain the collection.
      */

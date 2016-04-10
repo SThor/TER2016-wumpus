@@ -5,18 +5,20 @@
  */
 package gui.general;
 
-import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.Condition;
+import model.State;
+import model.SysObject;
+import model.UniqueList;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 class ConditionTableModel extends AbstractTableModel {
-    private final List<Condition> conditions;
+    private final UniqueList<Condition> conditions;
     
-    public ConditionTableModel(List<Condition> conditions) {
+    public ConditionTableModel(UniqueList<Condition> conditions) {
         this.conditions = conditions;
     }
 
@@ -36,6 +38,32 @@ class ConditionTableModel extends AbstractTableModel {
         switch(columnIndex) {
             case 0: return c.getObject();
             case 1: return c.getState();
+            default:
+                throw new RuntimeException("Unexpected behavior");
+        }
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        Condition c = conditions.get(rowIndex);
+        switch(columnIndex) {
+            case 0: c.setObject((SysObject)aValue); break;
+            case 1: c.setState((State)aValue); break;
+            default:
+                throw new RuntimeException("Unexpected behavior");
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return true;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        switch(column) {
+            case 0: return "Object";
+            case 1: return "State";
             default:
                 throw new RuntimeException("Unexpected behavior");
         }

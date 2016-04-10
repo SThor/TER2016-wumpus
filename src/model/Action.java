@@ -98,18 +98,18 @@ public class Action {
     
     /**
      * Access the pre-conditions.
-     * @return An unmodifiable list of the pre-conditions
+     * @return The list of pre-conditions
      */
-    public List<Condition> getPreConditions() {
-        return preConditions.asList();
+    public UniqueList<Condition> getPreConditions() {
+        return preConditions;
     }
     
     /**
      * Access the post-conditions.
-     * @return An unmodifiable list of the post-conditions
+     * @return The list of post-conditions
      */
-    public List<Condition> getPostConditions() {
-        return postConditions.asList();
+    public UniqueList<Condition> getPostConditions() {
+        return postConditions;
     }
     
     /**

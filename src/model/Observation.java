@@ -5,25 +5,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Observation of the system at a certain point in time.
+ * Observation of the world at a certain point in time.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Observation {
     /**
      * Map representing the observation.
      */
-    private Map<SysObject, State> system;
+    private Map<SysObject, State> world;
     
     /**
      * Constructs a Map representing an empty observation.
      * Meaning that all objects were observed in state <tt>UNDIFINED</tt>.
-     * @param s The observed system.
+     * @param w The observed world.
      */
-    public Observation(System s) {
-        system = new HashMap<>();
+    public Observation(World w) {
+        world = new HashMap<>();
         
-        for(SysObject obj : s.getObjects())
-            system.put(obj, State.UNDEFINED);
+        for(SysObject obj : w.getObjects())
+            world.put(obj, State.UNDEFINED);
     }
     
     /**
@@ -37,7 +37,7 @@ public class Observation {
         if(!obj.isValidState(state))
             throw new UnknownObjectStateException();
         
-        system.replace(obj, state);
+        world.replace(obj, state);
     }
     
     /**
@@ -46,17 +46,17 @@ public class Observation {
      * @return The observed state.
      */
     public State getObservedState(SysObject obj) {
-        return system.get(obj);
+        return world.get(obj);
     }
     
     /**
-     * Change update the observed system
-     * @param s The observed system
+     * Change update the observed world
+     * @param w The observed world
      */
-    protected void updateSystem(System s) {
-        Map<SysObject, State> old = new HashMap<>(system);
-        system = new HashMap<>();
-        for(SysObject obj : s.getObjects())
-            system.put(obj, old.getOrDefault(obj, State.UNDEFINED));
+    protected void updateWorld(World w) {
+        Map<SysObject, State> old = new HashMap<>(world);
+        world = new HashMap<>();
+        for(SysObject obj : w.getObjects())
+            world.put(obj, old.getOrDefault(obj, State.UNDEFINED));
     } 
 }

@@ -25,22 +25,22 @@ public class SysObject {
     private State currentState;
     
     /**
-     * Reference to the system this object is in
+     * Reference to the world this object is in
      */
-    private System system;
+    private World world;
 
     /**
-     * Constructs a new system object.
+     * Constructs a new world object.
      * @param name Teh name of the object.
-     * @param system The system this object is in
+     * @param world The world this object is in
      * @throws NullPointerException If the name is <tt>null</tt>
      */
-    public SysObject(String name, System system) {
+    public SysObject(String name, World world) {
         if(name == null)
             throw new NullPointerException();
         
         this.name = name;
-        this.system = system;
+        this.world = world;
         possibleStates = new UniqueList<>();
         currentState = State.UNDEFINED;
     }
@@ -69,10 +69,14 @@ public class SysObject {
     /**
      * Add a possible state to this object.
      * @param state The new possible state
+     * @throws IllegalArgumentException If the state is <tt>State.UNDEFINED</tt>
      * @throws DuplicateElementException
      *  If the new state is already a possible state.
      */
     public void addPossibleState(State state) {
+        if(state == State.UNDEFINED)
+            throw new IllegalArgumentException(state.toString());
+        
         possibleStates.add(state);
     }
     
@@ -81,7 +85,7 @@ public class SysObject {
      * @param index The index of the state to remove 
      */
     public void removePossibleState(int index) {
-        system.updateSystem(this, possibleStates.get(index));
+        world.updateWorld(this, possibleStates.get(index));
         possibleStates.remove(index);
     }
 

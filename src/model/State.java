@@ -22,7 +22,7 @@ public class State {
      */
     public State(String name) {
         if(name == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException(name);
         
         this.name = name;
     }

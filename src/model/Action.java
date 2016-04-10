@@ -1,11 +1,11 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import model.exceptions.DuplicateElementException;
 
 /**
- * Represents a possible action in a system.
+ * Represents a possible action in a world.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Action {
@@ -77,7 +77,7 @@ public class Action {
      * @throws DuplicateElementException If the post-condition already exists
      */
     public void addPostCondition(Condition postCondition) {
-        preConditions.add(postCondition);
+        postConditions.add(postCondition);
     }
     
     /**
@@ -93,7 +93,23 @@ public class Action {
      * @param index The index of the post-condition to remove
      */
     public void removePostCondition(int index) {
-        preConditions.remove(index);
+        postConditions.remove(index);
+    }
+    
+    /**
+     * Access the pre-conditions.
+     * @return An unmodifiable list of the pre-conditions
+     */
+    public List<Condition> getPreConditions() {
+        return preConditions.asList();
+    }
+    
+    /**
+     * Access the post-conditions.
+     * @return An unmodifiable list of the post-conditions
+     */
+    public List<Condition> getPostConditions() {
+        return postConditions.asList();
     }
     
     /**

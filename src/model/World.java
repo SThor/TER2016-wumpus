@@ -128,4 +128,12 @@ public class World {
             a.removePostConditions(object, state);
         }
     }
+    
+    /**
+     * Access to the observations
+     * @return The list of observations
+     */
+    public List<Observation> getObservations() {
+        return observations;
+    }
 }

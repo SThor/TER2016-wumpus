@@ -9,6 +9,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.Condition;
+import model.Observation;
 import model.State;
 import model.SysObject;
 import model.World;
@@ -44,6 +45,20 @@ public class GeneralApp {
         
         world.addPossibleAction(closeDoor);
         
+        Observation obs0 = new Observation(world);
+        Observation obs1 = new Observation(world);
+        Observation obs2 = new Observation(world);
+        
+        obs0.setObservedState(door, new State(("Opened")));
+        obs0.setObservedState(person, new State("Sat"));
+        
+        obs1.setObservedState(door, new State("Closed"));
+        
+        obs2.setObservedState(person, new State("Sat"));
+        
+        world.addObservation(0, obs0);
+        world.addObservation(1, obs1);
+        world.addObservation(2, obs2);
         
         // Try to set look and feel to platform.
         try {

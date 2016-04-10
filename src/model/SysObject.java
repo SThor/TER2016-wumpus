@@ -101,7 +101,7 @@ public class SysObject {
      *         <tt>false</tt> otherwise.
      */
     public boolean isValidState(State state) {
-        return possibleStates.contains(state);
+        return state == State.UNDEFINED || possibleStates.contains(state);
     }
     
     /**

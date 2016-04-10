@@ -44,19 +44,8 @@ class ConditionTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Condition c = conditions.get(rowIndex);
-        switch(columnIndex) {
-            case 0: c.setObject((SysObject)aValue); break;
-            case 1: c.setState((State)aValue); break;
-            default:
-                throw new RuntimeException("Unexpected behavior");
-        }
-    }
-
-    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return false;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package gui.general;
 
+import java.util.Enumeration;
+import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.event.ListSelectionEvent;
@@ -9,7 +11,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.DefaultCellEditor;
 import javax.swing.table.TableModel;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import model.Action;
+import model.State;
 import model.SysObject;
 import model.World;
 
@@ -42,17 +47,37 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         
         initComponents();
         
+        // In the observation table :
+        
+        // For each editable column, set the editor to correspond to abject states
+        TableColumnModel obsColumnModel = tableObs.getColumnModel();
+        for(int i=1; i<obsColumnModel.getColumnCount(); i++) {
+            TableColumn column = obsColumnModel.getColumn(i);
+            Vector states = new Vector(world.getObjects().get(i-1).getPossibleStates());
+            states.add(0, State.UNDEFINED);
+            column.setCellEditor(new DefaultCellEditor(new JComboBox(states)));
+        }
+        
+        tableObs.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tableObsValueChanged(e);
+            }
+        });
+        
+        // In condition table :
+        
         tablePreCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                tablePreValueChanged(e);
+                tablePreCondValueChanged(e);
             }
         });
         
         tablePostCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                tablePostValueChanged(e);
+                tablePostCondValueChanged(e);
             }
         });
         
@@ -86,13 +111,13 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         panelLaws = new javax.swing.JPanel();
         panelPre = new javax.swing.JPanel();
         scrollTablePre = new javax.swing.JScrollPane();
-        tablePreCond = new ConditionTable();
+        tablePreCond = new javax.swing.JTable();
         panelBtnPre = new javax.swing.JPanel();
         btnAddPre = new javax.swing.JButton();
         btnRemPre = new javax.swing.JButton();
         panelPost = new javax.swing.JPanel();
         scrollTablePost = new javax.swing.JScrollPane();
-        tablePostCond = new ConditionTable();
+        tablePostCond = new javax.swing.JTable();
         panelBtnPost = new javax.swing.JPanel();
         btnAddPost = new javax.swing.JButton();
         btnRemPost = new javax.swing.JButton();
@@ -250,29 +275,7 @@ public class WorldBuilderUI extends javax.swing.JFrame {
 
         panelObservations.setLayout(new java.awt.BorderLayout());
 
-        tableObs.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                { new Integer(0), "Door", "Closed"},
-                { new Integer(0), "Window", "Closed"},
-                { new Integer(0), "Chair", "Occupied"},
-                { new Integer(0), "Person", "Sat"},
-                { new Integer(1), "Door", "Open"},
-                { new Integer(1), "Chair", "Free"},
-                { new Integer(2), "Door", "Open"},
-                { new Integer(2), "Person", "Sat"}
-            },
-            new String [] {
-                "Instant", "Object", "State"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+        tableObs.setModel(new ObservationTableModel(world));
         scrollTableObs.setViewportView(tableObs);
 
         panelObservations.add(scrollTableObs, java.awt.BorderLayout.CENTER);
@@ -353,14 +356,26 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         btnRemState.setEnabled(stateIndex != -1);
     }//GEN-LAST:event_listStatesValueChanged
 
-    private void tablePreValueChanged(ListSelectionEvent e) {
+    private void tablePreCondValueChanged(ListSelectionEvent e) {
         preCondIndex = tablePreCond.getSelectedRow();
         btnRemPre.setEnabled(preCondIndex != -1);
     }
 
-    private void tablePostValueChanged(ListSelectionEvent e) {
+    private void tablePostCondValueChanged(ListSelectionEvent e) {
         postCondIndex = tablePostCond.getSelectedRow();
         btnRemPost.setEnabled(postCondIndex != -1);
+    }
+    
+    private void tableObsValueChanged(ListSelectionEvent e) {
+        observationIndex = tableObs.getSelectedRow();
+        boolean hasSelection = observationIndex != -1;
+        boolean notLast = observationIndex != tableObs.getModel().getRowCount()-1;
+        boolean notFirst = observationIndex != 0;
+        btnRemObs.setEnabled(hasSelection);
+        btnAddObsAfter.setEnabled(hasSelection && notLast);
+        btnAddObsBefore.setEnabled(hasSelection && notFirst);
+        btnMoveUp.setEnabled(hasSelection && notFirst);
+        btnMoveDown.setEnabled(hasSelection && notLast);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -411,18 +426,4 @@ public class WorldBuilderUI extends javax.swing.JFrame {
     private javax.swing.JTable tablePostCond;
     private javax.swing.JTable tablePreCond;
     // End of variables declaration//GEN-END:variables
-    
-    private class ConditionTable extends JTable {
-        @Override
-        public TableCellEditor getCellEditor(int row, int column) {
-            int modelColumn = convertColumnIndexToModel(column);
-
-            if(modelColumn == 0)
-                return new DefaultCellEditor(new JComboBox(world.getObjects().toArray()));
-            
-            int modelRow = convertColumnIndexToModel(row);
-            SysObject object = (SysObject) getValueAt(modelRow, 0);
-            return new DefaultCellEditor(new JComboBox(object.getPossibleStates().toArray()));
-        }
-    }
 }

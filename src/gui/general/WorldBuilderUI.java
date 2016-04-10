@@ -10,6 +10,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import model.Action;
+import model.Observation;
 import model.State;
 import model.World;
 
@@ -282,22 +283,47 @@ public class WorldBuilderUI extends javax.swing.JFrame {
 
         btnAddObsAfter.setText("Add After");
         btnAddObsAfter.setEnabled(false);
+        btnAddObsAfter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddObsAfterActionPerformed(evt);
+            }
+        });
         panelBtnObs.add(btnAddObsAfter);
 
         btnAddObsBefore.setText("Add Before");
         btnAddObsBefore.setEnabled(false);
+        btnAddObsBefore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddObsBeforeActionPerformed(evt);
+            }
+        });
         panelBtnObs.add(btnAddObsBefore);
 
         btnMoveUp.setText("Move Up");
         btnMoveUp.setEnabled(false);
+        btnMoveUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveUpActionPerformed(evt);
+            }
+        });
         panelBtnObs.add(btnMoveUp);
 
         btnMoveDown.setText("Move Down");
         btnMoveDown.setEnabled(false);
+        btnMoveDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveDownActionPerformed(evt);
+            }
+        });
         panelBtnObs.add(btnMoveDown);
 
         btnRemObs.setText("Remove");
         btnRemObs.setEnabled(false);
+        btnRemObs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemObsActionPerformed(evt);
+            }
+        });
         panelBtnObs.add(btnRemObs);
 
         panelObservations.add(panelBtnObs, java.awt.BorderLayout.PAGE_END);
@@ -356,6 +382,33 @@ public class WorldBuilderUI extends javax.swing.JFrame {
         btnRemState.setEnabled(stateIndex != -1);
     }//GEN-LAST:event_listStatesValueChanged
 
+    private void btnAddObsAfterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddObsAfterActionPerformed
+        observationIndex++;
+        addObservationRow(observationIndex);
+    }//GEN-LAST:event_btnAddObsAfterActionPerformed
+
+    private void btnAddObsBeforeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddObsBeforeActionPerformed
+        addObservationRow(observationIndex);
+    }//GEN-LAST:event_btnAddObsBeforeActionPerformed
+
+    private void btnRemObsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemObsActionPerformed
+        ((ObservationTableModel)tableObs.getModel()).removeRow(observationIndex);
+        observationIndex = -1;
+        tableObs.clearSelection();
+    }//GEN-LAST:event_btnRemObsActionPerformed
+
+    private void btnMoveUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveUpActionPerformed
+        ((ObservationTableModel)tableObs.getModel()).moveUp(observationIndex);
+        observationIndex--;
+        tableObs.getSelectionModel().setSelectionInterval(observationIndex, observationIndex);
+    }//GEN-LAST:event_btnMoveUpActionPerformed
+
+    private void btnMoveDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveDownActionPerformed
+        ((ObservationTableModel)tableObs.getModel()).moveDown(observationIndex);
+        observationIndex++;
+        tableObs.getSelectionModel().setSelectionInterval(observationIndex, observationIndex);
+    }//GEN-LAST:event_btnMoveDownActionPerformed
+
     private void tablePreCondValueChanged(ListSelectionEvent e) {
         preCondIndex = tablePreCond.getSelectedRow();
         btnRemPre.setEnabled(preCondIndex != -1);
@@ -369,14 +422,17 @@ public class WorldBuilderUI extends javax.swing.JFrame {
     private void tableObsValueChanged(ListSelectionEvent e) {
         observationIndex = tableObs.getSelectedRow();
         boolean hasSelection = observationIndex != -1;
-        boolean notLast = observationIndex != tableObs.getModel().getRowCount()-1;
-        boolean notFirst = observationIndex != 0;
         btnRemObs.setEnabled(hasSelection);
-        btnAddObsAfter.setEnabled(hasSelection && notLast);
-        btnAddObsBefore.setEnabled(hasSelection && notFirst);
-        btnMoveUp.setEnabled(hasSelection && notFirst);
-        btnMoveDown.setEnabled(hasSelection && notLast);
+        btnAddObsAfter.setEnabled(hasSelection);
+        btnAddObsBefore.setEnabled(hasSelection);
+        btnMoveUp.setEnabled(hasSelection && observationIndex != 0);
+        btnMoveDown.setEnabled(hasSelection && observationIndex != tableObs.getModel().getRowCount()-1);
     }
+    
+    private void addObservationRow(int index) {
+        ((ObservationTableModel)tableObs.getModel()).addRow(observationIndex);
+        tableObs.getSelectionModel().setSelectionInterval(observationIndex, observationIndex);
+    } 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;

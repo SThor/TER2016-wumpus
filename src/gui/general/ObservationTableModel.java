@@ -14,10 +14,12 @@ import model.World;
 public class ObservationTableModel extends AbstractTableModel {
     private final List<Observation> observations;
     private final List<SysObject> objects;
+    private final World world;
     
     public ObservationTableModel(World world) {
         observations = world.getObservations();
         objects = world.getObjects();
+        this.world = world;
     }
     
     @Override
@@ -57,5 +59,25 @@ public class ObservationTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         return column == 0 ? "Instant" : objects.get(column-1).toString();
+    }
+    
+    public void addRow(int index) {
+        world.addObservation(index, new Observation(world));
+        fireTableRowsInserted(index, index);
+    }
+    
+    public void removeRow(int index) {
+        world.removeObservation(index);
+        fireTableRowsDeleted(index, index);
+    }
+    
+    public void moveUp(int index) {
+        world.moveObservationUp(index);
+        fireTableRowsUpdated(index-1, index);
+    }
+    
+    public void moveDown(int index) {
+        world.moveObservationDown(index);
+        fireTableRowsUpdated(index, index+1);
     }
 }

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 
@@ -135,5 +136,21 @@ public class World {
      */
     public List<Observation> getObservations() {
         return observations;
+    }
+
+    /**
+     * Move an observation up in the list.
+     * @param index The index of the observation to move.
+     */
+    public void moveObservationUp(int index) {
+        Collections.swap(observations, index, index-1);
+    }
+    
+    /**
+     * Move an observation down in the list.
+     * @param index The index of the observation to move.
+     */
+    public void moveObservationDown(int index) {
+        Collections.swap(observations, index, index+1);
     }
 }

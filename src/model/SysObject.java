@@ -3,7 +3,7 @@ package model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.Predicate;
 import model.exceptions.NoSuchPropertyException;
 
 /**
@@ -82,11 +82,22 @@ public class SysObject {
     }
     
     /**
-     * Add a property to this object
+     * Add a property to this object or replace the possible values of an existing property
      * @param property The name of the property to add
+     * @param newPossibleValues The possible values for the property
      */
-    public void addProperty(String property) {
-        properties.put(property, new ObjectProperty());
+    public void setPossibleValuesOf(String property, final UniqueList<String> newPossibleValues) {
+        List<String> oldValues = properties.put(property, new ObjectProperty(newPossibleValues)).getPossibleValues();
+        if(oldValues != null) {
+            // Will retain only values that are not in the new possible values
+            oldValues.removeIf(new Predicate<String>(){
+                @Override
+                public boolean test(String t) {
+                    return newPossibleValues.contains(t);
+                }
+            });
+            world.signalPossibleValuesChanged(this, property, oldValues);
+        }
     }
     
     /**
@@ -97,7 +108,7 @@ public class SysObject {
         if(properties.remove(property) != null)
             world.signalPropertyRemoved(this, property);
     }
-
+    
     @Override
     public String toString() {
         return name;

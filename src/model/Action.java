@@ -97,7 +97,7 @@ public class Action {
     }
     
     /**
-     * Access the pre-conditions.
+     * Accessor to the pre-conditions.
      * @return The list of pre-conditions
      */
     public List<Condition> getPreConditions() {
@@ -105,7 +105,7 @@ public class Action {
     }
     
     /**
-     * Access the post-conditions.
+     * Accessor to the post-conditions.
      * @return The list of post-conditions
      */
     public List<Condition> getPostConditions() {
@@ -113,40 +113,30 @@ public class Action {
     }
     
     /**
-     * Remove all pre-conditions associated to an object in a certain state.
-     * If state is <tt>null</tt> the pre-condition will be deleted regardless of the state.
-     * @param object The associated object
-     * @param state The associated state
+     * @see Action#removeFromList(java.util.List, model.SysObject, java.lang.String, java.lang.String) 
      */
-    protected void removePreConditions(SysObject object, State state) {
-        for(Iterator<Condition> it = preConditions.iterator(); it.hasNext();) {
-            Condition c = it.next();
-            if(c.getObject().equals(object) && (state == null || c.getState().equals(state)))
-                it.remove();
-        }
-            
+    protected void removeAllConditions(SysObject object, String property, List<String> values) {
+        removeFromList(preConditions, object, property, values);
+        removeFromList(postConditions, object, property, values);
     }
-
+    
     /**
-     * Remove all post-conditions associated to an object in a certain state.
-     * If state is <tt>null</tt> the post-condition will be deleted regardless of the state.
+     * Remove all condition associated to an object that has a certain property
+     * which is currently at a certain value.
+     * Note: if <tt>value</tt> is <tt>null</tt>, the value of the property is discarded.
+     *       if <tt>property</tt> is <tt>null</tt> the object is deleted wether it has this propety or not.
      * @param object The associated object
-     * @param state The associated state
+     * @param property The associated property
+     * @param values The list of possible values associated
      */
-    protected void removePostConditions(SysObject object, State state) {
-        for(Iterator<Condition> it = preConditions.iterator(); it.hasNext();) {
+    private void removeFromList(List<Condition> conditions, SysObject object, String property, List<String> values) {
+        for(Iterator<Condition> it = conditions.iterator(); it.hasNext();) {
             Condition c = it.next();
-            if(c.getObject().equals(object) && (state == null || c.getState().equals(state)))
+            if(c.getObject().equals(object)
+            &&(property == null || c.getPropertyName().equals(property))
+            &&(values == null || values.contains(c.getWantedValue())))
                 it.remove();
         }
-    }
-    
-    protected void signalPropertyRemoved() {
-        
-    }
-    
-    protected void signalPossibleValueRemoved() {
-        
     }
     
     @Override

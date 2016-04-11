@@ -49,22 +49,8 @@ public class Observation {
         return world.get(obj);
     }
     
-    /**
-     * Change update the observed world
-     * @param addedObj The added object
-     */
-    protected void signalObjectAdded(SysObject addedObj) {
-        Map<SysObject, State> old = new HashMap<>(world);
-        world = new HashMap<>();
-        for(SysObject obj : w.getObjects())
-            world.put(obj, old.getOrDefault(obj, State.UNDEFINED));
-    } 
-
-    protected void signalObjectRemoved(SysObject removed) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
-    protected void signalPossibleValueRemoved() {
+    protected void removeObservations(SysObject object, String property, String value) {
         
     }
 }

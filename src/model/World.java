@@ -69,17 +69,12 @@ public class World {
      * @param index The index of the object to remove
      */
     public void removeObject(int index) {
-        SysObject object = worldObjects.get(index);
-        
-        for(Action a : possibleActions) {
-            a.removePreConditions(object, null);
-            a.removePostConditions(object, null);
-        }
-        
         SysObject removed = worldObjects.remove(index);
         
-        for(Observation o : observations)
-            o.signalObjectRemoved(removed);
+        propagateSignalToActions(removed, null, null);
+        
+        for(Observation o : observations)//TODO
+            o.rem oveObservations(removed, null, null);
     }
     
     /**
@@ -119,17 +114,33 @@ public class World {
      * @param object The object concerned by the modification
      * @param property The removed property
      */
-    protected void signalPropertyRemoved(SysObject object, String property) { //TODO
-        for(Observation o : observations)
+    protected void signalPropertyRemoved(SysObject object, String property) {
+        propagateSignalToActions(object, property, null);
+        
+        for(Observation o : observations) //TODO
             if(o.getObservedState(object).equals(state))
                 o.setObservedState(object, State.UNDEFINED);
-        
-        for(Action a : possibleActions) {
-            a.removePreConditions(object, state);
-            a.removePostConditions(object, state);
-        }
     }
     
+    /**
+     * Triggered when a property has changed its possible values in an object.
+     * @param object The concerned object
+     * @param property The concerned property
+     * @param removedValues Values that were in the previous version
+     */
+    protected void signalPossibleValuesChanged(SysObject object, String property, List<String> removedValues) {
+        propagateSignalToActions(object, property, removedValues);
+        //TODO observation
+    }
+    
+    /**
+     * Apply to all actions
+     * @see Action#removeAllConditions(model.SysObject, java.lang.String, java.util.List) 
+     */
+    private void propagateSignalToActions(SysObject object, String property, List<String> removedValues) {
+        for(Action a : possibleActions)
+            a.removeAllConditions(object, property, removedValues);
+    }
     /**
      * Access to the observations
      * @return The list of observations

@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Objects;
 import model.exceptions.NoSuchPropertyException;
 
 /**
@@ -74,5 +75,30 @@ public class Condition {
      */
     public String getWantedValue() {
         return wantedValue;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + object.hashCode();
+        hash = 11 * hash + propertyName.hashCode();
+        hash = 11 * hash + wantedValue.hashCode();
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Condition))
+            return false;
+        
+        Condition c = (Condition) obj;
+        
+        if(!c.object.equals(object))
+            return false;
+        
+        if(!c.propertyName.equals(propertyName))
+            return false;
+        
+        return c.wantedValue.equals(wantedValue);
     }
 }

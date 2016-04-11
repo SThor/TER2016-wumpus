@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 
@@ -21,9 +22,9 @@ public class World {
     private final List<Action> possibleActions;
     
     /**
-     * List of observations.
+     * List of objectObservations.
      */
-    private final List<Observation> observations;
+    private final List<ObjectObservation> objectObservations;
     
     /**
      * Constructs a new empty world.
@@ -31,7 +32,7 @@ public class World {
     public World() {
         worldObjects = new UniqueList<>();
         possibleActions = new UniqueList<>();
-        observations = new ArrayList<>();
+        objectObservations = new ArrayList<>();
     }
     
     /**
@@ -41,8 +42,8 @@ public class World {
      */
     public void addObject(SysObject object) {
         worldObjects.add(object);
-        for(Observation o : observations)
-            o.signalObjectAdded(object);
+        for(ObjectObservation o : objectObservations)
+            o.mapNewObject(object);
     }
     
     /**
@@ -59,22 +60,20 @@ public class World {
      * @param index The index to add the observation to.
      * @param obs The observation.
      */
-    public void addObservation(int index, Observation obs) {
-        observations.add(index, obs);
+    public void addObservation(int index, ObjectObservation obs) {
+        objectObservations.add(index, obs);
     }
     
     /**
      * Remove an object from the world and all 
-     * associated actions and observations.
+ associated actions and objectObservations.
      * @param index The index of the object to remove
      */
     public void removeObject(int index) {
         SysObject removed = worldObjects.remove(index);
-        
         propagateSignalToActions(removed, null, null);
-        
-        for(Observation o : observations)//TODO
-            o.rem oveObservations(removed, null, null);
+        for(ObjectObservation o : objectObservations)
+            o.removeObject(removed);
     }
     
     /**
@@ -90,7 +89,7 @@ public class World {
      * @param index The index of the observation to remove
      */
     public void removeObservation(int index) {
-        observations.remove(index);
+        objectObservations.remove(index);
     }
     
     /**
@@ -116,10 +115,18 @@ public class World {
      */
     protected void signalPropertyRemoved(SysObject object, String property) {
         propagateSignalToActions(object, property, null);
-        
-        for(Observation o : observations) //TODO
-            if(o.getObservedState(object).equals(state))
-                o.setObservedState(object, State.UNDEFINED);
+        for(ObjectObservation o : objectObservations)
+            o.removeProperty(object, property);
+    }
+    
+    /**
+     * Triggered when a property has been added to an object
+     * @param object The object concerned by the modification
+     * @param property The added property
+     */
+    protected void signalPropertyAdded(SysObject object, String property) {
+        for(ObjectObservation o : objectObservations)
+            o.mapNewProperty(object, property);
     }
     
     /**
@@ -130,7 +137,9 @@ public class World {
      */
     protected void signalPossibleValuesChanged(SysObject object, String property, List<String> removedValues) {
         propagateSignalToActions(object, property, removedValues);
-        //TODO observation
+        for(ObjectObservation o : objectObservations)
+            if(removedValues.contains(o.getObservedState(object, property)))
+                o.setObservedValue(object, property, null);
     }
     
     /**
@@ -141,12 +150,13 @@ public class World {
         for(Action a : possibleActions)
             a.removeAllConditions(object, property, removedValues);
     }
+    
     /**
-     * Access to the observations
-     * @return The list of observations
+     * Access to the objectObservations
+     * @return The list of objectObservations
      */
-    public List<Observation> getObservations() {
-        return observations;
+    public List<ObjectObservation> getObservations() {
+        return objectObservations;
     }
 
     /**
@@ -154,7 +164,7 @@ public class World {
      * @param index The index of the observation to move.
      */
     public void moveObservationUp(int index) {
-        Collections.swap(observations, index, index-1);
+        Collections.swap(objectObservations, index, index-1);
     }
     
     /**
@@ -162,6 +172,6 @@ public class World {
      * @param index The index of the observation to move.
      */
     public void moveObservationDown(int index) {
-        Collections.swap(observations, index, index+1);
+        Collections.swap(objectObservations, index, index+1);
     }
 }

@@ -97,6 +97,8 @@ public class SysObject {
                 }
             });
             world.signalPossibleValuesChanged(this, property, oldValues);
+        } else {
+            world.signalPropertyAdded(this, property);
         }
     }
     

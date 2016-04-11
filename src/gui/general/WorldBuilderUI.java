@@ -10,7 +10,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import model.Action;
-import model.Observation;
+import model.ObjectObservation;
 import model.State;
 import model.World;
 

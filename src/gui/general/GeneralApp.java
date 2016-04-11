@@ -9,7 +9,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.Condition;
-import model.Observation;
+import model.ObjectObservation;
 import model.State;
 import model.SysObject;
 import model.World;
@@ -45,9 +45,9 @@ public class GeneralApp {
         
         world.addPossibleAction(closeDoor);
         
-        Observation obs0 = new Observation(world);
-        Observation obs1 = new Observation(world);
-        Observation obs2 = new Observation(world);
+        ObjectObservation obs0 = new ObjectObservation(world);
+        ObjectObservation obs1 = new ObjectObservation(world);
+        ObjectObservation obs2 = new ObjectObservation(world);
         
         obs0.setObservedState(door, new State(("Opened")));
         obs0.setObservedState(person, new State("Sat"));

@@ -2,7 +2,7 @@ package gui.general;
 
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.Observation;
+import model.ObjectObservation;
 import model.State;
 import model.SysObject;
 import model.World;
@@ -12,7 +12,7 @@ import model.World;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ObservationTableModel extends AbstractTableModel {
-    private final List<Observation> observations;
+    private final List<ObjectObservation> observations;
     private final List<SysObject> objects;
     private final World world;
     
@@ -37,7 +37,7 @@ public class ObservationTableModel extends AbstractTableModel {
         if(columnIndex == 0) {
             return rowIndex; // Instant
         } else {
-            Observation obs = observations.get(rowIndex);
+            ObjectObservation obs = observations.get(rowIndex);
             SysObject object = objects.get(columnIndex-1);
             return obs.getObservedState(object);
         }
@@ -45,7 +45,7 @@ public class ObservationTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Observation obs = observations.get(rowIndex);
+        ObjectObservation obs = observations.get(rowIndex);
         SysObject object = objects.get(columnIndex-1);
         obs.setObservedState(object, (State)aValue);
         fireTableCellUpdated(rowIndex, columnIndex);
@@ -62,7 +62,7 @@ public class ObservationTableModel extends AbstractTableModel {
     }
     
     public void addRow(int index) {
-        world.addObservation(index, new Observation(world));
+        world.addObservation(index, new ObjectObservation(world));
         fireTableRowsInserted(index, index);
     }
     

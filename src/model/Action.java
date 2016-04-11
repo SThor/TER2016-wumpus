@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Iterator;
+import java.util.List;
 import model.exceptions.DuplicateElementException;
 
 /**
@@ -16,12 +17,12 @@ public class Action {
     /**
      * List of pre-conditions for this action to be realised.
      */
-    private final UniqueList<Condition> preConditions;
+    private final List<Condition> preConditions;
     
     /**
      * List of post-conditions after this action has been realised.
      */
-    private final UniqueList<Condition> postConditions;
+    private final List<Condition> postConditions;
     
     /**
      * Constructs an action with no pre- and post-consitions 
@@ -42,7 +43,7 @@ public class Action {
      * @return <tt>true</tt> if all the pre-conditions are verified, <tt>false</tt> otherwise.
      */
     public boolean preConditionsVerified() {
-        for(Condition c : preConditions.asList())
+        for(Condition c : preConditions)
             if(!c.isVerified())
                 return false;
         
@@ -54,7 +55,7 @@ public class Action {
      * @return <tt>true</tt> if all the post-conditions are verified, <tt>false</tt> otherwise.
      */
     public boolean postConditionsVerified() {
-        for(Condition c : postConditions.asList())
+        for(Condition c : postConditions)
             if(!c.isVerified())
                 return false;
         
@@ -99,7 +100,7 @@ public class Action {
      * Access the pre-conditions.
      * @return The list of pre-conditions
      */
-    public UniqueList<Condition> getPreConditions() {
+    public List<Condition> getPreConditions() {
         return preConditions;
     }
     
@@ -107,7 +108,7 @@ public class Action {
      * Access the post-conditions.
      * @return The list of post-conditions
      */
-    public UniqueList<Condition> getPostConditions() {
+    public List<Condition> getPostConditions() {
         return postConditions;
     }
     
@@ -138,6 +139,14 @@ public class Action {
             if(c.getObject().equals(object) && (state == null || c.getState().equals(state)))
                 it.remove();
         }
+    }
+    
+    protected void signalPropertyRemoved() {
+        
+    }
+    
+    protected void signalPossibleValueRemoved() {
+        
     }
     
     @Override

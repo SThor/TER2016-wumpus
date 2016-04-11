@@ -13,12 +13,12 @@ public class World {
     /**
      * List of objects
      */
-    private final UniqueList<SysObject> worldObjects;
+    private final List<SysObject> worldObjects;
     
     /**
      * List of possible actions.
      */
-    private final UniqueList<Action> possibleActions;
+    private final List<Action> possibleActions;
     
     /**
      * List of observations.
@@ -42,7 +42,7 @@ public class World {
     public void addObject(SysObject object) {
         worldObjects.add(object);
         for(Observation o : observations)
-            o.updateWorld(this);
+            o.signalObjectAdded(object);
     }
     
     /**
@@ -71,15 +71,15 @@ public class World {
     public void removeObject(int index) {
         SysObject object = worldObjects.get(index);
         
-        for(Action a : possibleActions.asList()) {
+        for(Action a : possibleActions) {
             a.removePreConditions(object, null);
             a.removePostConditions(object, null);
         }
         
-        worldObjects.remove(index);
+        SysObject removed = worldObjects.remove(index);
         
         for(Observation o : observations)
-            o.updateWorld(this);
+            o.signalObjectRemoved(removed);
     }
     
     /**
@@ -100,31 +100,31 @@ public class World {
     
     /**
      * Access the objects list.
-     * @return An unmodifiable list of the objects
+     * @return A list of the objects
      */
     public List<SysObject> getObjects() {
-        return worldObjects.asList();
+        return worldObjects;
     }
     
     /**
      * Access the possible actions list.
-     * @return An unmodifiable list of the possible actions
+     * @return A list of the possible actions
      */
     public List<Action> getPossibleActions() {
-        return possibleActions.asList();
+        return possibleActions;
     }
-
+    
     /**
-     * Update the world in case of a possible state deletion of an object.
-     * @param object The modified object
-     * @param state The deleted state
+     * Triggered when a property has been removed from an object
+     * @param object The object concerned by the modification
+     * @param property The removed property
      */
-    protected void updateWorld(SysObject object, State state) {
+    protected void signalPropertyRemoved(SysObject object, String property) { //TODO
         for(Observation o : observations)
             if(o.getObservedState(object).equals(state))
                 o.setObservedState(object, State.UNDEFINED);
         
-        for(Action a : possibleActions.asList()) {
+        for(Action a : possibleActions) {
             a.removePreConditions(object, state);
             a.removePostConditions(object, state);
         }

@@ -1,6 +1,6 @@
 package model;
 
-import model.exceptions.UnknownObjectStateException;
+import model.exceptions.NoSuchPropertyException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,12 +30,12 @@ public class Observation {
      * Change the observed state of an object.
      * @param obj The observed object.
      * @param state The observed state.
-     * @throws UnknownObjectStateException 
+     * @throws NoSuchPropertyException 
      *  If <tt>state</tt> is not a possible state of object.
      */
     public void setObservedState(SysObject obj, State state) {
         if(!obj.isValidState(state))
-            throw new UnknownObjectStateException();
+            throw new NoSuchPropertyException();
         
         world.replace(obj, state);
     }
@@ -51,12 +51,20 @@ public class Observation {
     
     /**
      * Change update the observed world
-     * @param w The observed world
+     * @param addedObj The added object
      */
-    protected void updateWorld(World w) {
+    protected void signalObjectAdded(SysObject addedObj) {
         Map<SysObject, State> old = new HashMap<>(world);
         world = new HashMap<>();
         for(SysObject obj : w.getObjects())
             world.put(obj, old.getOrDefault(obj, State.UNDEFINED));
     } 
+
+    protected void signalObjectRemoved(SysObject removed) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    protected void signalPossibleValueRemoved() {
+        
+    }
 }

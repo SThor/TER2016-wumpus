@@ -1,10 +1,10 @@
 package model;
 
-import model.exceptions.UnknownObjectStateException;
+import model.exceptions.NoSuchPropertyException;
 
 /**
- * Represents a condition as a <tt>SysObject</tt> and a <tt>State</tt>.
- * The condition is verified if the <tt>SysObject</tt>'s current state is the <tt>State</tt>.
+ * Represents a condition, which is an object and a wanted value of a certain property of this object.
+ * The condition is verified if the <tt>SysObject</tt>'s current property is the <tt>State</tt>.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Condition {
@@ -14,69 +14,65 @@ public class Condition {
     private SysObject object;
     
     /**
-     * The wanted state.
+     * The name of the concerned property
      */
-    private State state;
+    private String propertyName;
     
+    /**
+     * The wanted value for this property
+     */
+    private String wantedValue;
+
     /**
      * Constructs a condition.
-     * @param object The concerned object.
-     * @param state The wanted state.
-     * @throws UnknownObjectStateException 
-     *  If <tt>state</tt> is not a possible state of <tt>object</tt>.
+     * <b>Warning:</b> it is possible to create a condition on a value not 
+     * contained in the property's possible values. Such a condition will
+     * never be verified.
+     * @param object The object concerned
+     * @param propertyName The name of the property concerned
+     * @param wantedValue The wanted value for this property
+     * @throws NoSuchPropertyException If the property name is not one of the objects properties.
+     * @throws IllegalArgumentException If the wanted value is not in the property's possible values
      */
-    public Condition(SysObject object, State state) {
-        if(!object.isValidState(state))
-            throw new UnknownObjectStateException();
+    public Condition(SysObject object, String propertyName, String wantedValue) {
+        if(!object.isPossibleValueOf(propertyName, wantedValue))
+            throw new IllegalArgumentException(wantedValue+" is not a possible value of the property "+propertyName);
         
         this.object = object;
-        this.state = state;
+        this.propertyName = propertyName;
+        this.wantedValue = wantedValue;
     }
     
     /**
-     * Check wether this condition is verified.
-     * @return <tt>true</tt> if the object is currently in the wanted state,
-     *         <tt>false</tt> otherwise
+     * Checks wether this condition is verified.
+     * @return <tt>true</tt> if the object's property currently has the wanted value,
+     *         <tt>false</tt> otherwise.
      */
     public boolean isVerified() {
-        return object.getCurrentState().equals(state);
+        return object.getCurrentValueOf(propertyName).equals(wantedValue);
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 43 * hash + object.hashCode();
-        hash = 43 * hash + state.hashCode();
-        return hash;
-    }
-
+    
     /**
-     * Two <tt>Conditions</tt> are equals if they have the same
-     * object and the same wanted state.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof Condition))
-            return false;
-        
-        Condition c = (Condition) obj;
-        
-        return c.state.equals(state) && c.object.equals(object);
-    }
-
-    /**
-     * Access the object
-     * @return The object concerned by this condition
+     * Accessor to the object
+     * @return The concerned object
      */
     public SysObject getObject() {
         return object;
     }
-
+    
     /**
-     * Access the state
-     * @return The state concerned by this condition
+     * Accessor to the property
+     * @return The concerned property
      */
-    public State getState() {
-        return state;
+    public String getPropertyName() {
+        return propertyName;
+    }
+    
+    /**
+     * Accessor to the wanted value
+     * @return The wanted value
+     */
+    public String getWantedValue() {
+        return wantedValue;
     }
 }

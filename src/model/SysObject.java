@@ -1,8 +1,10 @@
 package model;
 
-import model.exceptions.UnknownObjectStateException;
+import java.util.HashMap;
 import java.util.List;
-import model.exceptions.DuplicateElementException;
+import java.util.Map;
+import java.util.Objects;
+import model.exceptions.NoSuchPropertyException;
 
 /**
  * Represent an object of a sytem.
@@ -15,14 +17,9 @@ public class SysObject {
     private final String name;
     
     /**
-     * List of the possible possible states.
+     * Map the object's properties.
      */
-    private final UniqueList<State> possibleStates;
-    
-    /**
-     * Current state of the object.
-     */
-    private State currentState;
+    private final Map<String, ObjectProperty> properties;
     
     /**
      * Reference to the world this object is in
@@ -41,52 +38,64 @@ public class SysObject {
         
         this.name = name;
         this.world = world;
-        possibleStates = new UniqueList<>();
-        currentState = State.UNDEFINED;
+        properties = new HashMap<>();
     }
     
     /**
-     * Change the state of this object.
-     * @param newState The new state of the object
-     * @throws UnknownObjectStateException
-     *  If the new state is not one of this object's possible states.
+     * Change the value of a property of this object.
+     * @param property Property to change
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
-    public final void changeState(State newState) {
-        if(!isValidState(newState))
-            throw new UnknownObjectStateException();
-        
-        currentState = newState;
+    public final void changeValueOf(String property) {
+        try {
+            properties.get(property).changeToNextValue();
+        } catch(NullPointerException e) {
+            throw new NoSuchPropertyException(property, toString());
+        }
     }
     
     /**
-     * Access the curretn state of this object.
-     * @return The current state of this object.
+     * Set the value of a property of this object to undefined
+     * @param property Property to set to undefined
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
-    public State getCurrentState() {
-        return currentState;
+    public void setToUndefined(String property) {
+        try {
+            properties.get(property).setToUndefined();
+        } catch(NullPointerException e) {
+            throw new NoSuchPropertyException(property, toString());
+        }
     }
     
     /**
-     * Add a possible state to this object.
-     * @param state The new possible state
-     * @throws IllegalArgumentException If the state is <tt>State.UNDEFINED</tt>
-     * @throws DuplicateElementException
-     *  If the new state is already a possible state.
+     * Accessor to the current value of a property
+     * @param property The property to access
+     * @return The current value of the property
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
-    public void addPossibleState(State state) {
-        if(state == State.UNDEFINED)
-            throw new IllegalArgumentException(state.toString());
-        
-        possibleStates.add(state);
+    public String getCurrentValueOf(String property) {
+        try {
+            return properties.get(property).getCurrentValue();
+        } catch(NullPointerException e) {
+            throw new NoSuchPropertyException(property, toString());
+        }
     }
     
     /**
-     * Remove a possible state.
-     * @param index The index of the state to remove 
+     * Add a property to this object
+     * @param property The name of the property to add
      */
-    public void removePossibleState(int index) {
-        world.updateWorld(this, possibleStates.get(index));
-        possibleStates.remove(index);
+    public void addProperty(String property) {
+        properties.put(property, new ObjectProperty());
+    }
+    
+    /**
+     * Remove a property from this object
+     * @param property The name of the property to remove
+     */
+    public void removeProperty(String property) {
+        if(properties.remove(property) != null)
+            world.signalPropertyRemoved(this, property);
     }
 
     @Override
@@ -95,20 +104,41 @@ public class SysObject {
     }
     
     /**
-     * Check wether a state is a possible state of this object.
-     * @param state The state to check
-     * @return <tt>true</tt> if the state is a possible state of this object,
-     *         <tt>false</tt> otherwise.
+     * Accessor to properties' names
+     * @return A set of the properties names.
      */
-    public boolean isValidState(State state) {
-        return state == State.UNDEFINED || possibleStates.contains(state);
+    public List<String> getPropertiesNames() {
+        return new UniqueList<>(properties.keySet());
     }
     
     /**
-     * Access the possible states.
-     * @return An unmodifiable list of this object's possible states.
+     * Checks wether a value is a possible value of a property.
+     * @param property The concerned property
+     * @param value The value to check
+     * @return <tt>true</tt> if the value is one of the property's possible values,
+     *         <tt>false</tt> otherwise.
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
-    public List<State> getPossibleStates() {
-        return possibleStates.asList();
+     public boolean isPossibleValueOf(String property, String value) {
+        try {
+            return properties.get(property).getPossibleValues().contains(value);
+        } catch(NullPointerException e) {
+            throw new NoSuchPropertyException(property, toString());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + name.hashCode();
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof SysObject))
+            return false;
+        
+        return ((SysObject)obj).name.equals(name);
     }
 }

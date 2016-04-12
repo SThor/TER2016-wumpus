@@ -1,8 +1,7 @@
 package model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import model.exceptions.NoSuchPropertyException;
 
@@ -17,9 +16,9 @@ public class SysObject {
     private final String name;
     
     /**
-     * Map the object's properties.
+     * List the object's properties.
      */
-    private final Map<String, ObjectProperty> properties;
+    private final List<ObjectProperty> properties;
     
     /**
      * Reference to the world this object is in
@@ -38,77 +37,140 @@ public class SysObject {
         
         this.name = name;
         this.world = world;
-        properties = new HashMap<>();
+        properties = new ArrayList<>();
+    }
+    
+    /**
+     * Change the value of a property of this object via its name.
+     * @param property Name of the property to change
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
+     */
+    public final void changeValueOf(String property) {
+        changeValueOf(new ObjectProperty(property));
     }
     
     /**
      * Change the value of a property of this object.
-     * @param property Property to change
+     * @param propertyToChange Property to change
      * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
-    public final void changeValueOf(String property) {
-        try {
-            properties.get(property).changeToNextValue();
-        } catch(NullPointerException e) {
-            throw new NoSuchPropertyException(property, toString());
+    public final void changeValueOf(ObjectProperty propertyToChange) {
+        if(properties.contains(propertyToChange)){
+            for (ObjectProperty property : properties) {
+                if(property.equals(propertyToChange)){
+                    property.changeToNextValue();
+                    break;
+                }
+            }
+        }else{
+            throw new NoSuchPropertyException(propertyToChange.getName(), toString());
         }
+    }
+    
+    /**
+     * Set the value of a property of this object to undefined via its name
+     * @param property Name of the property to set to undefined
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
+     */
+    public void setToUndefined(String property) {
+        setToUndefined(new ObjectProperty(property));
     }
     
     /**
      * Set the value of a property of this object to undefined
-     * @param property Property to set to undefined
+     * @param propertyToChange Property to set to undefined
      * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
-    public void setToUndefined(String property) {
-        try {
-            properties.get(property).setToUndefined();
-        } catch(NullPointerException e) {
-            throw new NoSuchPropertyException(property, toString());
+    public void setToUndefined(ObjectProperty propertyToChange) {
+        if(properties.contains(propertyToChange)){
+            for (ObjectProperty property : properties) {
+                if(property.equals(propertyToChange)){
+                    property.setToUndefined();
+                    break;
+                }
+            }
+        }else{
+            throw new NoSuchPropertyException(propertyToChange.getName(), toString());
         }
     }
     
     /**
-     * Accessor to the current value of a property
-     * @param property The property to access
+     * Accessor to the current value of a property via its name
+     * @param property Name of the property to access
      * @return The current value of the property
      * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
     public String getCurrentValueOf(String property) {
-        try {
-            return properties.get(property).getCurrentValue();
-        } catch(NullPointerException e) {
-            throw new NoSuchPropertyException(property, toString());
+        return getCurrentValueOf(new ObjectProperty(property));
+    }
+    
+    /**
+     * Accessor to the current value of a property
+     * @param propertyWanted The property to access
+     * @return The current value of the property
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
+     */
+    public String getCurrentValueOf(ObjectProperty propertyWanted) {
+        if(properties.contains(propertyWanted)){
+            String value = null;
+            for (ObjectProperty property : properties) {
+                if(property.equals(propertyWanted)){
+                    value = property.getCurrentValue();
+                    break;
+                }
+            }
+            return value;
+        }else{
+            throw new NoSuchPropertyException(propertyWanted.getName(), toString());
         }
     }
     
     /**
-     * Add a property to this object or replace the possible values of an existing property
+     * Add a property via its name to this object or replace the possible values of an existing property via its name
      * @param property The name of the property to add
      * @param newPossibleValues The possible values for the property
      */
     public void setPossibleValuesOf(String property, final UniqueList<String> newPossibleValues) {
-        List<String> oldValues = properties.put(property, new ObjectProperty(newPossibleValues)).getPossibleValues();
-        if(oldValues != null) {
-            // Will retain only values that are not in the new possible values
-            oldValues.removeIf(new Predicate<String>(){
-                @Override
-                public boolean test(String t) {
-                    return newPossibleValues.contains(t);
+        setPossibleValuesOf(new ObjectProperty(property), newPossibleValues);
+    }
+    
+    /**
+     * Add a property to this object or replace the possible values of an existing property
+     * @param property The property to add
+     * @param newPossibleValues The possible values for the property
+     */
+    public void setPossibleValuesOf(ObjectProperty property, final UniqueList<String> newPossibleValues) {
+        if(properties.contains(property)){
+            List<String> oldValues = null;
+            for (ObjectProperty prop : properties) {
+                if(prop.equals(property)){
+                    oldValues = prop.getPossibleValues();
+                    prop.setPossibleValues(newPossibleValues);
+                    break;
                 }
-            });
-            world.signalPossibleValuesChanged(this, property, oldValues);
-        } else {
-            world.signalPropertyAdded(this, property);
+            }
+            world.signalPossibleValuesChanged(this, property.getName(), oldValues);
+        }else{
+            properties.add(new ObjectProperty(newPossibleValues, property.getName()));
+            world.signalPropertyAdded(this, property.getName());
         }
     }
     
     /**
-     * Remove a property from this object
+     * Remove a property from this object via its name
      * @param property The name of the property to remove
      */
     public void removeProperty(String property) {
-        if(properties.remove(property) != null)
-            world.signalPropertyRemoved(this, property);
+        removeProperty(new ObjectProperty(property));
+    }
+    
+    /**
+     * Remove a property from this object
+     * @param property The property to remove
+     */
+    public void removeProperty(ObjectProperty property) {
+        if( properties.remove(property))
+            world.signalPropertyRemoved(this, property.getName());
     }
     
     @Override
@@ -121,22 +183,45 @@ public class SysObject {
      * @return A set of the properties names.
      */
     public List<String> getPropertiesNames() {
-        return new UniqueList<>(properties.keySet());
+        List<String> list = new UniqueList<>();
+        for (ObjectProperty property : properties) {
+            list.add(property.getName());
+        }
+        return list;
     }
     
     /**
-     * Checks wether a value is a possible value of a property.
-     * @param property The concerned property
+     * Checks wether a value is a possible value of a property via the property's name.
+     * @param property Name of the concerned property
      * @param value The value to check
      * @return <tt>true</tt> if the value is one of the property's possible values,
      *         <tt>false</tt> otherwise.
      * @throws NoSuchPropertyException If the property doesn't exist in this object.
      */
      public boolean isPossibleValueOf(String property, String value) {
-        try {
-            return properties.get(property).getPossibleValues().contains(value);
-        } catch(NullPointerException e) {
-            throw new NoSuchPropertyException(property, toString());
+        return isPossibleValueOf(new ObjectProperty(property), value);
+    }
+     
+    /**
+     * Checks wether a value is a possible value of a property.
+     * @param propertyToCheck The concerned property
+     * @param value The value to check
+     * @return <tt>true</tt> if the value is one of the property's possible values,
+     *         <tt>false</tt> otherwise.
+     * @throws NoSuchPropertyException If the property doesn't exist in this object.
+     */
+     public boolean isPossibleValueOf(ObjectProperty propertyToCheck, String value) {
+        if(properties.contains(propertyToCheck)){
+            boolean res = false;
+            for (ObjectProperty property : properties) {
+                if(property.equals(propertyToCheck)){
+                    res = property.getPossibleValues().contains(value);
+                    break;
+                }
+            }
+            return res;
+        }else{
+            throw new NoSuchPropertyException(propertyToCheck.getName(), toString());
         }
     }
 
@@ -153,5 +238,9 @@ public class SysObject {
             return false;
         
         return ((SysObject)obj).name.equals(name);
+    }
+
+    public List<ObjectProperty> getProperties() {
+        return properties;
     }
 }

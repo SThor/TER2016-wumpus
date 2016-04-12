@@ -15,12 +15,4 @@ public class DuplicateElementException extends RuntimeException {
         super("This element is already contained in this list");
     }
     
-    /**
-     * Create a <tt>DuplicateElementException</tt>
-     * @param explanation Message to be displayed
-     */
-    public DuplicateElementException(String explanation) {
-        super(explanation);
-    }
-    
 }

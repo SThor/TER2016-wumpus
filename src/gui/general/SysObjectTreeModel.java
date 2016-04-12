@@ -52,9 +52,4 @@ public class SysObjectTreeModel extends DefaultTreeModel {
                 objects.indexOf(child) : 
                 ((SysObject)parent).getProperties().indexOf(child);
     }
-    
-    @Override
-    public Object getRoot() {
-        return null;
-    }
 }

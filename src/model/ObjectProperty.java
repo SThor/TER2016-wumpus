@@ -14,14 +14,20 @@ import java.util.List;
 public class ObjectProperty {
     private List<String> possibleValues;
     private int currentValueIndex;
+    private String name;
     
-    public ObjectProperty() {
-        this(new UniqueList<String>());
+    public ObjectProperty(String name) {
+        this(new UniqueList<String>(), name);
     }
     
-    public ObjectProperty(UniqueList<String> possibleValues) {
+    public ObjectProperty(UniqueList<String> possibleValues, String name) {
         this.possibleValues = new UniqueList<>();
         currentValueIndex = -1;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
     
     public List<String> getPossibleValues() {
@@ -40,4 +46,34 @@ public class ObjectProperty {
     public void setToUndefined() {
         currentValueIndex = -1;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ObjectProperty){
+            ObjectProperty property = (ObjectProperty)obj;
+            return name.equals(property.getName());
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode()*17;
+    }
+
+    /**
+     * Replaces the possible values
+     * @param newPossibleValues The possible values for the property
+     */
+    public void setPossibleValues(UniqueList<String> newPossibleValues) {
+        possibleValues = newPossibleValues;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+    
+    
 }

@@ -239,4 +239,8 @@ public class SysObject {
         
         return ((SysObject)obj).name.equals(name);
     }
+
+    public List<ObjectProperty> getProperties() {
+        return properties;
+    }
 }

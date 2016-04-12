@@ -14,20 +14,14 @@ import java.util.List;
 public class ObjectProperty {
     private List<String> possibleValues;
     private int currentValueIndex;
-    private String name;
     
-    public ObjectProperty(String name) {
-        this(new UniqueList<String>(), name);
+    public ObjectProperty() {
+        this(new UniqueList<String>());
     }
     
-    public ObjectProperty(UniqueList<String> possibleValues, String name) {
+    public ObjectProperty(UniqueList<String> possibleValues) {
         this.possibleValues = new UniqueList<>();
         currentValueIndex = -1;
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
     
     public List<String> getPossibleValues() {

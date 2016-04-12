@@ -1,11 +1,11 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import model.exceptions.DuplicateElementException;
 
 /**
- * Represents a possible action in a system.
+ * Represents a possible action in a world.
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Action {
@@ -17,12 +17,12 @@ public class Action {
     /**
      * List of pre-conditions for this action to be realised.
      */
-    private final UniqueList<Condition> preConditions;
+    private final List<Condition> preConditions;
     
     /**
      * List of post-conditions after this action has been realised.
      */
-    private final UniqueList<Condition> postConditions;
+    private final List<Condition> postConditions;
     
     /**
      * Constructs an action with no pre- and post-consitions 
@@ -43,7 +43,7 @@ public class Action {
      * @return <tt>true</tt> if all the pre-conditions are verified, <tt>false</tt> otherwise.
      */
     public boolean preConditionsVerified() {
-        for(Condition c : preConditions.asList())
+        for(Condition c : preConditions)
             if(!c.isVerified())
                 return false;
         
@@ -55,7 +55,7 @@ public class Action {
      * @return <tt>true</tt> if all the post-conditions are verified, <tt>false</tt> otherwise.
      */
     public boolean postConditionsVerified() {
-        for(Condition c : postConditions.asList())
+        for(Condition c : postConditions)
             if(!c.isVerified())
                 return false;
         
@@ -77,7 +77,7 @@ public class Action {
      * @throws DuplicateElementException If the post-condition already exists
      */
     public void addPostCondition(Condition postCondition) {
-        preConditions.add(postCondition);
+        postConditions.add(postCondition);
     }
     
     /**
@@ -93,34 +93,48 @@ public class Action {
      * @param index The index of the post-condition to remove
      */
     public void removePostCondition(int index) {
-        preConditions.remove(index);
+        postConditions.remove(index);
     }
     
     /**
-     * Remove all pre-conditions associated to an object in a certain state.
-     * If state is <tt>null</tt> the pre-condition will be deleted regardless of the state.
-     * @param object The associated object
-     * @param state The associated state
+     * Accessor to the pre-conditions.
+     * @return The list of pre-conditions
      */
-    protected void removePreConditions(SysObject object, State state) {
-        for(Iterator<Condition> it = preConditions.iterator(); it.hasNext();) {
-            Condition c = it.next();
-            if(c.getObject().equals(object) && (state == null || c.getState().equals(state)))
-                it.remove();
-        }
-            
+    public List<Condition> getPreConditions() {
+        return preConditions;
     }
-
+    
     /**
-     * Remove all post-conditions associated to an object in a certain state.
-     * If state is <tt>null</tt> the post-condition will be deleted regardless of the state.
-     * @param object The associated object
-     * @param state The associated state
+     * Accessor to the post-conditions.
+     * @return The list of post-conditions
      */
-    protected void removePostConditions(SysObject object, State state) {
-        for(Iterator<Condition> it = preConditions.iterator(); it.hasNext();) {
+    public List<Condition> getPostConditions() {
+        return postConditions;
+    }
+    
+    /**
+     * @see Action#removeFromList(java.util.List, model.SysObject, java.lang.String, java.lang.String) 
+     */
+    protected void removeAllConditions(SysObject object, String property, List<String> values) {
+        removeFromList(preConditions, object, property, values);
+        removeFromList(postConditions, object, property, values);
+    }
+    
+    /**
+     * Remove all condition associated to an object that has a certain property
+     * which is currently at a certain value.
+     * Note: if <tt>value</tt> is <tt>null</tt>, the value of the property is discarded.
+     *       if <tt>property</tt> is <tt>null</tt> the object is deleted wether it has this propety or not.
+     * @param object The associated object
+     * @param property The associated property
+     * @param values The list of possible values associated
+     */
+    private void removeFromList(List<Condition> conditions, SysObject object, String property, List<String> values) {
+        for(Iterator<Condition> it = conditions.iterator(); it.hasNext();) {
             Condition c = it.next();
-            if(c.getObject().equals(object) && (state == null || c.getState().equals(state)))
+            if(c.getObject().equals(object)
+            &&(property == null || c.getPropertyName().equals(property))
+            &&(values == null || values.contains(c.getWantedValue())))
                 it.remove();
         }
     }

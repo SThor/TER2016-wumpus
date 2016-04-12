@@ -46,4 +46,34 @@ public class ObjectProperty {
     public void setToUndefined() {
         currentValueIndex = -1;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ObjectProperty){
+            ObjectProperty property = (ObjectProperty)obj;
+            return name.equals(property.getName());
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode()*17;
+    }
+
+    /**
+     * Replaces the possible values
+     * @param newPossibleValues The possible values for the property
+     */
+    public void setPossibleValues(UniqueList<String> newPossibleValues) {
+        possibleValues = newPossibleValues;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+    
+    
 }

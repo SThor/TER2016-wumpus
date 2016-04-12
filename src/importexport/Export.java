@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Action;
+import model.Condition;
 import model.ObjectObservation;
 import model.ObjectProperty;
 import model.SysObject;
@@ -77,4 +78,45 @@ public class Export {
         }
         lines.add("</object>");
     }
+
+    private void exportProperty(ObjectProperty property) {
+        lines.add("<property name=\""+property.getName()+"\">");
+        for (String value : property.getPossibleValues()) {
+            lines.add("<value name=\""+value+"\">");
+        }
+        lines.add("</object>");
+    }
+
+    private void exportAction(Action action) {
+        lines.add("<action name=\""+action.getName()+"\">");
+        
+        lines.add("<preconditions>");
+        for (Condition precondition : action.getPreConditions()) {
+            exportCondition(precondition);
+        }
+        lines.add("</preconditions>");
+        
+        lines.add("<postconditions>");
+        for (Condition postcondition : action.getPostConditions()) {
+            exportCondition(postcondition);
+        }
+        lines.add("</postconditions>");
+        
+        lines.add("</action>");
+    }
+
+    private void exportCondition(Condition condition) {
+        String object = condition.getObject().toString();
+        String property = condition.getPropertyName();
+        String value = condition.getWantedValue();
+        lines.add("<condition object=\""+object+"\" property=\""+property+"\" wantedValue=\""+value+"\">");
+    }
+
+    private void exportObservation(ObjectObservation observation) {
+        lines.add("<observation>");
+        //TODO        
+        lines.add("</observation>");
+    }
+    
+    
 }

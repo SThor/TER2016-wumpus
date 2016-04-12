@@ -1,22 +1,43 @@
-package gui;
+package gui.general;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+import javax.swing.DefaultListModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import model.SysObject;
+import model.World;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class GeneralUI extends javax.swing.JFrame {
+    
+    private int _object,
+                _property,
+                _propValue,
+                _action,
+                _preCond,
+                _postCond,
+                _observation;
+                                
 
+    private final World world;
+    
     /**
      * Creates new form GeneralUI
+     * @param world The world to work on
      */
-    public GeneralUI() {
+    public GeneralUI(World world) {
+        this.world = world;
+        
+        _object =_property =_propValue =_action =_preCond =_postCond =_observation = -1;
+        
         initComponents();
+        
+        treeObjects.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
+        super.setLocationRelativeTo(null);
     }
 
     /**
@@ -38,7 +59,7 @@ public class GeneralUI extends javax.swing.JFrame {
         btnRemState = new javax.swing.JButton();
         panelObjects = new javax.swing.JPanel();
         scrollPaneObjects = new javax.swing.JScrollPane();
-        jTreeObjects = new javax.swing.JTree();
+        treeObjects = new javax.swing.JTree();
         panelBtnObjects = new javax.swing.JPanel();
         btnAddObject = new javax.swing.JButton();
         btnRemObject = new javax.swing.JButton();
@@ -46,13 +67,13 @@ public class GeneralUI extends javax.swing.JFrame {
         panelLaws = new javax.swing.JPanel();
         panelPre = new javax.swing.JPanel();
         scrollTablePre = new javax.swing.JScrollPane();
-        tablePre = new javax.swing.JTable();
+        tablePreCond = new javax.swing.JTable();
         panelBtnPre = new javax.swing.JPanel();
         btnAddPre = new javax.swing.JButton();
         btnRemPre = new javax.swing.JButton();
         panelPost = new javax.swing.JPanel();
         scrollTablePost = new javax.swing.JScrollPane();
-        tablePost = new javax.swing.JTable();
+        tablePostCond = new javax.swing.JTable();
         panelBtnPost = new javax.swing.JPanel();
         btnAddPost = new javax.swing.JButton();
         btnRemPost = new javax.swing.JButton();
@@ -80,11 +101,17 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelStates.setLayout(new java.awt.BorderLayout());
 
-        listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Property state", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
+        listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Possible values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
         listProperties.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "True", "False" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        listProperties.setOpaque(false);
+        listProperties.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listPropertiesValueChanged(evt);
+            }
         });
         scrollListProp.setViewportView(listProperties);
 
@@ -103,32 +130,16 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelObjects.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Door");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isOpen");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Chair");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isSatOn");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isUpright");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Person");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("xCoordinate");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("yCoordinate");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isSat");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Window");
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isOpen");
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        jTreeObjects.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jTreeObjects.setRootVisible(false);
-        scrollPaneObjects.setViewportView(jTreeObjects);
+        treeObjects.setModel(new SysObjectTreeModel(world.getObjects()));
+        treeObjects.setOpaque(false);
+        treeObjects.setRootVisible(false);
+        treeObjects.setShowsRootHandles(true);
+        treeObjects.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                treeObjectsValueChanged(evt);
+            }
+        });
+        scrollPaneObjects.setViewportView(treeObjects);
 
         panelObjects.add(scrollPaneObjects, java.awt.BorderLayout.CENTER);
 
@@ -153,7 +164,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPre.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pre-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPre.setLayout(new java.awt.BorderLayout());
 
-        tablePre.setModel(new javax.swing.table.DefaultTableModel(
+        tablePreCond.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"Door", "isOpen", "false"},
                 {"Person", "isSat", "false"},
@@ -164,7 +175,8 @@ public class GeneralUI extends javax.swing.JFrame {
                 "Object", "Property", "State"
             }
         ));
-        scrollTablePre.setViewportView(tablePre);
+        tablePreCond.getTableHeader().setReorderingAllowed(false);
+        scrollTablePre.setViewportView(tablePreCond);
 
         panelPre.add(scrollTablePre, java.awt.BorderLayout.CENTER);
 
@@ -182,7 +194,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPost.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Post-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPost.setLayout(new java.awt.BorderLayout());
 
-        tablePost.setModel(new javax.swing.table.DefaultTableModel(
+        tablePostCond.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {"Door", "isOpen", "true"},
                 {"Person", "isSat", "false"},
@@ -193,7 +205,8 @@ public class GeneralUI extends javax.swing.JFrame {
                 "Object", "Property", "State"
             }
         ));
-        scrollTablePost.setViewportView(tablePost);
+        tablePostCond.getTableHeader().setReorderingAllowed(false);
+        scrollTablePost.setViewportView(tablePostCond);
 
         panelPost.add(scrollTablePost, java.awt.BorderLayout.CENTER);
 
@@ -217,6 +230,7 @@ public class GeneralUI extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        listActions.setOpaque(false);
         scrollListActions.setViewportView(listActions);
 
         panelActions.add(scrollListActions, java.awt.BorderLayout.CENTER);
@@ -260,6 +274,7 @@ public class GeneralUI extends javax.swing.JFrame {
                 "Object", "Property", "State"
             }
         ));
+        tableObservation.getTableHeader().setReorderingAllowed(false);
         scrollTableObservation.setViewportView(tableObservation);
 
         panelObservation.add(scrollTableObservation, java.awt.BorderLayout.CENTER);
@@ -280,7 +295,7 @@ public class GeneralUI extends javax.swing.JFrame {
         jMenu1.setText("File");
         menuBar.add(jMenu1);
 
-        jMenu2.setText("System");
+        jMenu2.setText("World");
         menuBar.add(jMenu2);
 
         setJMenuBar(menuBar);
@@ -299,40 +314,46 @@ public class GeneralUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    private void treeObjectsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_treeObjectsValueChanged
+        Object selected = null;
+        Object parent = null;
+        
+        _propValue = -1;
+        
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GeneralUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GeneralUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GeneralUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GeneralUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            TreePath path = treeObjects.getSelectionPath();
+            selected = path.getLastPathComponent();
+            parent = path.getParentPath().getLastPathComponent();
+            
+        } catch(NullPointerException e) { // If caught, nothing is selected in the JTree
+            _object = -1;
+            _property = -1;
+            listProperties.setModel(new DefaultListModel<String>());
+            btnRemObject.setEnabled(false);
+            return;
         }
-        //</editor-fold>
+        
+        TreeModel treeModel = treeObjects.getModel();
+        
+        // A SysObject has been selected
+        if(selected instanceof SysObject) {
+            _object = treeModel.getIndexOfChild(parent, selected);
+            _property = -1;
+            listProperties.setModel(new DefaultListModel<String>());
+            
+        } else { // An ObjectProperty has been selected
+            _object = treeModel.getIndexOfChild(treeModel.getRoot(), parent);
+            _property = treeModel.getIndexOfChild(parent, selected);
+            listProperties.setModel(new WorldListModel(world.getObjects().get(_object).getProperties().get(_property).getPossibleValues()));
+        }
+        
+        // In both case
+        btnRemObject.setEnabled(true);
+    }//GEN-LAST:event_treeObjectsValueChanged
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GeneralUI().setVisible(true);
-            }
-        });
-    }
+    private void listPropertiesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPropertiesValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listPropertiesValueChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
@@ -349,7 +370,6 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JButton btnRemState;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
-    private javax.swing.JTree jTreeObjects;
     private javax.swing.JList<String> listActions;
     private javax.swing.JList<String> listProperties;
     private javax.swing.JMenuBar menuBar;
@@ -378,7 +398,8 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JSplitPane splitTabObjects;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tableObservation;
-    private javax.swing.JTable tablePost;
-    private javax.swing.JTable tablePre;
+    private javax.swing.JTable tablePostCond;
+    private javax.swing.JTable tablePreCond;
+    private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
 }

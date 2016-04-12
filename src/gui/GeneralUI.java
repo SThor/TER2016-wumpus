@@ -37,8 +37,8 @@ public class GeneralUI extends javax.swing.JFrame {
         btnAddState = new javax.swing.JButton();
         btnRemState = new javax.swing.JButton();
         panelObjects = new javax.swing.JPanel();
-        scrollListObjects = new javax.swing.JScrollPane();
-        listObjects = new javax.swing.JList<>();
+        scrollPaneObjects = new javax.swing.JScrollPane();
+        jTreeObjects = new javax.swing.JTree();
         panelBtnObjects = new javax.swing.JPanel();
         btnAddObject = new javax.swing.JButton();
         btnRemObject = new javax.swing.JButton();
@@ -63,11 +63,13 @@ public class GeneralUI extends javax.swing.JFrame {
         btnAddAction = new javax.swing.JButton();
         btnRemAction = new javax.swing.JButton();
         panelObservations = new javax.swing.JPanel();
-        scrollTableObs = new javax.swing.JScrollPane();
-        tableObs = new javax.swing.JTable();
-        panelBtnObs = new javax.swing.JPanel();
-        btnAddObs = new javax.swing.JButton();
-        btnRemObs = new javax.swing.JButton();
+        sliderInstant = new javax.swing.JSlider();
+        panelObservation = new javax.swing.JPanel();
+        scrollTableObservation = new javax.swing.JScrollPane();
+        tableObservation = new javax.swing.JTable();
+        panelBtnObservation = new javax.swing.JPanel();
+        btnAddObservation = new javax.swing.JButton();
+        btnRemObservation = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -78,9 +80,9 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelStates.setLayout(new java.awt.BorderLayout());
 
-        listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Object states", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
+        listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Property state", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
         listProperties.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Closed", "Open" };
+            String[] strings = { "True", "False" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -101,14 +103,34 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelObjects.setLayout(new java.awt.BorderLayout());
 
-        listObjects.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Door", "Window", "Chair", "Person" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        scrollListObjects.setViewportView(listObjects);
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Door");
+        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isOpen");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Chair");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isSatOn");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isUpright");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Person");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("xCoordinate");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("yCoordinate");
+        treeNode2.add(treeNode3);
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isSat");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Window");
+        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("isOpen");
+        treeNode2.add(treeNode3);
+        treeNode1.add(treeNode2);
+        jTreeObjects.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeObjects.setRootVisible(false);
+        scrollPaneObjects.setViewportView(jTreeObjects);
 
-        panelObjects.add(scrollListObjects, java.awt.BorderLayout.CENTER);
+        panelObjects.add(scrollPaneObjects, java.awt.BorderLayout.CENTER);
 
         btnAddObject.setText("Add");
         panelBtnObjects.add(btnAddObject);
@@ -133,11 +155,13 @@ public class GeneralUI extends javax.swing.JFrame {
 
         tablePre.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Door", "Closed"},
-                {"Person", "Up"}
+                {"Door", "isOpen", "false"},
+                {"Person", "isSat", "false"},
+                {"Person", "xCoordinate", "4"},
+                {"Person", "yCoordinate", "8"}
             },
             new String [] {
-                "Object", "State"
+                "Object", "Property", "State"
             }
         ));
         scrollTablePre.setViewportView(tablePre);
@@ -160,11 +184,13 @@ public class GeneralUI extends javax.swing.JFrame {
 
         tablePost.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Door", "Open"},
-                {"Person", "Up"}
+                {"Door", "isOpen", "true"},
+                {"Person", "isSat", "false"},
+                {"Person", "xCoordinate", "4"},
+                {"Person", "yCoordinate", "8"}
             },
             new String [] {
-                "Object", "State"
+                "Object", "Property", "State"
             }
         ));
         scrollTablePost.setViewportView(tablePost);
@@ -210,41 +236,44 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelObservations.setLayout(new java.awt.BorderLayout());
 
-        tableObs.setModel(new javax.swing.table.DefaultTableModel(
+        sliderInstant.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        sliderInstant.setMaximum(10);
+        sliderInstant.setPaintLabels(true);
+        sliderInstant.setPaintTicks(true);
+        sliderInstant.setSnapToTicks(true);
+        sliderInstant.setToolTipText("");
+        sliderInstant.setValue(0);
+        sliderInstant.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Instant", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        panelObservations.add(sliderInstant, java.awt.BorderLayout.NORTH);
+
+        panelObservation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Observation", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        panelObservation.setLayout(new java.awt.BorderLayout());
+
+        tableObservation.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                { new Integer(0), "Door", "Closed"},
-                { new Integer(0), "Window", "Closed"},
-                { new Integer(0), "Chair", "Occupied"},
-                { new Integer(0), "Person", "Sat"},
-                { new Integer(1), "Door", "Open"},
-                { new Integer(1), "Chair", "Free"},
-                { new Integer(2), "Door", "Open"},
-                { new Integer(2), "Person", "Sat"}
+                {"Door", "isOpen", "false"},
+                {"Person", "isSat", "false"},
+                {"Person", "xCoordinate", "4"},
+                {"Person", "yCoordinate", "8"}
             },
             new String [] {
-                "Instant", "Object", "State"
+                "Object", "Property", "State"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class
-            };
+        ));
+        scrollTableObservation.setViewportView(tableObservation);
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        scrollTableObs.setViewportView(tableObs);
+        panelObservation.add(scrollTableObservation, java.awt.BorderLayout.CENTER);
 
-        panelObservations.add(scrollTableObs, java.awt.BorderLayout.CENTER);
+        btnAddObservation.setText("Add");
+        panelBtnObservation.add(btnAddObservation);
 
-        btnAddObs.setText("Add");
-        panelBtnObs.add(btnAddObs);
+        btnRemObservation.setText("Remove");
+        btnRemObservation.setEnabled(false);
+        panelBtnObservation.add(btnRemObservation);
 
-        btnRemObs.setText("Remove");
-        btnRemObs.setEnabled(false);
-        panelBtnObs.add(btnRemObs);
+        panelObservation.add(panelBtnObservation, java.awt.BorderLayout.SOUTH);
 
-        panelObservations.add(panelBtnObs, java.awt.BorderLayout.PAGE_END);
+        panelObservations.add(panelObservation, java.awt.BorderLayout.CENTER);
 
         tabbedPane.addTab("Observations", panelObservations);
 
@@ -260,7 +289,7 @@ public class GeneralUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 563, Short.MAX_VALUE)
+            .addComponent(tabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -308,45 +337,47 @@ public class GeneralUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
     private javax.swing.JButton btnAddObject;
-    private javax.swing.JButton btnAddObs;
+    private javax.swing.JButton btnAddObservation;
     private javax.swing.JButton btnAddPost;
     private javax.swing.JButton btnAddPre;
     private javax.swing.JButton btnAddState;
     private javax.swing.JButton btnRemAction;
     private javax.swing.JButton btnRemObject;
-    private javax.swing.JButton btnRemObs;
+    private javax.swing.JButton btnRemObservation;
     private javax.swing.JButton btnRemPost;
     private javax.swing.JButton btnRemPre;
     private javax.swing.JButton btnRemState;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JTree jTreeObjects;
     private javax.swing.JList<String> listActions;
-    private javax.swing.JList<String> listObjects;
     private javax.swing.JList<String> listProperties;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JPanel panelActions;
     private javax.swing.JPanel panelBtnActions;
     private javax.swing.JPanel panelBtnObjects;
-    private javax.swing.JPanel panelBtnObs;
+    private javax.swing.JPanel panelBtnObservation;
     private javax.swing.JPanel panelBtnPost;
     private javax.swing.JPanel panelBtnPre;
     private javax.swing.JPanel panelBtnStates;
     private javax.swing.JPanel panelLaws;
     private javax.swing.JPanel panelObjects;
+    private javax.swing.JPanel panelObservation;
     private javax.swing.JPanel panelObservations;
     private javax.swing.JPanel panelPost;
     private javax.swing.JPanel panelPre;
     private javax.swing.JPanel panelStates;
     private javax.swing.JScrollPane scrollListActions;
-    private javax.swing.JScrollPane scrollListObjects;
     private javax.swing.JScrollPane scrollListProp;
-    private javax.swing.JScrollPane scrollTableObs;
+    private javax.swing.JScrollPane scrollPaneObjects;
+    private javax.swing.JScrollPane scrollTableObservation;
     private javax.swing.JScrollPane scrollTablePost;
     private javax.swing.JScrollPane scrollTablePre;
+    private javax.swing.JSlider sliderInstant;
     private javax.swing.JSplitPane splitActionTab;
     private javax.swing.JSplitPane splitTabObjects;
     private javax.swing.JTabbedPane tabbedPane;
-    private javax.swing.JTable tableObs;
+    private javax.swing.JTable tableObservation;
     private javax.swing.JTable tablePost;
     private javax.swing.JTable tablePre;
     // End of variables declaration//GEN-END:variables

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
 <Form version="1.6" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+=======
+<Form version="1.7" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
@@ -44,7 +48,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="tabbedPane" alignment="1" pref="563" max="32767" attributes="0"/>
+          <Component id="tabbedPane" alignment="1" pref="586" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -97,12 +101,21 @@
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Object states">
+                            <TitledBorder title="Property state">
                               <Font PropertyName="font" name="Tahoma" size="16" style="0"/>
                             </TitledBorder>
                           </Border>
                         </Property>
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                         <Property name="opaque" type="boolean" value="false"/>
+=======
+                        <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
+                          <StringArray count="2">
+                            <StringItem index="0" value="True"/>
+                            <StringItem index="1" value="False"/>
+                          </StringArray>
+                        </Property>
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
                       </Properties>
                       <Events>
                         <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="listStatesValueChanged"/>
@@ -146,7 +159,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="scrollListObjects">
+                <Container class="javax.swing.JScrollPane" name="scrollPaneObjects">
                   <AuxValues>
                     <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
                   </AuxValues>
@@ -158,8 +171,9 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JList" name="listObjects">
+                    <Component class="javax.swing.JTree" name="jTreeObjects">
                       <Properties>
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                         <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                           <Connection code="new gui.general.WorldListModel(world.getObjects())&#xd;&#xa;" type="code"/>
                         </Property>
@@ -172,6 +186,13 @@
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                       </AuxValues>
+=======
+                        <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
+                          <TreeModel code="Door&#xa; isOpen&#xa;Chair&#xa; isSatOn&#xa; isUpright&#xa;Person&#xa; xCoordinate&#xa; yCoordinate&#xa; isSat&#xa;Window&#xa; isOpen"/>
+                        </Property>
+                        <Property name="rootVisible" type="boolean" value="false"/>
+                      </Properties>
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
                     </Component>
                   </SubComponents>
                 </Container>
@@ -263,6 +284,7 @@
                       <SubComponents>
                         <Component class="javax.swing.JTable" name="tablePreCond">
                           <Properties>
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="new DefaultTableModel()" type="code"/>
                             </Property>
@@ -271,6 +293,48 @@
                             </Property>
                             <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                               <JTableSelectionModel selectionMode="0"/>
+=======
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="3" rowCount="4">
+                                <Column editable="true" title="Object" type="java.lang.Object">
+                                  <Data value="Door"/>
+                                  <Data value="Person"/>
+                                  <Data value="Person"/>
+                                  <Data value="Person"/>
+                                </Column>
+                                <Column editable="true" title="Property" type="java.lang.Object">
+                                  <Data value="isOpen"/>
+                                  <Data value="isSat"/>
+                                  <Data value="xCoordinate"/>
+                                  <Data value="yCoordinate"/>
+                                </Column>
+                                <Column editable="true" title="State" type="java.lang.Object">
+                                  <Data value="false"/>
+                                  <Data value="false"/>
+                                  <Data value="4"/>
+                                  <Data value="8"/>
+                                </Column>
+                              </Table>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0">
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                              </TableColumnModel>
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
                             </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
@@ -330,6 +394,7 @@
                       <SubComponents>
                         <Component class="javax.swing.JTable" name="tablePostCond">
                           <Properties>
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="new DefaultTableModel()" type="code"/>
                             </Property>
@@ -338,6 +403,48 @@
                             </Property>
                             <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                               <JTableSelectionModel selectionMode="0"/>
+=======
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="3" rowCount="4">
+                                <Column editable="true" title="Object" type="java.lang.Object">
+                                  <Data value="Door"/>
+                                  <Data value="Person"/>
+                                  <Data value="Person"/>
+                                  <Data value="Person"/>
+                                </Column>
+                                <Column editable="true" title="Property" type="java.lang.Object">
+                                  <Data value="isOpen"/>
+                                  <Data value="isSat"/>
+                                  <Data value="xCoordinate"/>
+                                  <Data value="yCoordinate"/>
+                                </Column>
+                                <Column editable="true" title="State" type="java.lang.Object">
+                                  <Data value="true"/>
+                                  <Data value="false"/>
+                                  <Data value="4"/>
+                                  <Data value="8"/>
+                                </Column>
+                              </Table>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0">
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                  <Title/>
+                                  <Editor/>
+                                  <Renderer/>
+                                </Column>
+                              </TableColumnModel>
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
                             </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
@@ -447,15 +554,31 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JScrollPane" name="scrollTableObs">
-              <AuxValues>
-                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-              </AuxValues>
+            <Component class="javax.swing.JSlider" name="sliderInstant">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="14" style="0"/>
+                </Property>
+                <Property name="maximum" type="int" value="10"/>
+                <Property name="paintLabels" type="boolean" value="true"/>
+                <Property name="paintTicks" type="boolean" value="true"/>
+                <Property name="snapToTicks" type="boolean" value="true"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="value" type="int" value="0"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder title="Instant">
+                      <Font PropertyName="font" name="Tahoma" size="14" style="0"/>
+                    </TitledBorder>
+                  </Border>
+                </Property>
+              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                  <BorderConstraints direction="Center"/>
+                  <BorderConstraints direction="North"/>
                 </Constraint>
               </Constraints>
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
@@ -491,14 +614,28 @@
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="panelBtnObs">
+=======
+            </Component>
+            <Container class="javax.swing.JPanel" name="panelObservation">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder title="Observation">
+                      <Font PropertyName="font" name="Tahoma" size="14" style="0"/>
+                    </TitledBorder>
+                  </Border>
+                </Property>
+              </Properties>
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                  <BorderConstraints direction="Last"/>
+                  <BorderConstraints direction="Center"/>
                 </Constraint>
               </Constraints>
 
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
               <SubComponents>
+<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                 <Component class="javax.swing.JButton" name="btnAddObsAfter">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Add After"/>
@@ -544,6 +681,92 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemObsActionPerformed"/>
                   </Events>
                 </Component>
+=======
+                <Container class="javax.swing.JScrollPane" name="scrollTableObservation">
+                  <AuxValues>
+                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                  </AuxValues>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="Center"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTable" name="tableObservation">
+                      <Properties>
+                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                          <Table columnCount="3" rowCount="4">
+                            <Column editable="true" title="Object" type="java.lang.Object">
+                              <Data value="Door"/>
+                              <Data value="Person"/>
+                              <Data value="Person"/>
+                              <Data value="Person"/>
+                            </Column>
+                            <Column editable="true" title="Property" type="java.lang.Object">
+                              <Data value="isOpen"/>
+                              <Data value="isSat"/>
+                              <Data value="xCoordinate"/>
+                              <Data value="yCoordinate"/>
+                            </Column>
+                            <Column editable="true" title="State" type="java.lang.Object">
+                              <Data value="false"/>
+                              <Data value="false"/>
+                              <Data value="4"/>
+                              <Data value="8"/>
+                            </Column>
+                          </Table>
+                        </Property>
+                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                          <TableColumnModel selectionModel="0">
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                              <Title/>
+                              <Editor/>
+                              <Renderer/>
+                            </Column>
+                          </TableColumnModel>
+                        </Property>
+                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="panelBtnObservation">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="South"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JButton" name="btnAddObservation">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Add"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnRemObservation">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Remove"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+>>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
               </SubComponents>
             </Container>
           </SubComponents>

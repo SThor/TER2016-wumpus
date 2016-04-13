@@ -14,27 +14,26 @@ import model.ObjectProperty;
 import model.SysObject;
 import model.World;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author silmathoron
+ * Object used to export the world and scenario to an xml file
+ * @author Paul Givel et Guillaume Hartenstein
  */
 public class Export {
     private World world;
     private Path file;
     private List<String> lines;
     
+    /**
+     * Creates a new Export object
+     * @param world World to export
+     * @param file Path to the destination file
+     */
     public Export(World world, Path file){
         this.world = world;
         this.file = file;
     }
     
-    public void exportWorld(){
+    private void exportWorld(){
         lines.add("<world>");
         
         lines.add("<objects>");
@@ -58,6 +57,9 @@ public class Export {
         lines.add("</world>");
     }
     
+    /**
+     * Starts the exportation process
+     */
     public void export(){
         exportWorld();
         write();

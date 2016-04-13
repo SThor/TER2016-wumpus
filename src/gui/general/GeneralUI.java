@@ -1,6 +1,10 @@
 package gui.general;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -19,7 +23,8 @@ public class GeneralUI extends javax.swing.JFrame {
                 _action,
                 _preCond,
                 _postCond,
-                _observation;
+                _observation,
+                _instant;
                                 
 
     private final World world;
@@ -36,6 +41,27 @@ public class GeneralUI extends javax.swing.JFrame {
         initComponents();
         
         treeObjects.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
+        tablePreCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tablePreCondValueChanged(e);
+            }
+        });
+        
+        tablePostCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tablePostCondValueChanged(e);
+            }
+        });
+        
+        tableObservation.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                tableObservationValueChanged(e);
+            }
+        });
         
         super.setLocationRelativeTo(null);
     }
@@ -56,7 +82,7 @@ public class GeneralUI extends javax.swing.JFrame {
         listProperties = new javax.swing.JList<>();
         panelBtnStates = new javax.swing.JPanel();
         btnAddState = new javax.swing.JButton();
-        btnRemState = new javax.swing.JButton();
+        btnRemProperty = new javax.swing.JButton();
         panelObjects = new javax.swing.JPanel();
         scrollPaneObjects = new javax.swing.JScrollPane();
         treeObjects = new javax.swing.JTree();
@@ -102,11 +128,6 @@ public class GeneralUI extends javax.swing.JFrame {
         panelStates.setLayout(new java.awt.BorderLayout());
 
         listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Possible values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
-        listProperties.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "True", "False" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         listProperties.setOpaque(false);
         listProperties.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -120,9 +141,14 @@ public class GeneralUI extends javax.swing.JFrame {
         btnAddState.setText("Add");
         panelBtnStates.add(btnAddState);
 
-        btnRemState.setText("Remove");
-        btnRemState.setEnabled(false);
-        panelBtnStates.add(btnRemState);
+        btnRemProperty.setText("Remove");
+        btnRemProperty.setEnabled(false);
+        btnRemProperty.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemPropertyActionPerformed(evt);
+            }
+        });
+        panelBtnStates.add(btnRemProperty);
 
         panelStates.add(panelBtnStates, java.awt.BorderLayout.PAGE_END);
 
@@ -148,6 +174,11 @@ public class GeneralUI extends javax.swing.JFrame {
 
         btnRemObject.setText("Remove");
         btnRemObject.setEnabled(false);
+        btnRemObject.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemObjectActionPerformed(evt);
+            }
+        });
         panelBtnObjects.add(btnRemObject);
 
         panelObjects.add(panelBtnObjects, java.awt.BorderLayout.PAGE_END);
@@ -164,17 +195,8 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPre.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pre-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPre.setLayout(new java.awt.BorderLayout());
 
-        tablePreCond.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"Door", "isOpen", "false"},
-                {"Person", "isSat", "false"},
-                {"Person", "xCoordinate", "4"},
-                {"Person", "yCoordinate", "8"}
-            },
-            new String [] {
-                "Object", "Property", "State"
-            }
-        ));
+        tablePreCond.setModel(new DefaultTableModel());
+        tablePreCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tablePreCond.getTableHeader().setReorderingAllowed(false);
         scrollTablePre.setViewportView(tablePreCond);
 
@@ -185,6 +207,11 @@ public class GeneralUI extends javax.swing.JFrame {
 
         btnRemPre.setText("Remove");
         btnRemPre.setEnabled(false);
+        btnRemPre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemPreActionPerformed(evt);
+            }
+        });
         panelBtnPre.add(btnRemPre);
 
         panelPre.add(panelBtnPre, java.awt.BorderLayout.SOUTH);
@@ -194,17 +221,8 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPost.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Post-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPost.setLayout(new java.awt.BorderLayout());
 
-        tablePostCond.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"Door", "isOpen", "true"},
-                {"Person", "isSat", "false"},
-                {"Person", "xCoordinate", "4"},
-                {"Person", "yCoordinate", "8"}
-            },
-            new String [] {
-                "Object", "Property", "State"
-            }
-        ));
+        tablePostCond.setModel(new DefaultTableModel());
+        tablePostCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tablePostCond.getTableHeader().setReorderingAllowed(false);
         scrollTablePost.setViewportView(tablePostCond);
 
@@ -215,6 +233,11 @@ public class GeneralUI extends javax.swing.JFrame {
 
         btnRemPost.setText("Remove");
         btnRemPost.setEnabled(false);
+        btnRemPost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemPostActionPerformed(evt);
+            }
+        });
         panelBtnPost.add(btnRemPost);
 
         panelPost.add(panelBtnPost, java.awt.BorderLayout.SOUTH);
@@ -225,12 +248,14 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelActions.setLayout(new java.awt.BorderLayout());
 
-        listActions.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Open_door", "Open_window", "Close_door", "Close_window", "Sit_down", "Stand_up" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        listActions.setModel(new WorldListModel(world.getPossibleActions())
+        );
         listActions.setOpaque(false);
+        listActions.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listActionsValueChanged(evt);
+            }
+        });
         scrollListActions.setViewportView(listActions);
 
         panelActions.add(scrollListActions, java.awt.BorderLayout.CENTER);
@@ -240,6 +265,11 @@ public class GeneralUI extends javax.swing.JFrame {
 
         btnRemAction.setText("Remove");
         btnRemAction.setEnabled(false);
+        btnRemAction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemActionActionPerformed(evt);
+            }
+        });
         panelBtnActions.add(btnRemAction);
 
         panelActions.add(panelBtnActions, java.awt.BorderLayout.PAGE_END);
@@ -251,7 +281,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelObservations.setLayout(new java.awt.BorderLayout());
 
         sliderInstant.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        sliderInstant.setMaximum(10);
+        sliderInstant.setMaximum(world.getObservations().size()-1);
         sliderInstant.setPaintLabels(true);
         sliderInstant.setPaintTicks(true);
         sliderInstant.setSnapToTicks(true);
@@ -263,17 +293,8 @@ public class GeneralUI extends javax.swing.JFrame {
         panelObservation.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Observation", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelObservation.setLayout(new java.awt.BorderLayout());
 
-        tableObservation.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"Door", "isOpen", "false"},
-                {"Person", "isSat", "false"},
-                {"Person", "xCoordinate", "4"},
-                {"Person", "yCoordinate", "8"}
-            },
-            new String [] {
-                "Object", "Property", "State"
-            }
-        ));
+        tableObservation.setModel(new DefaultTableModel());
+        tableObservation.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tableObservation.getTableHeader().setReorderingAllowed(false);
         scrollTableObservation.setViewportView(tableObservation);
 
@@ -314,6 +335,25 @@ public class GeneralUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void listPropertiesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPropertiesValueChanged
+        _propValue = listProperties.getSelectedIndex();
+        btnRemProperty.setEnabled(_propValue != -1);
+    }//GEN-LAST:event_listPropertiesValueChanged
+
+    private void listActionsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listActionsValueChanged
+        _action = listProperties.getSelectedIndex();
+        
+        if(_action != -1) {
+            tablePreCond.setModel(new ConditionTableModel(world.getActionAt(_action).getPreConditions()));
+            tablePostCond.setModel(new ConditionTableModel(world.getActionAt(_action).getPostConditions()));
+            btnRemAction.setEnabled(true);
+        } else {
+            tablePreCond.setModel(new DefaultTableModel());
+            tablePostCond.setModel(new DefaultTableModel());
+            btnRemAction.setEnabled(false);
+        }
+    }//GEN-LAST:event_listActionsValueChanged
+
     private void treeObjectsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_treeObjectsValueChanged
         Object selected = null;
         Object parent = null;
@@ -344,17 +384,65 @@ public class GeneralUI extends javax.swing.JFrame {
         } else { // An ObjectProperty has been selected
             _object = treeModel.getIndexOfChild(treeModel.getRoot(), parent);
             _property = treeModel.getIndexOfChild(parent, selected);
-            listProperties.setModel(new WorldListModel(world.getObjects().get(_object).getProperties().get(_property).getPossibleValues()));
+            System.out.println(world.getObjectAt(_object).getProperties().get(_property).getPossibleValues());
+            listProperties.setModel(new WorldListModel(world.getObjectAt(_object).getProperties().get(_property).getPossibleValues()));
         }
         
         // In both case
         btnRemObject.setEnabled(true);
     }//GEN-LAST:event_treeObjectsValueChanged
 
-    private void listPropertiesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPropertiesValueChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listPropertiesValueChanged
+    private void btnRemObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemObjectActionPerformed
+        if(_property != -1)
+            removeProperty();
+        else
+            removeObject();
+        
+        String message = "Are you sure you want to delete "
+                        + world.getObjectAt(_object).toString()
+                        + "from the world ?";
+        
+        int result = JOptionPane.showConfirmDialog(this,
+                                    message, 
+                                    "Confirm deletion ?", 
+                                    JOptionPane.YES_NO_OPTION, 
+                                    JOptionPane.WARNING_MESSAGE);
+                
+        if(result == JOptionPane.YES_OPTION)
+            world.removeObject(_object);
+    }//GEN-LAST:event_btnRemObjectActionPerformed
 
+    private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRemPropertyActionPerformed
+
+    private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRemActionActionPerformed
+
+    private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRemPreActionPerformed
+
+    private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRemPostActionPerformed
+
+    private void tablePreCondValueChanged(ListSelectionEvent e) {
+        _preCond = tablePreCond.getSelectedRow();
+        btnRemPre.setEnabled(_preCond != -1);
+    }
+
+    private void tablePostCondValueChanged(ListSelectionEvent e) {
+        _postCond = tablePostCond.getSelectedRow();
+        btnRemPost.setEnabled(_postCond != -1);
+    }
+
+    private void tableObservationValueChanged(ListSelectionEvent e) {
+        _observation = tablePostCond.getSelectedRow();
+        btnRemObservation.setEnabled(_observation != -1);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
     private javax.swing.JButton btnAddObject;
@@ -367,7 +455,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JButton btnRemObservation;
     private javax.swing.JButton btnRemPost;
     private javax.swing.JButton btnRemPre;
-    private javax.swing.JButton btnRemState;
+    private javax.swing.JButton btnRemProperty;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JList<String> listActions;

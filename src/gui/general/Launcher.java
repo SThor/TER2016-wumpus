@@ -5,11 +5,12 @@
  */
 package gui.general;
 
-import java.util.Arrays;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import model.Action;
+import model.Condition;
+import model.ObjectProperty;
 import model.SysObject;
-import model.UniqueList;
 import model.World;
 
 /**
@@ -27,17 +28,36 @@ public class Launcher {
         SysObject door = new SysObject("Door", world);
         SysObject person = new SysObject("Person", world);
         
-        UniqueList<String> isOpenedValues = new UniqueList<>(Arrays.asList(new String[]{"true", "false"}));
-        door.setPossibleValuesOf("isOpened", isOpenedValues);
+        door.addProperty("isOpened");
+        door.addPossibleValue("isOpened", "true");
+        door.addPossibleValue("isOpened", "false");
         
-        UniqueList<String> positionValues = new UniqueList<>(Arrays.asList(new String[]{"moving", "up", "atDoor", "sat"}));
-        person.setPossibleValuesOf("position", positionValues);
+        person.addProperty("position");
+        person.addPossibleValue("position", "sat");
+        person.addPossibleValue("position", "up");
+        person.addPossibleValue("position", "atDoor");
         
-        UniqueList<String> isCallingValues = new UniqueList<>(Arrays.asList(new String[]{"true", "false"}));
-        person.setPossibleValuesOf("isCalling", isCallingValues);
+        person.addProperty("isCalling");
+        person.addPossibleValue("isCalling", "true");
+        person.addPossibleValue("isCalling", "false");
+        
+        for (ObjectProperty objprop : person.getProperties()) {
+            System.out.println(objprop.getPossibleValues());
+        }
         
         world.addObject(door);
         world.addObject(person);
+        
+        Action closeDoor = new Action("Close_Door");
+        closeDoor.addPreCondition(new Condition(person, "position", "atDoor"));
+        closeDoor.addPreCondition(new Condition(door, "isOpened", "true"));
+        
+        Action openDoor = new Action("Open_Door");
+        openDoor.addPreCondition(new Condition(person, "position", "atDoor"));
+        openDoor.addPreCondition(new Condition(door, "isOpened", "false"));
+        
+        world.addPossibleAction(openDoor);
+        world.addPossibleAction(closeDoor);
         
         //------------------//
         

@@ -62,14 +62,15 @@ public class SysObject {
      * object.
      */
     private void changeValueOf(ObjectProperty propertyToChange) {
-        if (properties.contains(propertyToChange)) {
-            for (ObjectProperty property : properties) {
-                if (property.equals(propertyToChange)) {
-                    property.changeToNextValue();
-                    break;
-                }
+        boolean found = false;
+        for (ObjectProperty property : properties) {
+            if (property.equals(propertyToChange)) {
+                property.changeToNextValue();
+                found = true;
+                break;
             }
-        } else {
+        }
+        if (!found) {
             throw new NoSuchPropertyException(propertyToChange.getName(), toString());
         }
     }
@@ -93,14 +94,15 @@ public class SysObject {
      * object.
      */
     private void setToUndefined(ObjectProperty propertyToChange) {
-        if (properties.contains(propertyToChange)) {
-            for (ObjectProperty property : properties) {
-                if (property.equals(propertyToChange)) {
-                    property.setToUndefined();
-                    break;
-                }
+        boolean found = false;
+        for (ObjectProperty property : properties) {
+            if (property.equals(propertyToChange)) {
+                property.setToUndefined();
+                found = false;
+                break;
             }
-        } else {
+        }
+        if (!found) {
             throw new NoSuchPropertyException(propertyToChange.getName(), toString());
         }
     }
@@ -126,80 +128,90 @@ public class SysObject {
      * object.
      */
     private String getCurrentValueOf(ObjectProperty propertyWanted) {
-        if (properties.contains(propertyWanted)) {
-            String value = null;
-            for (ObjectProperty property : properties) {
-                if (property.equals(propertyWanted)) {
-                    value = property.getCurrentValue();
-                    break;
-                }
+        boolean found = false;
+        String value = null;
+        for (ObjectProperty property : properties) {
+            if (property.equals(propertyWanted)) {
+                value = property.getCurrentValue();
+                found = true;
+                break;
             }
-            return value;
-        } else {
+        }
+        if (!found) {
             throw new NoSuchPropertyException(propertyWanted.getName(), toString());
         }
+        return value;
     }
-    
+
     /**
      * Adds a possible value to a property via the name of the property
+     *
      * @param property Name of the property to change
      * @param value Value to add
      */
-    public void addPossibleValue(String property, String value){
+    public void addPossibleValue(String property, String value) {
         addPossibleValue(new ObjectProperty(property), value);
     }
-    
+
     /**
      * Adds a possible value to a property
+     *
      * @param property Property to change
      * @param value Value to add
      */
-    private void addPossibleValue(ObjectProperty property, String value){
-        if(properties.contains(property)){
-            for (ObjectProperty prop : properties) {
-                if(prop.equals(property)){
-                    prop.addPossibleValue(value);
-                }
+    private void addPossibleValue(ObjectProperty property, String value) {
+        boolean found = false;
+        for (ObjectProperty prop : properties) {
+            if (prop.equals(property)) {
+                prop.addPossibleValue(value);
+                found = true;
                 break;
             }
-        }else{
+        }
+        if (!found) {
             throw new NoSuchPropertyException(property.getName(), name);
         }
     }
-    
+
     /**
      * Adds a new property to this object
+     *
      * @param property Name of the property to add
      */
-    public void addProperty(String property){
+    public void addProperty(String property) {
         properties.add(new ObjectProperty(property));
     }
-    
+
     /**
-     * Removes a possible value from a property of the object via the name of the property
+     * Removes a possible value from a property of the object via the name of
+     * the property
+     *
      * @param property Name of the property to change
      * @param valueIndex Value to remove
      */
-    public void removePossibleValue(String property, int valueIndex){
+    public void removePossibleValue(String property, int valueIndex) {
         removePossibleValue(new ObjectProperty(property), valueIndex);
     }
-    
+
     /**
      * Removes a possible value from a property of the object
+     *
      * @param property Property to change
      * @param valueIndex Value to remove
      */
-    public void removePossibleValue(ObjectProperty property, int valueIndex){
-        if(properties.contains(property)){
-            String value=null;
-            for (ObjectProperty prop : properties) {
-                if(prop.equals(property)){
-                    value = prop.removePossibleValue(valueIndex);
-                }
+    public void removePossibleValue(ObjectProperty property, int valueIndex) {
+        boolean found = false;
+        String value = null;
+        for (ObjectProperty prop : properties) {
+            if (prop.equals(property)) {
+                value = prop.removePossibleValue(valueIndex);
+                found = true;
                 break;
             }
+        }
+        if (found) {
             world.signalPossibleValueRemoved(this, property.getName(), value);
-        }else{
+        } else {
             throw new NoSuchPropertyException(property.getName(), name);
         }
     }
@@ -270,18 +282,19 @@ public class SysObject {
      * object.
      */
     public boolean isPossibleValueOf(ObjectProperty propertyToCheck, String value) {
-        if (properties.contains(propertyToCheck)) {
-            boolean res = false;
-            for (ObjectProperty property : properties) {
-                if (property.equals(propertyToCheck)) {
-                    res = property.getPossibleValues().contains(value);
-                    break;
-                }
+        boolean found = false;
+        boolean res = false;
+        for (ObjectProperty property : properties) {
+            if (property.equals(propertyToCheck)) {
+                res = property.getPossibleValues().contains(value);
+                found = true;
+                break;
             }
-            return res;
-        } else {
+        }
+        if (!found) {
             throw new NoSuchPropertyException(propertyToCheck.getName(), toString());
         }
+        return res;
     }
 
     @Override

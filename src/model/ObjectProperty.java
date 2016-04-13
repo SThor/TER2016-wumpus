@@ -82,9 +82,10 @@ public class ObjectProperty {
     /**
      * Removes a possible value from the list via its index
      * @param index index of the value to remove
+     * @return Value that was removed
      */
-    public void removePossibleValue(int index){
-        possibleValues.remove(index);
+    public String removePossibleValue(int index){
+        return possibleValues.remove(index);
     }
 
     @Override

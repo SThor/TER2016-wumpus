@@ -34,11 +34,27 @@ class ConditionTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Condition c = conditions.get(rowIndex);
         switch(columnIndex) {
-            case 1: return c.getObject();
-            case 2: return c.getPropertyName();
-            case 3: return c.getWantedValue();
+            case 0: return c.getObject();
+            case 1: return c.getPropertyName();
+            case 2: return c.getWantedValue();
             default:
                 throw new RuntimeException("Unexpected behavior.");
         }
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        switch(column) {
+            case 0: return "Object";
+            case 1: return "Property";
+            case 2: return "Value";
+            default:
+                throw new RuntimeException("Unexpected behavior.");
+        }
+    }
+    
+    public void removeRow(int index) {
+        conditions.remove(index);
+        fireTableRowsDeleted(index, index);
     }
 }

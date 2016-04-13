@@ -52,4 +52,14 @@ public class SysObjectTreeModel extends DefaultTreeModel {
                 objects.indexOf(child) : 
                 ((SysObject)parent).getProperties().indexOf(child);
     }
+    
+    public void removeObject(int index) {
+        Object[] removed = new Object[]{objects.remove(index)};
+        fireTreeNodesRemoved(this, new Object[]{getRoot()}, new int[]{index}, removed);
+    }
+    
+    public void removeProperty(int parentIndex, int index) {
+        Object[] removed = new Object[]{objects.get(parentIndex).getProperties().remove(index)};
+        fireTreeNodesRemoved(this, new Object[]{getRoot(), objects.get(parentIndex)}, new int[]{index}, removed);
+    }
 }

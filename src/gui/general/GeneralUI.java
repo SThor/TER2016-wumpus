@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import model.Action;
+import model.ObjectProperty;
 import model.SysObject;
 import model.World;
 
@@ -341,7 +343,7 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_listPropertiesValueChanged
 
     private void listActionsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listActionsValueChanged
-        _action = listProperties.getSelectedIndex();
+        _action = listActions.getSelectedIndex();
         
         if(_action != -1) {
             tablePreCond.setModel(new ConditionTableModel(world.getActionAt(_action).getPreConditions()));
@@ -384,7 +386,6 @@ public class GeneralUI extends javax.swing.JFrame {
         } else { // An ObjectProperty has been selected
             _object = treeModel.getIndexOfChild(treeModel.getRoot(), parent);
             _property = treeModel.getIndexOfChild(parent, selected);
-            System.out.println(world.getObjectAt(_object).getProperties().get(_property).getPossibleValues());
             listProperties.setModel(new WorldListModel(world.getObjectAt(_object).getProperties().get(_property).getPossibleValues()));
         }
         
@@ -397,35 +398,40 @@ public class GeneralUI extends javax.swing.JFrame {
             removeProperty();
         else
             removeObject();
-        
-        String message = "Are you sure you want to delete "
-                        + world.getObjectAt(_object).toString()
-                        + "from the world ?";
-        
-        int result = JOptionPane.showConfirmDialog(this,
-                                    message, 
-                                    "Confirm deletion ?", 
-                                    JOptionPane.YES_NO_OPTION, 
-                                    JOptionPane.WARNING_MESSAGE);
-                
-        if(result == JOptionPane.YES_OPTION)
-            world.removeObject(_object);
     }//GEN-LAST:event_btnRemObjectActionPerformed
 
     private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
-        // TODO add your handling code here:
+        SysObject obj = world.getObjectAt(_object);
+        ObjectProperty prop = obj.getProperties().get(_property);
+        String propValue = prop.getPossibleValues().get(_propValue);
+        String message = "Delete value \""+ propValue +"\" from property \""+ prop +"\" in object \""+ obj +"\" ?";
+        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+        if(result == JOptionPane.YES_OPTION)
+            ((WorldListModel)listProperties.getModel()).removeElement(_propValue);
     }//GEN-LAST:event_btnRemPropertyActionPerformed
 
     private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
-        // TODO add your handling code here:
+        Action act = world.getActionAt(_action);
+        String message = "Delete action \""+ act +"\" from world ?";
+        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+        if(result == JOptionPane.YES_OPTION)
+            ((WorldListModel)listActions.getModel()).removeElement(_action);
     }//GEN-LAST:event_btnRemActionActionPerformed
 
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
-        // TODO add your handling code here:
+        Action act = world.getActionAt(_action);
+        String message = "Delete selected pre-condition from action \""+ act +"\" ?";
+        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+        if(result == JOptionPane.YES_OPTION)
+            ((ConditionTableModel)tablePreCond.getModel()).removeRow(_preCond);
     }//GEN-LAST:event_btnRemPreActionPerformed
 
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
-        // TODO add your handling code here:
+        Action act = world.getActionAt(_action);
+        String message = "Delete selected post-condition from action \""+ act +"\" ?";
+        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+        if(result == JOptionPane.YES_OPTION)
+            ((ConditionTableModel)tablePostCond.getModel()).removeRow(_postCond);
     }//GEN-LAST:event_btnRemPostActionPerformed
 
     private void tablePreCondValueChanged(ListSelectionEvent e) {
@@ -443,6 +449,22 @@ public class GeneralUI extends javax.swing.JFrame {
         btnRemObservation.setEnabled(_observation != -1);
     }
     
+    private void removeProperty() {
+        SysObject obj = world.getObjectAt(_object);
+        String message = "Delete property \""+ obj.getProperties().get(_property) +"\" from object \""+ obj +"\" ?";
+        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+        if(result == JOptionPane.YES_OPTION)
+            ((SysObjectTreeModel)treeObjects.getModel()).removeProperty(_object, _property);
+    }
+
+    private void removeObject() {
+        String message = "Delete object \""+ world.getObjectAt(_object) +"\" from world ?";
+        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION);
+        if(result == JOptionPane.YES_OPTION)
+            ((SysObjectTreeModel)treeObjects.getModel()).removeObject(_object);
+    }
+    
+    // <editor-fold defaultstate="collapsed" desc="Variable declarations">  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
     private javax.swing.JButton btnAddObject;
@@ -490,4 +512,5 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JTable tablePreCond;
     private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
+    // </editor-fold> 
 }

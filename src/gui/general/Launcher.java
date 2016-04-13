@@ -9,7 +9,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.Condition;
-import model.ObjectProperty;
 import model.SysObject;
 import model.World;
 
@@ -41,20 +40,20 @@ public class Launcher {
         person.addPossibleValue("isCalling", "true");
         person.addPossibleValue("isCalling", "false");
         
-        for (ObjectProperty objprop : person.getProperties()) {
-            System.out.println(objprop.getPossibleValues());
-        }
-        
         world.addObject(door);
         world.addObject(person);
         
         Action closeDoor = new Action("Close_Door");
         closeDoor.addPreCondition(new Condition(person, "position", "atDoor"));
         closeDoor.addPreCondition(new Condition(door, "isOpened", "true"));
+        closeDoor.addPostCondition(new Condition(person, "position", "atDoor"));
+        closeDoor.addPostCondition(new Condition(door, "isOpened", "false"));
         
         Action openDoor = new Action("Open_Door");
         openDoor.addPreCondition(new Condition(person, "position", "atDoor"));
         openDoor.addPreCondition(new Condition(door, "isOpened", "false"));
+        openDoor.addPostCondition(new Condition(person, "position", "atDoor"));
+        openDoor.addPostCondition(new Condition(door, "isOpened", "true"));
         
         world.addPossibleAction(openDoor);
         world.addPossibleAction(closeDoor);

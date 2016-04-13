@@ -28,4 +28,9 @@ public class WorldListModel extends AbstractListModel {
     public Object getElementAt(int index) {
         return list.get(index);
     }
+    
+    public void removeElement(int index) {
+        list.remove(index);
+        fireIntervalRemoved(this, index, index);
+    }
 }

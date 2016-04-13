@@ -2,7 +2,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import model.exceptions.NoSuchPropertyException;
 
 /**
@@ -62,7 +61,7 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    public final void changeValueOf(ObjectProperty propertyToChange) {
+    private void changeValueOf(ObjectProperty propertyToChange) {
         if (properties.contains(propertyToChange)) {
             for (ObjectProperty property : properties) {
                 if (property.equals(propertyToChange)) {
@@ -93,7 +92,7 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    public void setToUndefined(ObjectProperty propertyToChange) {
+    private void setToUndefined(ObjectProperty propertyToChange) {
         if (properties.contains(propertyToChange)) {
             for (ObjectProperty property : properties) {
                 if (property.equals(propertyToChange)) {
@@ -126,7 +125,7 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    public String getCurrentValueOf(ObjectProperty propertyWanted) {
+    private String getCurrentValueOf(ObjectProperty propertyWanted) {
         if (properties.contains(propertyWanted)) {
             String value = null;
             for (ObjectProperty property : properties) {
@@ -140,41 +139,68 @@ public class SysObject {
             throw new NoSuchPropertyException(propertyWanted.getName(), toString());
         }
     }
-
+    
     /**
-     * Add a property via its name to this object or replace the possible values
-     * of an existing property via its name
-     *
-     * @param property The name of the property to add
-     * @param newPossibleValues The possible values for the property
+     * Adds a possible value to a property via the name of the property
+     * @param property Name of the property to change
+     * @param value Value to add
      */
-    public void setPossibleValuesOf(String property, final UniqueList<String> newPossibleValues) {
-        setPossibleValuesOf(new ObjectProperty(property), newPossibleValues);
+    public void addPossibleValue(String property, String value){
+        addPossibleValue(new ObjectProperty(property), value);
     }
-
+    
     /**
-     * Add a property to this object or replace the possible values of an
-     * existing property
-     *
-     * @param property The property to add
-     * @param newPossibleValues The possible values for the property
+     * Adds a possible value to a property
+     * @param property Property to change
+     * @param value Value to add
      */
-    public void setPossibleValuesOf(ObjectProperty property, final UniqueList<String> newPossibleValues) {
-        if (properties.contains(property)) {
-            List<String> oldValues = null;
+    private void addPossibleValue(ObjectProperty property, String value){
+        if(properties.contains(property)){
             for (ObjectProperty prop : properties) {
-                if (prop.equals(property)) {
-                    oldValues = prop.getPossibleValues();
-                    // Will retain only values that are not in the new possible values
-                    oldValues.removeAll(newPossibleValues);
-                    prop.setPossibleValues(newPossibleValues);
-                    break;
+                if(prop.equals(property)){
+                    prop.addPossibleValue(value);
                 }
+                break;
             }
-            world.signalPossibleValuesChanged(this, property.getName(), oldValues);
-        } else {
-            properties.add(new ObjectProperty(newPossibleValues, property.getName()));
-            world.signalPropertyAdded(this, property.getName());
+        }else{
+            throw new NoSuchPropertyException(property.getName(), name);
+        }
+    }
+    
+    /**
+     * Adds a new property to this object
+     * @param property Name of the property to add
+     */
+    public void addProperty(String property){
+        properties.add(new ObjectProperty(property));
+    }
+    
+    /**
+     * Removes a possible value from a property of the object via the name of the property
+     * @param property Name of the property to change
+     * @param valueIndex Value to remove
+     */
+    public void removePossibleValue(String property, int valueIndex){
+        removePossibleValue(new ObjectProperty(property), valueIndex);
+    }
+    
+    /**
+     * Removes a possible value from a property of the object
+     * @param property Property to change
+     * @param valueIndex Value to remove
+     */
+    public void removePossibleValue(ObjectProperty property, int valueIndex){
+        if(properties.contains(property)){
+            String value=null;
+            for (ObjectProperty prop : properties) {
+                if(prop.equals(property)){
+                    value = prop.removePossibleValue(valueIndex);
+                }
+                break;
+            }
+            world.signalPossibleValueRemoved(this, property.getName(), value);
+        }else{
+            throw new NoSuchPropertyException(property.getName(), name);
         }
     }
 

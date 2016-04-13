@@ -2,7 +2,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 
@@ -33,6 +32,33 @@ public class World {
         worldObjects = new UniqueList<>();
         possibleActions = new UniqueList<>();
         objectObservations = new ArrayList<>();
+    }
+    
+    /**
+     * Getter on a possible action
+     * @param index index of the desired action
+     * @return desired action
+     */
+    public Action getActionAt(int index){
+        return possibleActions.get(index);
+    }
+    
+    /**
+     * Getter on an objectObservation
+     * @param index index of the desired ObjectObservation
+     * @return desired observation
+     */
+    public ObjectObservation getObservationAt(int index){
+        return objectObservations.get(index);
+    }
+    
+    /**
+     * Getter on an object of the world
+     * @param index index of the desired SysObject
+     * @return desired SysObject
+     */
+    public SysObject getObjectAt(int index){
+        return worldObjects.get(index);
     }
     
     /**

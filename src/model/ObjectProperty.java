@@ -63,11 +63,29 @@ public class ObjectProperty {
     }
 
     /**
-     * Replaces the possible values
+     * Replaces all of the possible values
      * @param newPossibleValues The possible values for the property
      */
     public void setPossibleValues(UniqueList<String> newPossibleValues) {
         possibleValues = newPossibleValues;
+    }
+    
+    /**
+     * Adds a possible value to the list
+     * @param possibleValue Value to add
+     */
+    public void addPossibleValue(String possibleValue){
+        possibleValues.add(possibleValue);
+        
+    }
+    
+    /**
+     * Removes a possible value from the list via its index
+     * @param index index of the value to remove
+     * @return Value that was removed
+     */
+    public String removePossibleValue(int index){
+        return possibleValues.remove(index);
     }
 
     @Override

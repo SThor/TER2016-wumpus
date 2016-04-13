@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui.general;
+package gui.general.componentModels;
 
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -13,7 +13,7 @@ import model.Condition;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-class ConditionTableModel extends AbstractTableModel {
+public class ConditionTableModel extends AbstractTableModel {
     private final List<Condition> conditions;
     
     public ConditionTableModel(List<Condition> conditions) {
@@ -53,8 +53,9 @@ class ConditionTableModel extends AbstractTableModel {
         }
     }
     
-    public void removeRow(int index) {
-        conditions.remove(index);
+    public void removeRow(Condition toRemove) {
+        int index = conditions.indexOf(toRemove);
+        conditions.remove(toRemove);
         fireTableRowsDeleted(index, index);
     }
 }

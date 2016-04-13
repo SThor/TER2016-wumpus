@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui.general;
+package gui.general.componentModels;
 
 import java.util.List;
 import javax.swing.AbstractListModel;
@@ -11,11 +11,12 @@ import javax.swing.AbstractListModel;
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
+ * @param <E> Type of list elements
  */
-public class WorldListModel extends AbstractListModel {
-    private final List<?> list;
+public class WorldListModel<E> extends AbstractListModel {
+    private final List<E> list;
     
-    public WorldListModel(List<?> list) {
+    public WorldListModel(List<E> list) {
         this.list = list;
     }
 
@@ -29,8 +30,15 @@ public class WorldListModel extends AbstractListModel {
         return list.get(index);
     }
     
-    public void removeElement(int index) {
-        list.remove(index);
+    public void removeElement(E toRemove) {
+        int index = list.indexOf(toRemove);
+        list.remove(toRemove);
         fireIntervalRemoved(this, index, index);
+    }
+    
+    public void addElement(E toAdd) {
+        list.add(toAdd);
+        int index = list.size()-1;
+        fireIntervalAdded(this, index, index);
     }
 }

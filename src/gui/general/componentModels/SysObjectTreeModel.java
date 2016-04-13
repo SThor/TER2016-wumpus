@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui.general;
+package gui.general.componentModels;
 
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -53,13 +53,26 @@ public class SysObjectTreeModel extends DefaultTreeModel {
                 ((SysObject)parent).getProperties().indexOf(child);
     }
     
-    public void removeObject(int index) {
-        Object[] removed = new Object[]{objects.remove(index)};
-        fireTreeNodesRemoved(this, new Object[]{getRoot()}, new int[]{index}, removed);
+    public void removeObject(SysObject toRemove) {
+        int index = objects.indexOf(toRemove);
+        objects.remove(index);
+        fireTreeNodesRemoved(this, new Object[]{getRoot()}, new int[]{index}, new Object[]{toRemove});
     }
     
-    public void removeProperty(int parentIndex, int index) {
-        Object[] removed = new Object[]{objects.get(parentIndex).getProperties().remove(index)};
-        fireTreeNodesRemoved(this, new Object[]{getRoot(), objects.get(parentIndex)}, new int[]{index}, removed);
+    public void removeProperty(SysObject parent, ObjectProperty toRemove) {
+        int index = parent.getProperties().indexOf(toRemove);
+        parent.getProperties().remove(index);
+        fireTreeNodesRemoved(this, new Object[]{getRoot(), parent}, new int[]{index}, new Object[]{toRemove});
+    }
+    
+    public void addObject(SysObject toAdd) {
+        objects.add(toAdd);
+        fireTreeNodesInserted(this, new Object[]{getRoot()}, new int[]{objects.size()-1}, new Object[]{toAdd});
+    }
+
+    public void addProperty(SysObject parent, ObjectProperty toAdd) {
+        parent.getProperties().add(toAdd);
+        int addIndex = parent.getProperties().size()-1;
+        fireTreeNodesInserted(this, new Object[]{getRoot(), parent}, new int[]{addIndex}, new Object[]{toAdd});
     }
 }

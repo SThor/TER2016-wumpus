@@ -124,6 +124,7 @@
                     <Component class="javax.swing.JButton" name="btnAddValue">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddValueActionPerformed"/>
@@ -325,7 +326,11 @@
                         <Component class="javax.swing.JButton" name="btnAddPre">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Add"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPreActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="btnRemPre">
                           <Properties>
@@ -411,7 +416,11 @@
                         <Component class="javax.swing.JButton" name="btnAddPost">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Add"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPostActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="btnRemPost">
                           <Properties>
@@ -478,6 +487,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddActionActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnRemAction">
                       <Properties>

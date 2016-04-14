@@ -58,4 +58,14 @@ public class ConditionTableModel extends AbstractTableModel {
         conditions.remove(toRemove);
         fireTableRowsDeleted(index, index);
     }
+    
+    public void addRow(Condition toAdd) {
+        conditions.add(toAdd);
+        int index = conditions.size()-1;
+        fireTableRowsInserted(index, index);
+    }
+    
+    public void triggerUpdate() {
+        fireTableDataChanged();
+    }
 }

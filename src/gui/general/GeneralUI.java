@@ -32,8 +32,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private Condition _postCond;
     private ObjectObservation _objectObs;
     private int _instant;
-                                
-
+                            
     private final World world;
     
     /**
@@ -138,6 +137,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelStates.add(scrollListProp, java.awt.BorderLayout.CENTER);
 
         btnAddValue.setText("Add");
+        btnAddValue.setEnabled(false);
         btnAddValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddValueActionPerformed(evt);
@@ -221,6 +221,12 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPre.add(scrollTablePre, java.awt.BorderLayout.CENTER);
 
         btnAddPre.setText("Add");
+        btnAddPre.setEnabled(false);
+        btnAddPre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddPreActionPerformed(evt);
+            }
+        });
         panelBtnPre.add(btnAddPre);
 
         btnRemPre.setText("Remove");
@@ -247,6 +253,12 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPost.add(scrollTablePost, java.awt.BorderLayout.CENTER);
 
         btnAddPost.setText("Add");
+        btnAddPost.setEnabled(false);
+        btnAddPost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddPostActionPerformed(evt);
+            }
+        });
         panelBtnPost.add(btnAddPost);
 
         btnRemPost.setText("Remove");
@@ -279,6 +291,11 @@ public class GeneralUI extends javax.swing.JFrame {
         panelActions.add(scrollListActions, java.awt.BorderLayout.CENTER);
 
         btnAddAction.setText("Add");
+        btnAddAction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionActionPerformed(evt);
+            }
+        });
         panelBtnActions.add(btnAddAction);
 
         btnRemAction.setText("Remove");
@@ -360,16 +377,19 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void listActionsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listActionsValueChanged
         _action = listActions.getSelectedValue();
+        boolean notNull = _action != null;
         
-        if(_action != null) {
+        if(notNull) {
             tablePreCond.setModel(new ConditionTableModel(_action.getPreConditions()));
             tablePostCond.setModel(new ConditionTableModel(_action.getPostConditions()));
-            btnRemAction.setEnabled(true);
         } else {
             tablePreCond.setModel(new DefaultTableModel());
             tablePostCond.setModel(new DefaultTableModel());
-            btnRemAction.setEnabled(false);
         }
+        
+        btnAddPre.setEnabled(notNull);
+        btnAddPost.setEnabled(notNull);
+        btnRemAction.setEnabled(notNull);
     }//GEN-LAST:event_listActionsValueChanged
 
     private void treeObjectsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_treeObjectsValueChanged
@@ -383,30 +403,31 @@ public class GeneralUI extends javax.swing.JFrame {
             selected = path.getLastPathComponent();
             parent = path.getParentPath().getLastPathComponent();
             
+            // If true, a SysObject has been selected, else it's an ObjectProperty
+            boolean isSysObject = selected instanceof SysObject;
+        
+            if(isSysObject) {
+                _object = (SysObject) selected;
+                _property = null;
+                listProperties.setModel(new DefaultListModel<String>());
+            } else {
+                _object = (SysObject) parent;
+                _property = (ObjectProperty) selected;
+                listProperties.setModel(new WorldListModel(_property.getPossibleValues()));
+            }
+        
+            btnRemObject.setEnabled(true);
+            btnAddProp.setEnabled(true);
+            btnAddValue.setEnabled(!isSysObject);
+            
         } catch(NullPointerException e) { // If caught, nothing is selected in the JTree
             _object = null;
             _property = null;
             listProperties.setModel(new DefaultListModel<String>());
             btnRemObject.setEnabled(false);
             btnAddProp.setEnabled(false);
-            return;
+            btnAddValue.setEnabled(false);
         }
-        
-        // A SysObject has been selected
-        if(selected instanceof SysObject) {
-            _object = (SysObject) selected;
-            _property = null;
-            listProperties.setModel(new DefaultListModel<String>());
-            
-        } else { // An ObjectProperty has been selected
-            _object = (SysObject) parent;
-            _property = (ObjectProperty) selected;
-            listProperties.setModel(new WorldListModel(_property.getPossibleValues()));
-        }
-        
-        // In both case
-        btnRemObject.setEnabled(true);
-        btnAddProp.setEnabled(true);
     }//GEN-LAST:event_treeObjectsValueChanged
 
     private void btnRemObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemObjectActionPerformed
@@ -489,6 +510,28 @@ public class GeneralUI extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnAddValueActionPerformed
+
+    private void btnAddActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionActionPerformed
+        String name = nameInput("Name of the new action:", "Adding an action");
+        if(name != null) {
+            try {
+                ((WorldListModel<Action>)listActions.getModel()).addElement(new Action(name));
+            } catch (DuplicateElementException e) {
+                promptError("The action \""+ name +"\" already exists in the world.", 
+                            "Cannot create new action");
+            }
+        }
+    }//GEN-LAST:event_btnAddActionActionPerformed
+
+    private void btnAddPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPreActionPerformed
+        new AddConditionDialog(this, world.getObjects(), _action.getPreConditions()).setVisible(true);
+        ((ConditionTableModel)tablePreCond.getModel()).triggerUpdate();
+    }//GEN-LAST:event_btnAddPreActionPerformed
+
+    private void btnAddPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPostActionPerformed
+        new AddConditionDialog(this, world.getObjects(), _action.getPostConditions()).setVisible(true);
+        ((ConditionTableModel)tablePostCond.getModel()).triggerUpdate();
+    }//GEN-LAST:event_btnAddPostActionPerformed
 
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
         try {
@@ -582,5 +625,6 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JTable tablePreCond;
     private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
+
     // </editor-fold> 
 }

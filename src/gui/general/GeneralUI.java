@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import model.Action;
@@ -17,6 +16,7 @@ import model.ObjectObservation;
 import model.ObjectProperty;
 import model.SysObject;
 import model.World;
+import model.exceptions.DuplicateElementException;
 
 /**
  *
@@ -61,13 +61,6 @@ public class GeneralUI extends javax.swing.JFrame {
             }
         });
         
-        tableObservation.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                tableObservationValueChanged(e);
-            }
-        });
-        
         super.setLocationRelativeTo(null);
     }
 
@@ -86,7 +79,7 @@ public class GeneralUI extends javax.swing.JFrame {
         scrollListProp = new javax.swing.JScrollPane();
         listProperties = new javax.swing.JList<>();
         panelBtnStates = new javax.swing.JPanel();
-        btnAddState = new javax.swing.JButton();
+        btnAddValue = new javax.swing.JButton();
         btnRemProperty = new javax.swing.JButton();
         panelObjects = new javax.swing.JPanel();
         scrollPaneObjects = new javax.swing.JScrollPane();
@@ -144,13 +137,13 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelStates.add(scrollListProp, java.awt.BorderLayout.CENTER);
 
-        btnAddState.setText("Add");
-        btnAddState.addActionListener(new java.awt.event.ActionListener() {
+        btnAddValue.setText("Add");
+        btnAddValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddStateActionPerformed(evt);
+                btnAddValueActionPerformed(evt);
             }
         });
-        panelBtnStates.add(btnAddState);
+        panelBtnStates.add(btnAddValue);
 
         btnRemProperty.setText("Remove");
         btnRemProperty.setEnabled(false);
@@ -425,107 +418,119 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
         String message = "Delete value \""+ _propValue +"\" from property \""+ _property +"\" in object \""+ _object +"\" ?";
-        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if(result == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION)
             ((WorldListModel)listProperties.getModel()).removeElement(_propValue);
     }//GEN-LAST:event_btnRemPropertyActionPerformed
 
     private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
         String message = "Delete action \""+ _action +"\" from world ?";
-        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if(result == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION)
             ((WorldListModel)listActions.getModel()).removeElement(_action);
     }//GEN-LAST:event_btnRemActionActionPerformed
 
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
         String message = "Delete selected pre-condition from action \""+ _action +"\" ?";
-        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if(result == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION)
             ((ConditionTableModel)tablePreCond.getModel()).removeRow(_preCond);
     }//GEN-LAST:event_btnRemPreActionPerformed
 
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
         String message = "Delete selected post-condition from action \""+ _action +"\" ?";
-        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if(result == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION)
             ((ConditionTableModel)tablePostCond.getModel()).removeRow(_postCond);
     }//GEN-LAST:event_btnRemPostActionPerformed
-
-    private void btnAddObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddObjectActionPerformed
-        String name = JOptionPane.showInputDialog(this, "Name of the new object:", "Adding an object", JOptionPane.QUESTION_MESSAGE);
-        
-        while("".equals(name)) {
-            JOptionPane.showMessageDialog(this, "Please specify a name.", "Error while creating object", JOptionPane.ERROR_MESSAGE);
-            name = JOptionPane.showInputDialog(this, "Name of the new object:", "Adding an object", JOptionPane.QUESTION_MESSAGE);
-        }
-        
-        // If null => Cancel button => do nothing
-        if(name != null)
-            ((SysObjectTreeModel)treeObjects.getModel()).addObject(new SysObject(name, world));
-    }//GEN-LAST:event_btnAddObjectActionPerformed
-
-    private void btnAddPropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPropActionPerformed
-        String message = "Name of the new property for object \""+ _object +"\":";
-        String name = JOptionPane.showInputDialog(this, message, "Adding a property", JOptionPane.QUESTION_MESSAGE);
-        
-        while("".equals(name)) {
-            JOptionPane.showMessageDialog(this, "Please specify a name.", "Error while creating property", JOptionPane.ERROR_MESSAGE);
-            name = JOptionPane.showInputDialog(this, message, "Adding a property", JOptionPane.QUESTION_MESSAGE);
-        }
-        
-        // If null => Cancel button => do nothing
-        if(name != null)
-            ((SysObjectTreeModel)treeObjects.getModel()).addProperty(_object, new ObjectProperty(name));
-    }//GEN-LAST:event_btnAddPropActionPerformed
-
-    private void btnAddStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddStateActionPerformed
-        String message = "Name of the new value for property \""+ _property +"\" in object \""+ _object +"\":";
-        String name = JOptionPane.showInputDialog(this, message, "Adding a value", JOptionPane.QUESTION_MESSAGE);
-        
-        while("".equals(name)) {
-            JOptionPane.showMessageDialog(this, "Please specify a name.", "Error while creating value", JOptionPane.ERROR_MESSAGE);
-            name = JOptionPane.showInputDialog(this, message, "Adding a value", JOptionPane.QUESTION_MESSAGE);
-        }
-        
-        // If null => Cancel button => do nothing
-        if(name != null)
-            ((WorldListModel<String>)listProperties.getModel()).addElement(name);
-    }//GEN-LAST:event_btnAddStateActionPerformed
-
-    private void tablePreCondValueChanged(ListSelectionEvent e) {
-        try {
-            _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
-        } catch (IndexOutOfBoundsException ex) {
-            _preCond = null;
-        }
-        btnRemPre.setEnabled(_preCond != null);
-    }
-
-    private void tablePostCondValueChanged(ListSelectionEvent e) {
-        try {
-            _postCond = _action.getPostConditions().get(tablePostCond.getSelectedRow());
-        } catch (IndexOutOfBoundsException ex) {
-            _postCond = null;
-        }
-        btnRemPost.setEnabled(_postCond != null);
-    }
-
-    private void tableObservationValueChanged(ListSelectionEvent e) {
-        //TODO
-    }
     
     private void removeProperty() {
         String message = "Delete property \""+ _property +"\" from object \""+ _object +"\" ?";
-        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if(result == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION)
             ((SysObjectTreeModel)treeObjects.getModel()).removeProperty(_object, _property);
     }
 
     private void removeObject() {
         String message = "Delete object \""+ _object +"\" from world ?";
-        int result = JOptionPane.showConfirmDialog(this, message, "Deletion confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if(result == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION)
             ((SysObjectTreeModel)treeObjects.getModel()).removeObject(_object);
+    }
+    
+    private void btnAddObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddObjectActionPerformed
+        String name = nameInput("Name of the new object:", "Adding an object");
+        if(name != null) {
+            try {
+                ((SysObjectTreeModel)treeObjects.getModel()).addObject(new SysObject(name, world));
+            } catch (DuplicateElementException e) {
+                promptError("The object \""+ name +"\" already exists in the world.", 
+                            "Cannot create new object");
+            }
+        }
+    }//GEN-LAST:event_btnAddObjectActionPerformed
+
+    private void btnAddPropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPropActionPerformed
+        String message = "Name of the new property for object \""+ _object +"\":";
+        String name = nameInput(message, "Adding a property");
+        if(name != null) {
+            try {
+                ((SysObjectTreeModel)treeObjects.getModel()).addProperty(_object, new ObjectProperty(name));
+            } catch (DuplicateElementException e) {
+                promptError("The property \""+ name +"\" already exists in object \""+ _object +"\".", 
+                            "Cannot create new property");
+            }
+        }
+    }//GEN-LAST:event_btnAddPropActionPerformed
+
+    private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
+        String message = "Name of the new value for property \""+ _property +"\" in object \""+ _object +"\":";
+        String name = nameInput(message, "Adding a value");
+        if(name != null) {
+            try {
+                ((WorldListModel<String>)listProperties.getModel()).addElement(name);
+            } catch (DuplicateElementException e) {
+                promptError("The value \""+ name +"\" already exists in property \""+ _property +"\" of object \""+ _object +"\".", 
+                            "Cannot create new value");
+            }
+        }
+    }//GEN-LAST:event_btnAddValueActionPerformed
+
+    private void tablePreCondValueChanged(ListSelectionEvent evt) {
+        try {
+            _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
+        } catch (IndexOutOfBoundsException e) {
+            _preCond = null;
+        }
+        btnRemPre.setEnabled(_preCond != null);
+    }
+
+    private void tablePostCondValueChanged(ListSelectionEvent evt) {
+        try {
+            _postCond = _action.getPostConditions().get(tablePostCond.getSelectedRow());
+        } catch (IndexOutOfBoundsException e) {
+            _postCond = null;
+        }
+        btnRemPost.setEnabled(_postCond != null);
+    }
+    
+    private int confirmation(String message) {
+        return JOptionPane.showConfirmDialog(this, message, 
+                "Deletion confirmation", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE);
+    }
+    
+    private String nameInput(String message, String title) {
+        String name = JOptionPane.showInputDialog(this, message, title, JOptionPane.QUESTION_MESSAGE);
+        if(name != null)
+            name = name.trim();
+        
+        while("".equals(name)) {
+            name = JOptionPane.showInputDialog(this, "Please enter a valid name:", title, JOptionPane.ERROR_MESSAGE);
+            if(name != null)
+                name = name.trim();
+        }
+        
+        return name;
+    }
+    
+    private void promptError(String message, String title) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
     // <editor-fold defaultstate="collapsed" desc="Variable declarations">  
@@ -536,7 +541,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JButton btnAddPost;
     private javax.swing.JButton btnAddPre;
     private javax.swing.JButton btnAddProp;
-    private javax.swing.JButton btnAddState;
+    private javax.swing.JButton btnAddValue;
     private javax.swing.JButton btnRemAction;
     private javax.swing.JButton btnRemObject;
     private javax.swing.JButton btnRemObservation;

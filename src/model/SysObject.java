@@ -40,7 +40,7 @@ public class SysObject {
 
         this.name = name;
         this.world = world;
-        properties = new ArrayList<>();
+        properties = new UniqueList<>();
     }
 
     /**

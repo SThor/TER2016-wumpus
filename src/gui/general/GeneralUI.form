@@ -1,38 +1,115 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
-<Form version="1.6" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
-=======
 <Form version="1.7" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <Menu class="javax.swing.JMenu" name="menuWorld">
           <Properties>
-            <Property name="text" type="java.lang.String" value="File"/>
-          </Properties>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu2">
-          <Properties>
+            <Property name="mnemonic" type="int" value="70"/>
             <Property name="text" type="java.lang.String" value="World"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miOpenWorld">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+O"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="79"/>
+                <Property name="text" type="java.lang.String" value="Open"/>
+                <Property name="toolTipText" type="java.lang.String" value="Import from XML file"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miOpenWorldActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miSaveWorld">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+S"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="83"/>
+                <Property name="text" type="java.lang.String" value="Save"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export to XML file"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miSaveWorldActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miSaveWorldAs">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Alt+S"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Save as"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miSaveWorldAsActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="menuScenario">
+          <Properties>
+            <Property name="mnemonic" type="int" value="70"/>
+            <Property name="text" type="java.lang.String" value="Scenario"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miOpenScenario">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+O"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="79"/>
+                <Property name="text" type="java.lang.String" value="Open"/>
+                <Property name="toolTipText" type="java.lang.String" value="Import from XML file"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miOpenScenarioActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miSaveScenario">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+S"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="83"/>
+                <Property name="text" type="java.lang.String" value="Save"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export to XML file"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miSaveScenarioActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miSaveScenarioAs">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+Alt+S"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Save as"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miSaveScenarioAsActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
       </SubComponents>
     </Menu>
   </NonVisualComponents>
   <Properties>
-    <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="World Builder"/>
-    <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-      <Color id="Curseur par d&#xe9;faut"/>
-    </Property>
+    <Property name="defaultCloseOperation" type="int" value="0"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="menuBar"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -53,7 +130,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="tabbedPane" alignment="0" pref="341" max="32767" attributes="0"/>
+          <Component id="tabbedPane" alignment="0" pref="455" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -64,7 +141,7 @@
       <SubComponents>
         <Container class="javax.swing.JSplitPane" name="splitTabObjects">
           <Properties>
-            <Property name="dividerLocation" type="int" value="150"/>
+            <Property name="dividerLocation" type="int" value="270"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -97,28 +174,22 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JList" name="listStates">
+                    <Component class="javax.swing.JList" name="listProperties">
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Property state">
+                            <TitledBorder title="Possible values">
                               <Font PropertyName="font" name="Tahoma" size="16" style="0"/>
                             </TitledBorder>
                           </Border>
                         </Property>
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
-                        <Property name="opaque" type="boolean" value="false"/>
-=======
                         <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                          <StringArray count="2">
-                            <StringItem index="0" value="True"/>
-                            <StringItem index="1" value="False"/>
-                          </StringArray>
+                          <StringArray count="0"/>
                         </Property>
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="listStatesValueChanged"/>
+                        <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="listPropertiesValueChanged"/>
                       </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -135,16 +206,23 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JButton" name="btnAddState">
+                    <Component class="javax.swing.JButton" name="btnAddValue">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddValueActionPerformed"/>
+                      </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="btnRemState">
+                    <Component class="javax.swing.JButton" name="btnRemProperty">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Remove"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemPropertyActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -171,28 +249,18 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTree" name="jTreeObjects">
+                    <Component class="javax.swing.JTree" name="treeObjects">
                       <Properties>
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
-                        <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="new gui.general.WorldListModel(world.getObjects())&#xd;&#xa;" type="code"/>
+                        <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="new SysObjectTreeModel(world.getObjects())" type="code"/>
                         </Property>
-                        <Property name="selectionMode" type="int" value="0"/>
                         <Property name="opaque" type="boolean" value="false"/>
+                        <Property name="rootVisible" type="boolean" value="false"/>
+                        <Property name="showsRootHandles" type="boolean" value="true"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="listObjectsValueChanged"/>
+                        <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="treeObjectsValueChanged"/>
                       </Events>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                      </AuxValues>
-=======
-                        <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-                          <TreeModel code="Door&#xa; isOpen&#xa;Chair&#xa; isSatOn&#xa; isUpright&#xa;Person&#xa; xCoordinate&#xa; yCoordinate&#xa; isSat&#xa;Window&#xa; isOpen"/>
-                        </Property>
-                        <Property name="rootVisible" type="boolean" value="false"/>
-                      </Properties>
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
                     </Component>
                   </SubComponents>
                 </Container>
@@ -207,17 +275,39 @@
                   <SubComponents>
                     <Component class="javax.swing.JButton" name="btnAddObject">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Add"/>
+                        <Property name="text" type="java.lang.String" value="Add object"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddObjectActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnAddProp">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Add property"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPropActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnRemObject">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Remove"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemObjectActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="javax.swing.JSeparator" name="jSeparator1">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="First"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>
@@ -284,37 +374,8 @@
                       <SubComponents>
                         <Component class="javax.swing.JTable" name="tablePreCond">
                           <Properties>
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="new DefaultTableModel()" type="code"/>
-                            </Property>
-                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                              <TableColumnModel selectionModel="0"/>
-                            </Property>
-                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                              <JTableSelectionModel selectionMode="0"/>
-=======
-                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="3" rowCount="4">
-                                <Column editable="true" title="Object" type="java.lang.Object">
-                                  <Data value="Door"/>
-                                  <Data value="Person"/>
-                                  <Data value="Person"/>
-                                  <Data value="Person"/>
-                                </Column>
-                                <Column editable="true" title="Property" type="java.lang.Object">
-                                  <Data value="isOpen"/>
-                                  <Data value="isSat"/>
-                                  <Data value="xCoordinate"/>
-                                  <Data value="yCoordinate"/>
-                                </Column>
-                                <Column editable="true" title="State" type="java.lang.Object">
-                                  <Data value="false"/>
-                                  <Data value="false"/>
-                                  <Data value="4"/>
-                                  <Data value="8"/>
-                                </Column>
-                              </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                               <TableColumnModel selectionModel="0">
@@ -334,7 +395,9 @@
                                   <Renderer/>
                                 </Column>
                               </TableColumnModel>
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
+                            </Property>
+                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                              <JTableSelectionModel selectionMode="0"/>
                             </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
@@ -355,13 +418,20 @@
                         <Component class="javax.swing.JButton" name="btnAddPre">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Add"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPreActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="btnRemPre">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Remove"/>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemPreActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -394,37 +464,8 @@
                       <SubComponents>
                         <Component class="javax.swing.JTable" name="tablePostCond">
                           <Properties>
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                               <Connection code="new DefaultTableModel()" type="code"/>
-                            </Property>
-                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                              <TableColumnModel selectionModel="0"/>
-                            </Property>
-                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                              <JTableSelectionModel selectionMode="0"/>
-=======
-                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="3" rowCount="4">
-                                <Column editable="true" title="Object" type="java.lang.Object">
-                                  <Data value="Door"/>
-                                  <Data value="Person"/>
-                                  <Data value="Person"/>
-                                  <Data value="Person"/>
-                                </Column>
-                                <Column editable="true" title="Property" type="java.lang.Object">
-                                  <Data value="isOpen"/>
-                                  <Data value="isSat"/>
-                                  <Data value="xCoordinate"/>
-                                  <Data value="yCoordinate"/>
-                                </Column>
-                                <Column editable="true" title="State" type="java.lang.Object">
-                                  <Data value="true"/>
-                                  <Data value="false"/>
-                                  <Data value="4"/>
-                                  <Data value="8"/>
-                                </Column>
-                              </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                               <TableColumnModel selectionModel="0">
@@ -444,7 +485,9 @@
                                   <Renderer/>
                                 </Column>
                               </TableColumnModel>
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
+                            </Property>
+                            <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                              <JTableSelectionModel selectionMode="0"/>
                             </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
@@ -465,13 +508,20 @@
                         <Component class="javax.swing.JButton" name="btnAddPost">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Add"/>
+                            <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddPostActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="btnRemPost">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="Remove"/>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemPostActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -505,14 +555,13 @@
                         <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                           <Connection code="new WorldListModel(world.getPossibleActions())&#xd;&#xa;" type="code"/>
                         </Property>
-                        <Property name="selectionMode" type="int" value="0"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
                         <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="listActionsValueChanged"/>
                       </Events>
                       <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Action&gt;"/>
                       </AuxValues>
                     </Component>
                   </SubComponents>
@@ -530,12 +579,18 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddActionActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnRemAction">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Remove"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemActionActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -553,223 +608,6 @@
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
-          <SubComponents>
-            <Component class="javax.swing.JSlider" name="sliderInstant">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Tahoma" size="14" style="0"/>
-                </Property>
-                <Property name="maximum" type="int" value="10"/>
-                <Property name="paintLabels" type="boolean" value="true"/>
-                <Property name="paintTicks" type="boolean" value="true"/>
-                <Property name="snapToTicks" type="boolean" value="true"/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
-                <Property name="value" type="int" value="0"/>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder title="Instant">
-                      <Font PropertyName="font" name="Tahoma" size="14" style="0"/>
-                    </TitledBorder>
-                  </Border>
-                </Property>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                  <BorderConstraints direction="North"/>
-                </Constraint>
-              </Constraints>
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-              <SubComponents>
-                <Component class="javax.swing.JTable" name="tableObs">
-                  <Properties>
-                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="new ObservationTableModel(world)" type="code"/>
-                    </Property>
-                    <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                      <TableColumnModel selectionModel="0">
-                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                          <Title/>
-                          <Editor/>
-                          <Renderer/>
-                        </Column>
-                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                          <Title/>
-                          <Editor/>
-                          <Renderer/>
-                        </Column>
-                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                          <Title/>
-                          <Editor/>
-                          <Renderer/>
-                        </Column>
-                      </TableColumnModel>
-                    </Property>
-                    <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                      <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
-                    </Property>
-                  </Properties>
-                </Component>
-              </SubComponents>
-            </Container>
-            <Container class="javax.swing.JPanel" name="panelBtnObs">
-=======
-            </Component>
-            <Container class="javax.swing.JPanel" name="panelObservation">
-              <Properties>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder title="Observation">
-                      <Font PropertyName="font" name="Tahoma" size="14" style="0"/>
-                    </TitledBorder>
-                  </Border>
-                </Property>
-              </Properties>
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                  <BorderConstraints direction="Center"/>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
-              <SubComponents>
-<<<<<<< HEAD:src/gui/general/WorldBuilderUI.form
-                <Component class="javax.swing.JButton" name="btnAddObsAfter">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Add After"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddObsAfterActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnAddObsBefore">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Add Before"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddObsBeforeActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnMoveUp">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Move Up"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMoveUpActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnMoveDown">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Move Down"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMoveDownActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnRemObs">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Remove"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemObsActionPerformed"/>
-                  </Events>
-                </Component>
-=======
-                <Container class="javax.swing.JScrollPane" name="scrollTableObservation">
-                  <AuxValues>
-                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
-                  <Constraints>
-                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                      <BorderConstraints direction="Center"/>
-                    </Constraint>
-                  </Constraints>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                  <SubComponents>
-                    <Component class="javax.swing.JTable" name="tableObservation">
-                      <Properties>
-                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="3" rowCount="4">
-                            <Column editable="true" title="Object" type="java.lang.Object">
-                              <Data value="Door"/>
-                              <Data value="Person"/>
-                              <Data value="Person"/>
-                              <Data value="Person"/>
-                            </Column>
-                            <Column editable="true" title="Property" type="java.lang.Object">
-                              <Data value="isOpen"/>
-                              <Data value="isSat"/>
-                              <Data value="xCoordinate"/>
-                              <Data value="yCoordinate"/>
-                            </Column>
-                            <Column editable="true" title="State" type="java.lang.Object">
-                              <Data value="false"/>
-                              <Data value="false"/>
-                              <Data value="4"/>
-                              <Data value="8"/>
-                            </Column>
-                          </Table>
-                        </Property>
-                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                          <TableColumnModel selectionModel="0">
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
-                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                              <Title/>
-                              <Editor/>
-                              <Renderer/>
-                            </Column>
-                          </TableColumnModel>
-                        </Property>
-                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                        </Property>
-                      </Properties>
-                    </Component>
-                  </SubComponents>
-                </Container>
-                <Container class="javax.swing.JPanel" name="panelBtnObservation">
-                  <Constraints>
-                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-                      <BorderConstraints direction="South"/>
-                    </Constraint>
-                  </Constraints>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
-                  <SubComponents>
-                    <Component class="javax.swing.JButton" name="btnAddObservation">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Add"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btnRemObservation">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Remove"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
-                  </SubComponents>
-                </Container>
->>>>>>> refs/remotes/origin/newUI:src/gui/GeneralUI.form
-              </SubComponents>
-            </Container>
-          </SubComponents>
         </Container>
       </SubComponents>
     </Container>

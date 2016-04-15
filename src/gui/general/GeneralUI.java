@@ -800,7 +800,7 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private boolean exportWorldToXml(File file) {
         try {
-            new ExportJDOM(world, Paths.get(file.getAbsolutePath())).export();
+            new ExportJDOM(world, Paths.get(file.getAbsolutePath())).exportAll();
             return true;
         } catch (IOException ex) {
             promptError("Failed to write into file "+file, "Saving error");

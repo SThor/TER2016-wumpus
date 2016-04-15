@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import model.Action;
 import model.Condition;
-import model.ObjectObservation;
 import model.ObjectProperty;
 import model.SysObject;
 import model.World;

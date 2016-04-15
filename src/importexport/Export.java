@@ -16,11 +16,11 @@ import model.World;
 
 /**
  * Object used to export the world and scenario to an xml file
- * @author Paul Givel et Guillaume Hartenstein
+ * @author Paul Givel and Guillaume Hartenstein
  */
 public class Export {
-    private World world;
-    private Path file;
+    private final World world;
+    private final Path file;
     private List<String> lines;
     
     /**

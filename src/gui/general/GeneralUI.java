@@ -3,10 +3,13 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
+import java.io.File;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -23,6 +26,7 @@ import model.exceptions.DuplicateElementException;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class GeneralUI extends javax.swing.JFrame {
+    private final String frameTitle = "World creator - ";
     
     private SysObject _object;
     private ObjectProperty _property;
@@ -35,12 +39,18 @@ public class GeneralUI extends javax.swing.JFrame {
                             
     private final World world;
     
+    private File lastSaveFile;
+    private JFileChooser xmlChooser;
+    
     /**
      * Creates new form GeneralUI
      * @param world The world to work on
      */
     public GeneralUI(World world) {
         this.world = world;
+   
+        xmlChooser = new JFileChooser();
+        xmlChooser.setFileFilter(new FileNameExtensionFilter("XML files", "xml"));
         
         initComponents();
         
@@ -87,6 +97,7 @@ public class GeneralUI extends javax.swing.JFrame {
         btnAddObject = new javax.swing.JButton();
         btnAddProp = new javax.swing.JButton();
         btnRemObject = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
         splitActionTab = new javax.swing.JSplitPane();
         panelLaws = new javax.swing.JPanel();
         panelPre = new javax.swing.JPanel();
@@ -116,10 +127,16 @@ public class GeneralUI extends javax.swing.JFrame {
         btnAddObservation = new javax.swing.JButton();
         btnRemObservation = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        menuFile = new javax.swing.JMenu();
+        miOpen = new javax.swing.JMenuItem();
+        miSave = new javax.swing.JMenuItem();
+        miSaveAs = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        miExit = new javax.swing.JMenuItem();
+        menuWorld = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle(frameTitle);
 
         splitTabObjects.setDividerLocation(270);
 
@@ -200,6 +217,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelBtnObjects.add(btnRemObject);
 
         panelObjects.add(panelBtnObjects, java.awt.BorderLayout.PAGE_END);
+        panelObjects.add(jSeparator1, java.awt.BorderLayout.PAGE_START);
 
         splitTabObjects.setLeftComponent(panelObjects);
 
@@ -348,11 +366,58 @@ public class GeneralUI extends javax.swing.JFrame {
 
         tabbedPane.addTab("Observations", panelObservations);
 
-        jMenu1.setText("File");
-        menuBar.add(jMenu1);
+        menuFile.setMnemonic('F');
+        menuFile.setText("File");
+        menuFile.setToolTipText("");
 
-        jMenu2.setText("World");
-        menuBar.add(jMenu2);
+        miOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        miOpen.setMnemonic('O');
+        miOpen.setText("Open");
+        miOpen.setToolTipText("Import from XML file");
+        miOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miOpenActionPerformed(evt);
+            }
+        });
+        menuFile.add(miOpen);
+
+        miSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        miSave.setMnemonic('S');
+        miSave.setText("Save");
+        miSave.setToolTipText("Export to XML file");
+        miSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSaveActionPerformed(evt);
+            }
+        });
+        menuFile.add(miSave);
+
+        miSaveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        miSaveAs.setText("Save as");
+        miSaveAs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSaveAsActionPerformed(evt);
+            }
+        });
+        menuFile.add(miSaveAs);
+        menuFile.add(jSeparator2);
+
+        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        miExit.setMnemonic('E');
+        miExit.setText("Exit");
+        miExit.setToolTipText("Exit the application");
+        miExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExitActionPerformed(evt);
+            }
+        });
+        menuFile.add(miExit);
+
+        menuBar.add(menuFile);
+
+        menuWorld.setMnemonic('W');
+        menuWorld.setText("World");
+        menuBar.add(menuWorld);
 
         setJMenuBar(menuBar);
 
@@ -439,38 +504,50 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
         String message = "Delete value \""+ _propValue +"\" from property \""+ _property +"\" in object \""+ _object +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION){
             ((WorldListModel)listProperties.getModel()).removeElement(_propValue);
+            warnSave();
+        }
     }//GEN-LAST:event_btnRemPropertyActionPerformed
 
     private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
         String message = "Delete action \""+ _action +"\" from world ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION){
             ((WorldListModel)listActions.getModel()).removeElement(_action);
+            warnSave();
+        }
     }//GEN-LAST:event_btnRemActionActionPerformed
 
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
         String message = "Delete selected pre-condition from action \""+ _action +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION){
             ((ConditionTableModel)tablePreCond.getModel()).removeRow(_preCond);
+            warnSave();
+        }
     }//GEN-LAST:event_btnRemPreActionPerformed
 
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
         String message = "Delete selected post-condition from action \""+ _action +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION){
             ((ConditionTableModel)tablePostCond.getModel()).removeRow(_postCond);
+            warnSave();
+        }
     }//GEN-LAST:event_btnRemPostActionPerformed
     
     private void removeProperty() {
         String message = "Delete property \""+ _property +"\" from object \""+ _object +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION) {
             ((SysObjectTreeModel)treeObjects.getModel()).removeProperty(_object, _property);
+            warnSave();
+        }
     }
 
     private void removeObject() {
         String message = "Delete object \""+ _object +"\" from world ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION)
+        if(confirmation(message) == JOptionPane.YES_OPTION){
             ((SysObjectTreeModel)treeObjects.getModel()).removeObject(_object);
+            warnSave();
+        }
     }
     
     private void btnAddObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddObjectActionPerformed
@@ -478,6 +555,7 @@ public class GeneralUI extends javax.swing.JFrame {
         if(name != null) {
             try {
                 ((SysObjectTreeModel)treeObjects.getModel()).addObject(new SysObject(name, world));
+                warnSave();
             } catch (DuplicateElementException e) {
                 promptError("The object \""+ name +"\" already exists in the world.", 
                             "Cannot create new object");
@@ -491,6 +569,7 @@ public class GeneralUI extends javax.swing.JFrame {
         if(name != null) {
             try {
                 ((SysObjectTreeModel)treeObjects.getModel()).addProperty(_object, new ObjectProperty(name));
+                warnSave();
             } catch (DuplicateElementException e) {
                 promptError("The property \""+ name +"\" already exists in object \""+ _object +"\".", 
                             "Cannot create new property");
@@ -504,6 +583,7 @@ public class GeneralUI extends javax.swing.JFrame {
         if(name != null) {
             try {
                 ((WorldListModel<String>)listProperties.getModel()).addElement(name);
+                warnSave();
             } catch (DuplicateElementException e) {
                 promptError("The value \""+ name +"\" already exists in property \""+ _property +"\" of object \""+ _object +"\".", 
                             "Cannot create new value");
@@ -516,6 +596,7 @@ public class GeneralUI extends javax.swing.JFrame {
         if(name != null) {
             try {
                 ((WorldListModel<Action>)listActions.getModel()).addElement(new Action(name));
+                warnSave();
             } catch (DuplicateElementException e) {
                 promptError("The action \""+ name +"\" already exists in the world.", 
                             "Cannot create new action");
@@ -532,6 +613,49 @@ public class GeneralUI extends javax.swing.JFrame {
         new AddConditionDialog(this, world.getObjects(), _action.getPostConditions()).setVisible(true);
         ((ConditionTableModel)tablePostCond.getModel()).triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
+
+    private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
+        int result = JOptionPane.showConfirmDialog(this, 
+                "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?", 
+                "Open world", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE);
+        
+        if(result == JOptionPane.YES_OPTION) {
+            if(lastSaveFile != null) {
+                xmlChooser.setCurrentDirectory(lastSaveFile.getParentFile());
+            }
+            
+            if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                // TODO use import XML parser
+                newFileLoaded();
+            }
+        }
+    }//GEN-LAST:event_miOpenActionPerformed
+
+    private void miSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveActionPerformed
+        if(lastSaveFile == null) {
+            miSaveAsActionPerformed(null);
+        } else {
+           // TODO use XML export parser
+           unwarnSave();
+        }
+    }//GEN-LAST:event_miSaveActionPerformed
+
+    private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_miExitActionPerformed
+
+    private void miSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsActionPerformed
+        if(lastSaveFile != null) {
+                xmlChooser.setCurrentDirectory(lastSaveFile.getParentFile());
+        }
+        
+        if(xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+             // TODO use export XML parser
+             newFileLoaded();
+        }
+    }//GEN-LAST:event_miSaveAsActionPerformed
 
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
         try {
@@ -576,6 +700,21 @@ public class GeneralUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
+    private void newFileLoaded() {
+        lastSaveFile = xmlChooser.getSelectedFile();
+        setTitle(frameTitle+lastSaveFile.getName());
+    }
+    
+    private void unwarnSave() {
+        if(getTitle().startsWith("*"))
+            setTitle(getTitle().substring(1));
+    }
+    
+    protected void warnSave() {
+        if(!getTitle().startsWith("*"))
+            setTitle("*"+getTitle());
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Variable declarations">  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
@@ -591,11 +730,17 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JButton btnRemPost;
     private javax.swing.JButton btnRemPre;
     private javax.swing.JButton btnRemProperty;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JList<Action> listActions;
     private javax.swing.JList<String> listProperties;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu menuFile;
+    private javax.swing.JMenu menuWorld;
+    private javax.swing.JMenuItem miExit;
+    private javax.swing.JMenuItem miOpen;
+    private javax.swing.JMenuItem miSave;
+    private javax.swing.JMenuItem miSaveAs;
     private javax.swing.JPanel panelActions;
     private javax.swing.JPanel panelBtnActions;
     private javax.swing.JPanel panelBtnObjects;

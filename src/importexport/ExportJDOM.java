@@ -3,8 +3,6 @@ package importexport;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.Action;
 import model.Condition;
 import model.ObjectObservation;
@@ -42,8 +40,9 @@ public class ExportJDOM {
 
     /**
      * Starts the exportation process
+     * @throws java.io.IOException Exception if there is a problem with the file opening
      */
-    public void export() throws IOException {
+    public void exportAll() throws IOException {
         root.addContent(exportObjects());
         root.addContent(exportActions());
         root.addContent(exportObservations());
@@ -81,7 +80,7 @@ public class ExportJDOM {
     }
 
     private Element exportObject(SysObject object) {
-        Element xmlObject = new Element("Object");
+        Element xmlObject = new Element("object");
         xmlObject.setAttribute("name", object.getName());
 
         for (ObjectProperty property : object.getProperties()) {

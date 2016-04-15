@@ -3,7 +3,15 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
+import importexport.ExportJDOM;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -639,8 +647,9 @@ public class GeneralUI extends javax.swing.JFrame {
             if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = xmlChooser.getSelectedFile();
                 if(isXmlFile(file)) {
-                    // TODO use import XML parser
-                    newFileLoaded();
+                    if(importFromXml(file)) {
+                        newFileLoaded(file);
+                    }
                 }
             }
         }
@@ -650,7 +659,7 @@ public class GeneralUI extends javax.swing.JFrame {
         if(lastSaveFile == null) {
             miSaveAsActionPerformed(null);
         } else {
-           // TODO use XML export parser
+           exportToXml(lastSaveFile);
            unwarnSave();
         }
     }//GEN-LAST:event_miSaveActionPerformed
@@ -674,8 +683,9 @@ public class GeneralUI extends javax.swing.JFrame {
             
             if(result == JOptionPane.YES_OPTION) {
                 if(isXmlFile(file)) {
-                    // TODO use export XML parser
-                    newFileLoaded();
+                    if(exportToXml(file)) {
+                        newFileLoaded(file);
+                    }
                 }
             }
         }
@@ -729,8 +739,8 @@ public class GeneralUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
-    private void newFileLoaded() {
-        lastSaveFile = xmlChooser.getSelectedFile();
+    private void newFileLoaded(File file) {
+        lastSaveFile = file;
         isSaved = false;
         unwarnSave();
     }
@@ -765,13 +775,28 @@ public class GeneralUI extends javax.swing.JFrame {
         }
     }
     
-    private boolean isXmlFile(File f) {
-        if(f.getName().endsWith(".xml")) {
+    private boolean isXmlFile(File file) {
+        if(file.getName().endsWith(".xml")) {
             return true;
         } else {
             promptError("Please select an XML file", "Wrong file type");
             return false;
         }
+    }
+    
+    private boolean exportToXml(File file) {
+        try {
+            new ExportJDOM(world, Paths.get(file.getAbsolutePath())).export();
+            return true;
+        } catch (IOException ex) {
+            promptError("Failed to write into file "+file, "Saving error");
+            return false;
+        }
+    }
+    
+    private boolean importFromXml(File file) {
+        //TODO 
+        return true;
     }
     
     // <editor-fold defaultstate="collapsed" desc="Variable declarations">  
@@ -829,6 +854,5 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JTable tablePreCond;
     private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
-
     // </editor-fold> 
 }

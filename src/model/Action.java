@@ -8,7 +8,7 @@ import model.exceptions.DuplicateElementException;
  * Represents a possible action in a world.
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Action {
+public class Action implements Observation {
     /**
      * Name of the action.
      */
@@ -163,6 +163,11 @@ public class Action {
         return ((Action)obj).name.equals(name);
     }
 
+    @Override
+    public boolean isVerified() {
+        return preConditionsVerified() && postConditionsVerified();
+    }
+    
     public String getName() {
         return name;
     }

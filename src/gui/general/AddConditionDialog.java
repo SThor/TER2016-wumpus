@@ -209,7 +209,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         try {
             conditions.add(new Condition(_object, _property.getName(), _propValue));
-            ((GeneralUI)getParent()).warnSave();
+            ((GeneralUI)getParent()).warnWorldSave();
             dispose();
         } catch (DuplicateElementException e) {
             JOptionPane.showMessageDialog(this,

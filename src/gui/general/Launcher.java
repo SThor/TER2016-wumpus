@@ -9,6 +9,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.Condition;
+import model.Scenario;
 import model.SysObject;
 import model.World;
 
@@ -71,7 +72,7 @@ public class Launcher {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new GeneralUI(world).setVisible(true);
+                new GeneralUI(world, new Scenario()).setVisible(true);
             }
         });
     }

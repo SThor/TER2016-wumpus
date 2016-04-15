@@ -43,7 +43,7 @@ public class ExportJDOM {
     /**
      * Starts the exportation process
      */
-    public void export() {
+    public void export() throws IOException {
         root.addContent(exportObjects());
         root.addContent(exportActions());
         root.addContent(exportObservations());
@@ -136,12 +136,8 @@ public class ExportJDOM {
         return xmlObservation;
     }
 
-    private void save(Path file) {
-        try {
-            XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
-            out.output(xmlFile, new FileOutputStream(file.toFile()));
-        } catch (IOException ex) {
-            Logger.getLogger(ExportJDOM.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void save(Path file) throws IOException {
+        XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+        out.output(xmlFile, new FileOutputStream(file.toFile()));
     }
 }

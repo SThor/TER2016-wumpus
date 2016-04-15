@@ -6,6 +6,7 @@ import gui.general.componentModels.WorldListModel;
 import java.io.File;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -27,6 +28,7 @@ import model.exceptions.DuplicateElementException;
  */
 public class GeneralUI extends javax.swing.JFrame {
     private final String frameTitle = "World creator - ";
+    private boolean isSaved;
     
     private SysObject _object;
     private ObjectProperty _property;
@@ -51,6 +53,7 @@ public class GeneralUI extends javax.swing.JFrame {
    
         xmlChooser = new JFileChooser();
         xmlChooser.setFileFilter(new FileNameExtensionFilter("XML files", "xml"));
+        isSaved = true;
         
         initComponents();
         
@@ -620,9 +623,13 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddPostActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
-        int result = confirmation(
+        int result = JOptionPane.YES_OPTION;
+        
+        if(!isSaved) {
+            result = confirmation(
                 "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
                 "Open world");
+        }
         
         if(result == JOptionPane.YES_OPTION) {
             if(lastSaveFile != null) {
@@ -661,7 +668,7 @@ public class GeneralUI extends javax.swing.JFrame {
             File file = xmlChooser.getSelectedFile();
             int result = JOptionPane.YES_OPTION;
             
-            if(lastSaveFile.equals(file)) {
+            if(file.exists()) {
                 result = confirmation("This file already exists.\n Override ?", "File already exists");
             }
             
@@ -724,7 +731,38 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private void newFileLoaded() {
         lastSaveFile = xmlChooser.getSelectedFile();
-        setTitle(frameTitle+lastSaveFile.getName());
+        isSaved = false;
+        unwarnSave();
+    }
+    
+    private void unwarnSave() {
+        if(!isSaved) {
+            setTitle(lastSaveFile != null ? 
+                frameTitle+lastSaveFile.getName() :
+                frameTitle);
+            isSaved = true;
+        }
+    }
+    
+    protected void warnSave() {
+        if(isSaved) {
+            String warnMessage = " (unsaved changes)";
+            setTitle((lastSaveFile != null ? 
+                frameTitle+lastSaveFile.getName():
+                frameTitle)+warnMessage);
+            isSaved = false;
+        }
+    }
+    
+    private void confirmBeforeClose() {
+        if(isSaved) {
+            System.exit(0);
+        } else {
+            int result = confirmation("Exit the application ?\nAll unsaved changes will be discarded.", "Exit");
+            if(result == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        }
     }
     
     private boolean isXmlFile(File f) {
@@ -733,27 +771,6 @@ public class GeneralUI extends javax.swing.JFrame {
         } else {
             promptError("Please select an XML file", "Wrong file type");
             return false;
-        }
-    }
-    
-    private void unwarnSave() {
-        if(getTitle().startsWith("*"))
-            setTitle(getTitle().substring(1));
-    }
-    
-    protected void warnSave() {
-        if(!getTitle().startsWith("*"))
-            setTitle("*"+getTitle());
-    }
-    
-    private void confirmBeforeClose() {
-        if(getTitle().startsWith("*")) {
-            int result = confirmation("Exit the application ?\nAll unsaved changes will be discarded.", "Exit");
-            if(result == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-        } else {
-            System.exit(0);
         }
     }
     

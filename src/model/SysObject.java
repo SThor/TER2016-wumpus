@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
 import model.exceptions.NoSuchPropertyException;
 
@@ -180,6 +179,15 @@ public class SysObject {
      */
     public void addProperty(String property) {
         properties.add(new ObjectProperty(property));
+    }
+    
+    /**
+     * Adds a new property to this object
+     *
+     * @param property Property to add
+     */
+    public void addProperty(ObjectProperty property) {
+        properties.add(property);
     }
 
     /**

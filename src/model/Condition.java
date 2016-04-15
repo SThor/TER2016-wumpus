@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Objects;
 import model.exceptions.NoSuchPropertyException;
 
 /**
@@ -8,7 +7,7 @@ import model.exceptions.NoSuchPropertyException;
  * The condition is verified if the <tt>SysObject</tt>'s current property is the <tt>State</tt>.
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Condition {
+public class Condition implements Observation{
     /**
      * The concerned object.
      */
@@ -49,6 +48,7 @@ public class Condition {
      * @return <tt>true</tt> if the object's property currently has the wanted value,
      *         <tt>false</tt> otherwise.
      */
+    @Override
     public boolean isVerified() {
         return object.getCurrentValueOf(propertyName).equals(wantedValue);
     }

@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 
@@ -23,17 +21,11 @@ public class World {
     private final List<Action> possibleActions;
 
     /**
-     * List of objectObservations.
-     */
-    private final List<ObjectObservation> objectObservations;
-
-    /**
      * Constructs a new empty world.
      */
     public World() {
         worldObjects = new UniqueList<>();
         possibleActions = new UniqueList<>();
-        objectObservations = new ArrayList<>();
     }
 
     /**
@@ -44,16 +36,6 @@ public class World {
      */
     public Action getActionAt(int index) {
         return possibleActions.get(index);
-    }
-
-    /**
-     * Getter on an objectObservation
-     *
-     * @param index index of the desired ObjectObservation
-     * @return desired observation
-     */
-    public ObjectObservation getObservationAt(int index) {
-        return objectObservations.get(index);
     }
 
     /**
@@ -74,9 +56,6 @@ public class World {
      */
     public void addObject(SysObject object) {
         worldObjects.add(object);
-        for (ObjectObservation o : objectObservations) {
-            o.mapNewObject(object);
-        }
     }
 
     /**
@@ -90,16 +69,6 @@ public class World {
     }
 
     /**
-     * Add an observation to the world
-     *
-     * @param index The index to add the observation to.
-     * @param obs The observation.
-     */
-    public void addObservation(int index, ObjectObservation obs) {
-        objectObservations.add(index, obs);
-    }
-
-    /**
      * Remove an object from the world and all associated actions and
      * objectObservations.
      *
@@ -108,9 +77,6 @@ public class World {
     public void removeObject(int index) {
         SysObject removed = worldObjects.remove(index);
         propagateSignalToActions(removed, null, null);
-        for (ObjectObservation o : objectObservations) {
-            o.removeObject(removed);
-        }
     }
 
     /**
@@ -120,15 +86,6 @@ public class World {
      */
     public void removePossibleAction(int index) {
         possibleActions.remove(index);
-    }
-
-    /**
-     * Remove an observation
-     *
-     * @param index The index of the observation to remove
-     */
-    public void removeObservation(int index) {
-        objectObservations.remove(index);
     }
 
     /**
@@ -157,21 +114,6 @@ public class World {
      */
     protected void signalPropertyRemoved(SysObject object, String property) {
         propagateSignalToActions(object, property, null);
-        for (ObjectObservation o : objectObservations) {
-            o.removeProperty(object, property);
-        }
-    }
-
-    /**
-     * Triggered when a property has been added to an object
-     *
-     * @param object The object concerned by the modification
-     * @param property The added property
-     */
-    protected void signalPropertyAdded(SysObject object, String property) {
-        for (ObjectObservation o : objectObservations) {
-            o.mapNewProperty(object, property);
-        }
     }
 
     /**
@@ -186,39 +128,7 @@ public class World {
         }
     }
 
-    /**
-     * Access to the objectObservations
-     *
-     * @return The list of objectObservations
-     */
-    public List<ObjectObservation> getObservations() {
-        return objectObservations;
-    }
-
-    /**
-     * Move an observation up in the list.
-     *
-     * @param index The index of the observation to move.
-     */
-    public void moveObservationUp(int index) {
-        Collections.swap(objectObservations, index, index - 1);
-    }
-
-    /**
-     * Move an observation down in the list.
-     *
-     * @param index The index of the observation to move.
-     */
-    public void moveObservationDown(int index) {
-        Collections.swap(objectObservations, index, index + 1);
-    }
-
     void signalPossibleValueRemoved(SysObject object, String property, String removedValue) {
         propagateSignalToActions(object, property, removedValue);
-        for (ObjectObservation o : objectObservations) {
-            if (removedValue.equals(o.getObservedState(object, property))) {
-                o.setObservedValue(object, property, null);
-            }
-        }
     }
 }

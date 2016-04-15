@@ -40,7 +40,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private final World world;
     
     private File lastSaveFile;
-    private JFileChooser xmlChooser;
+    private final JFileChooser xmlChooser;
     
     /**
      * Creates new form GeneralUI
@@ -135,8 +135,13 @@ public class GeneralUI extends javax.swing.JFrame {
         miExit = new javax.swing.JMenuItem();
         menuWorld = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(frameTitle);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         splitTabObjects.setDividerLocation(270);
 
@@ -504,7 +509,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
         String message = "Delete value \""+ _propValue +"\" from property \""+ _property +"\" in object \""+ _object +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION){
+        if(confirmation(message, "Confirm deletion") == JOptionPane.YES_OPTION){
             ((WorldListModel)listProperties.getModel()).removeElement(_propValue);
             warnSave();
         }
@@ -512,7 +517,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
         String message = "Delete action \""+ _action +"\" from world ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION){
+        if(confirmation(message, "Confirm deletion") == JOptionPane.YES_OPTION){
             ((WorldListModel)listActions.getModel()).removeElement(_action);
             warnSave();
         }
@@ -520,7 +525,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
         String message = "Delete selected pre-condition from action \""+ _action +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION){
+        if(confirmation(message, "Confirm deletion") == JOptionPane.YES_OPTION){
             ((ConditionTableModel)tablePreCond.getModel()).removeRow(_preCond);
             warnSave();
         }
@@ -528,7 +533,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
         String message = "Delete selected post-condition from action \""+ _action +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION){
+        if(confirmation(message, "Confirm deletion") == JOptionPane.YES_OPTION){
             ((ConditionTableModel)tablePostCond.getModel()).removeRow(_postCond);
             warnSave();
         }
@@ -536,7 +541,7 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private void removeProperty() {
         String message = "Delete property \""+ _property +"\" from object \""+ _object +"\" ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION) {
+        if(confirmation(message, "Confirm deletion") == JOptionPane.YES_OPTION) {
             ((SysObjectTreeModel)treeObjects.getModel()).removeProperty(_object, _property);
             warnSave();
         }
@@ -544,7 +549,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void removeObject() {
         String message = "Delete object \""+ _object +"\" from world ?";
-        if(confirmation(message) == JOptionPane.YES_OPTION){
+        if(confirmation(message, "Confirm deletion") == JOptionPane.YES_OPTION){
             ((SysObjectTreeModel)treeObjects.getModel()).removeObject(_object);
             warnSave();
         }
@@ -615,11 +620,9 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddPostActionPerformed
 
     private void miOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenActionPerformed
-        int result = JOptionPane.showConfirmDialog(this, 
-                "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?", 
-                "Open world", 
-                JOptionPane.YES_NO_OPTION, 
-                JOptionPane.WARNING_MESSAGE);
+        int result = confirmation(
+                "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
+                "Open world");
         
         if(result == JOptionPane.YES_OPTION) {
             if(lastSaveFile != null) {
@@ -627,8 +630,11 @@ public class GeneralUI extends javax.swing.JFrame {
             }
             
             if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                // TODO use import XML parser
-                newFileLoaded();
+                File file = xmlChooser.getSelectedFile();
+                if(isXmlFile(file)) {
+                    // TODO use import XML parser
+                    newFileLoaded();
+                }
             }
         }
     }//GEN-LAST:event_miOpenActionPerformed
@@ -643,7 +649,7 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_miSaveActionPerformed
 
     private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
-        // TODO add your handling code here:
+        confirmBeforeClose();
     }//GEN-LAST:event_miExitActionPerformed
 
     private void miSaveAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsActionPerformed
@@ -652,10 +658,25 @@ public class GeneralUI extends javax.swing.JFrame {
         }
         
         if(xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-             // TODO use export XML parser
-             newFileLoaded();
+            File file = xmlChooser.getSelectedFile();
+            int result = JOptionPane.YES_OPTION;
+            
+            if(lastSaveFile.equals(file)) {
+                result = confirmation("This file already exists.\n Override ?", "File already exists");
+            }
+            
+            if(result == JOptionPane.YES_OPTION) {
+                if(isXmlFile(file)) {
+                    // TODO use export XML parser
+                    newFileLoaded();
+                }
+            }
         }
     }//GEN-LAST:event_miSaveAsActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        confirmBeforeClose();
+    }//GEN-LAST:event_formWindowClosing
 
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
         try {
@@ -675,9 +696,10 @@ public class GeneralUI extends javax.swing.JFrame {
         btnRemPost.setEnabled(_postCond != null);
     }
     
-    private int confirmation(String message) {
-        return JOptionPane.showConfirmDialog(this, message, 
-                "Deletion confirmation", 
+    private int confirmation(String message, String title) {
+        return JOptionPane.showConfirmDialog(this, 
+                message, 
+                title, 
                 JOptionPane.YES_NO_OPTION, 
                 JOptionPane.WARNING_MESSAGE);
     }
@@ -705,6 +727,15 @@ public class GeneralUI extends javax.swing.JFrame {
         setTitle(frameTitle+lastSaveFile.getName());
     }
     
+    private boolean isXmlFile(File f) {
+        if(f.getName().endsWith(".xml")) {
+            return true;
+        } else {
+            promptError("Please select an XML file", "Wrong file type");
+            return false;
+        }
+    }
+    
     private void unwarnSave() {
         if(getTitle().startsWith("*"))
             setTitle(getTitle().substring(1));
@@ -713,6 +744,17 @@ public class GeneralUI extends javax.swing.JFrame {
     protected void warnSave() {
         if(!getTitle().startsWith("*"))
             setTitle("*"+getTitle());
+    }
+    
+    private void confirmBeforeClose() {
+        if(getTitle().startsWith("*")) {
+            int result = confirmation("Exit the application ?\nAll unsaved changes will be discarded.", "Exit");
+            if(result == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        } else {
+            System.exit(0);
+        }
     }
     
     // <editor-fold defaultstate="collapsed" desc="Variable declarations">  

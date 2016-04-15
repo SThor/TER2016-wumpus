@@ -162,4 +162,8 @@ public class Action {
         
         return ((Action)obj).name.equals(name);
     }
+
+    public String getName() {
+        return name;
+    }
 }

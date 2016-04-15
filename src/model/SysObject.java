@@ -316,4 +316,8 @@ public class SysObject {
     public List<ObjectProperty> getProperties() {
         return properties;
     }
+
+    public String getName() {
+        return name;
+    }
 }

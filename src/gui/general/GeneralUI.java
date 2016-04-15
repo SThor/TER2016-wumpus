@@ -823,6 +823,8 @@ public class GeneralUI extends javax.swing.JFrame {
             promptError("Problem with the xml syntax in the file "+file, "Opening error");
             return false;
         }
+        
+        //TODO j'ai fait ce que je comprennais mais ça ne fonctionne pas encore, ici.
     }
     
     public void setTitle() {

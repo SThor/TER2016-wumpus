@@ -79,6 +79,7 @@ public class ExportJDOM {
 
     private Element exportProperty(ObjectProperty property) {
         Element xmlProperty = new Element("property");
+        xmlProperty.setAttribute("name", property.getName());
 
         Element xmlValues = new Element("values");
         for (String value : property.getPossibleValues()) {

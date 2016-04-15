@@ -22,10 +22,9 @@ public class ImportJDOM {
 
     private Document xmlFile;
     private Element root;
-    private Path file;
     private World world;
 
-    public World importAll() throws IOException, JDOMException {
+    public World importAll(Path file) throws IOException, JDOMException {
         world = new World();
         SAXBuilder sxb = new SAXBuilder();
         xmlFile = sxb.build(file.toFile());

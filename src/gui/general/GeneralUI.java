@@ -7,10 +7,14 @@ import importexport.ExportJDOM;
 import importexport.ImportJDOM;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -81,6 +85,8 @@ public class GeneralUI extends javax.swing.JFrame {
             }
         });
         
+        epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
+        
         super.setLocationRelativeTo(null);
         setTitle();
     }
@@ -95,7 +101,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void initComponents() {
 
         tabbedPane = new javax.swing.JTabbedPane();
-        splitTabObjects = new javax.swing.JSplitPane();
+        splitObjectsTab = new javax.swing.JSplitPane();
         panelStates = new javax.swing.JPanel();
         scrollListProp = new javax.swing.JScrollPane();
         listProperties = new javax.swing.JList<>();
@@ -130,7 +136,11 @@ public class GeneralUI extends javax.swing.JFrame {
         panelBtnActions = new javax.swing.JPanel();
         btnAddAction = new javax.swing.JButton();
         btnRemAction = new javax.swing.JButton();
-        panelScenario = new javax.swing.JPanel();
+        splitScenarioTab = new javax.swing.JSplitPane();
+        scrollFormulaArea = new javax.swing.JScrollPane();
+        taFormula = new javax.swing.JTextArea();
+        scrollEditorPane = new javax.swing.JScrollPane();
+        epXmlScenario = new javax.swing.JEditorPane();
         menuBar = new javax.swing.JMenuBar();
         menuWorld = new javax.swing.JMenu();
         miOpenWorld = new javax.swing.JMenuItem();
@@ -148,7 +158,7 @@ public class GeneralUI extends javax.swing.JFrame {
             }
         });
 
-        splitTabObjects.setDividerLocation(270);
+        splitObjectsTab.setDividerLocation(270);
 
         panelStates.setLayout(new java.awt.BorderLayout());
 
@@ -183,7 +193,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelStates.add(panelBtnStates, java.awt.BorderLayout.PAGE_END);
 
-        splitTabObjects.setRightComponent(panelStates);
+        splitObjectsTab.setRightComponent(panelStates);
 
         panelObjects.setLayout(new java.awt.BorderLayout());
 
@@ -229,9 +239,9 @@ public class GeneralUI extends javax.swing.JFrame {
         panelObjects.add(panelBtnObjects, java.awt.BorderLayout.PAGE_END);
         panelObjects.add(jSeparator1, java.awt.BorderLayout.PAGE_START);
 
-        splitTabObjects.setLeftComponent(panelObjects);
+        splitObjectsTab.setLeftComponent(panelObjects);
 
-        tabbedPane.addTab("Objects", splitTabObjects);
+        tabbedPane.addTab("Objects", splitObjectsTab);
 
         splitActionTab.setDividerLocation(150);
 
@@ -341,8 +351,22 @@ public class GeneralUI extends javax.swing.JFrame {
 
         tabbedPane.addTab("Actions", splitActionTab);
 
-        panelScenario.setLayout(new java.awt.BorderLayout());
-        tabbedPane.addTab("Scenario", panelScenario);
+        splitScenarioTab.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        taFormula.setEditable(false);
+        taFormula.setColumns(20);
+        taFormula.setRows(5);
+        taFormula.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Formula", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        taFormula.setOpaque(false);
+        scrollFormulaArea.setViewportView(taFormula);
+
+        splitScenarioTab.setTopComponent(scrollFormulaArea);
+
+        scrollEditorPane.setViewportView(epXmlScenario);
+
+        splitScenarioTab.setRightComponent(scrollEditorPane);
+
+        tabbedPane.addTab("Scenario", splitScenarioTab);
 
         menuWorld.setMnemonic('F');
         menuWorld.setText("World");
@@ -694,7 +718,7 @@ public class GeneralUI extends javax.swing.JFrame {
             if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = xmlChooser.getSelectedFile();
                 if(isXmlFile(file)) {
-                    importScenarioFromXml(file);
+                    openScenarioXml(file);
                 } else {
                     promptError("Selected file was not an XML file.", "Cannot open file");
                 }
@@ -706,7 +730,7 @@ public class GeneralUI extends javax.swing.JFrame {
         if(scenarioFile == null) {
             miSaveScenarioAsActionPerformed(null);
         } else {
-            exportScenarioToXml(worldFile);
+            saveScenarioXml(scenarioFile);
         }
     }//GEN-LAST:event_miSaveScenarioActionPerformed
 
@@ -732,7 +756,7 @@ public class GeneralUI extends javax.swing.JFrame {
             }
 
             if(result == JOptionPane.YES_OPTION) {
-                exportScenarioToXml(file);
+                saveScenarioXml(file);
             }
         }
     }//GEN-LAST:event_miSaveScenarioAsActionPerformed
@@ -753,6 +777,25 @@ public class GeneralUI extends javax.swing.JFrame {
             _postCond = null;
         }
         btnRemPost.setEnabled(_postCond != null);
+    }
+    
+    private void epXmlDocumentTextChanged(DocumentEvent e) {
+        (new Thread() {
+            @Override
+            public void run() {
+                /*
+                TODO:
+                if (document is valid) {
+                    change attribute List<Scenario>
+                    change text area formula
+                } else {
+                    Display error in text area
+                }
+                */
+            }
+        }).start();
+        
+        warnScenarioSave();
     }
     
     private int confirmation(String message, String title) {
@@ -802,7 +845,7 @@ public class GeneralUI extends javax.swing.JFrame {
         }
     }
     
-    protected void warnScenarioSave() {
+    private void warnScenarioSave() {
         if(scenarioSaved) {
             scenarioSaved = false;
             setTitle();
@@ -830,7 +873,7 @@ public class GeneralUI extends javax.swing.JFrame {
             worldFile = file;
             unwarnWorldSave();
         } catch (IOException ex) {
-            promptError("Failed to write into file "+file, "Saving error");
+            promptError("Failed to write into file "+file.getName(), "Saving error");
         }
     }
     
@@ -846,34 +889,34 @@ public class GeneralUI extends javax.swing.JFrame {
             tablePostCond.setModel(new DefaultTableModel());
             tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
-            promptError("Failed to read file "+file, "Opening error");
+            promptError("Failed to read file "+file.getName(), "Opening error");
         } catch (JDOMException ex) {
             promptError("Problem with the xml syntax in the file "+file.getName(), "Opening error");
         }
     }
     
-    private void exportScenarioToXml(File file) {
-        //try {
-            // TODO new ExportJDOM(scenario, Paths.get(file.getAbsolutePath())).exportAll();
+    private void saveScenarioXml(File file)  {
+        try {
+            Files.write(Paths.get(file.getAbsolutePath()), 
+                    epXmlScenario.getText().getBytes(), 
+                    StandardOpenOption.WRITE);
             scenarioFile = file;
             unwarnScenarioSave();
-        /*} catch (IOException ex) {
-            promptError("Failed to write into file "+file, "Saving error");
-        }*/
+        } catch (IOException ex) {
+            promptError("Error while writing in file "+file.getName(), "Saving error");
+        }
     }
     
-    private void importScenarioFromXml(File file) {
-        //try {
-            // TODO scenario = 
+    private void openScenarioXml(File file) {
+        try {
+            epXmlScenario.setPage(file.toURI().toURL());
+            epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
             scenarioFile = file;
             unwarnScenarioSave();
-            // TODO model updates
             tabbedPane.setSelectedIndex(2);
-        /*} catch (IOException ex) {
+        } catch (IOException ex) {
             promptError("Failed to read file "+file.getName(), "Opening error");
-        } catch (JDOMException ex) {
-            promptError("Problem with the xml syntax in the file "+file.getName(), "Opening error");
-        }*/
+        }
     }
     
     public void setTitle() {
@@ -902,6 +945,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JButton btnRemPost;
     private javax.swing.JButton btnRemPre;
     private javax.swing.JButton btnRemProperty;
+    private javax.swing.JEditorPane epXmlScenario;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JList<Action> listActions;
     private javax.swing.JList<String> listProperties;
@@ -924,19 +968,40 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JPanel panelObjects;
     private javax.swing.JPanel panelPost;
     private javax.swing.JPanel panelPre;
-    private javax.swing.JPanel panelScenario;
     private javax.swing.JPanel panelStates;
+    private javax.swing.JScrollPane scrollEditorPane;
+    private javax.swing.JScrollPane scrollFormulaArea;
     private javax.swing.JScrollPane scrollListActions;
     private javax.swing.JScrollPane scrollListProp;
     private javax.swing.JScrollPane scrollPaneObjects;
     private javax.swing.JScrollPane scrollTablePost;
     private javax.swing.JScrollPane scrollTablePre;
     private javax.swing.JSplitPane splitActionTab;
-    private javax.swing.JSplitPane splitTabObjects;
+    private javax.swing.JSplitPane splitObjectsTab;
+    private javax.swing.JSplitPane splitScenarioTab;
+    private javax.swing.JTextArea taFormula;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tablePostCond;
     private javax.swing.JTable tablePreCond;
     private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
+
     // </editor-fold> 
+    
+    private class XmlEditorListener implements DocumentListener {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            epXmlDocumentTextChanged(e);
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            epXmlDocumentTextChanged(e);
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            // Do nothing
+        }
+    }
 }

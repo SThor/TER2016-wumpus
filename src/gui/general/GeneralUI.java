@@ -8,8 +8,6 @@ import importexport.ImportJDOM;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -41,14 +39,12 @@ public class GeneralUI extends javax.swing.JFrame {
     private Condition _postCond;
                             
     private World world;
-    private final Scenario scenario;
+    private Scenario scenario;
     
     private File worldFile;
     private File scenarioFile;
     private boolean worldSaved;
     private boolean scenarioSaved;
-    private String worldFileName;
-    private String scenarioFileName;
     
     private final JFileChooser xmlChooser;
     
@@ -64,10 +60,8 @@ public class GeneralUI extends javax.swing.JFrame {
         xmlChooser = new JFileChooser();
         xmlChooser.setFileFilter(new FileNameExtensionFilter("XML files", "xml"));
         
-        worldSaved = true;
-        scenarioSaved = true;
-        worldFileName = "";
-        scenarioFileName = "";
+        worldSaved = false;
+        scenarioSaved = false;
         
         initComponents();
         
@@ -136,7 +130,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelBtnActions = new javax.swing.JPanel();
         btnAddAction = new javax.swing.JButton();
         btnRemAction = new javax.swing.JButton();
-        panelObservations = new javax.swing.JPanel();
+        panelScenario = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         menuWorld = new javax.swing.JMenu();
         miOpenWorld = new javax.swing.JMenuItem();
@@ -347,8 +341,8 @@ public class GeneralUI extends javax.swing.JFrame {
 
         tabbedPane.addTab("Actions", splitActionTab);
 
-        panelObservations.setLayout(new java.awt.BorderLayout());
-        tabbedPane.addTab("Observations", panelObservations);
+        panelScenario.setLayout(new java.awt.BorderLayout());
+        tabbedPane.addTab("Scenario", panelScenario);
 
         menuWorld.setMnemonic('F');
         menuWorld.setText("World");
@@ -636,9 +630,9 @@ public class GeneralUI extends javax.swing.JFrame {
             if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = xmlChooser.getSelectedFile();
                 if(isXmlFile(file)) {
-                    if(importWorldFromXml(file)) {
-                        newWorldFileLoaded(file);
-                    }
+                    importWorldFromXml(file);
+                } else {
+                    promptError("Selected file was not an XML file.", "Cannot open file");
                 }
             }
         }
@@ -649,7 +643,6 @@ public class GeneralUI extends javax.swing.JFrame {
             miSaveWorldAsActionPerformed(null);
         } else {
            exportWorldToXml(worldFile);
-           unwarnWorldSave();
         }
     }//GEN-LAST:event_miSaveWorldActionPerformed
 
@@ -661,17 +654,21 @@ public class GeneralUI extends javax.swing.JFrame {
         if(xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = xmlChooser.getSelectedFile();
             int result = JOptionPane.YES_OPTION;
-            
             if(file.exists()) {
-                result = confirmation("This file already exists.\n Override ?", "File already exists");
-            }
-            
-            if(result == JOptionPane.YES_OPTION) {
                 if(isXmlFile(file)) {
-                    if(exportWorldToXml(file)) {
-                        newWorldFileLoaded(file);
-                    }
+                    result = confirmation(file.getName()+" already exists.\n Override ?", "File already exists");
+                } else {
+                    promptError(file.getName()+" is not an XML file", "Failed to save file");
+                    return;
                 }
+            } else {
+                if(!isXmlFile(file)) {
+                    file = new File(file.getAbsolutePath()+".xml");
+                }
+            }
+
+            if(result == JOptionPane.YES_OPTION) {
+                exportWorldToXml(file);
             }
         }
     }//GEN-LAST:event_miSaveWorldAsActionPerformed
@@ -681,15 +678,63 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void miOpenScenarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenScenarioActionPerformed
-        // TODO add your handling code here:
+        int result = JOptionPane.YES_OPTION;
+        
+        if(!scenarioSaved) {
+            result = confirmation(
+                "Current scenario will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
+                "Open scenario");
+        }
+        
+        if(result == JOptionPane.YES_OPTION) {
+            if(scenarioFile != null) {
+                xmlChooser.setCurrentDirectory(scenarioFile.getParentFile());
+            }
+            
+            if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = xmlChooser.getSelectedFile();
+                if(isXmlFile(file)) {
+                    importScenarioFromXml(file);
+                } else {
+                    promptError("Selected file was not an XML file.", "Cannot open file");
+                }
+            }
+        }
     }//GEN-LAST:event_miOpenScenarioActionPerformed
 
     private void miSaveScenarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveScenarioActionPerformed
-        // TODO add your handling code here:
+        if(scenarioFile == null) {
+            miSaveScenarioAsActionPerformed(null);
+        } else {
+            exportScenarioToXml(worldFile);
+        }
     }//GEN-LAST:event_miSaveScenarioActionPerformed
 
     private void miSaveScenarioAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveScenarioAsActionPerformed
-        // TODO add your handling code here:
+        if(scenarioFile != null) {
+                xmlChooser.setCurrentDirectory(scenarioFile.getParentFile());
+        }
+        
+        if(xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = xmlChooser.getSelectedFile();
+            int result = JOptionPane.YES_OPTION;
+            if(file.exists()) {
+                if(isXmlFile(file)) {
+                    result = confirmation(file.getName()+" already exists.\n Override ?", "File already exists");
+                } else {
+                    promptError(file.getName()+" is not an XML file", "Failed to save file");
+                    return;
+                }
+            } else {
+                if(!isXmlFile(file)) {
+                    file = new File(file.getAbsolutePath()+".xml");
+                }
+            }
+
+            if(result == JOptionPane.YES_OPTION) {
+                exportScenarioToXml(file);
+            }
+        }
     }//GEN-LAST:event_miSaveScenarioAsActionPerformed
 
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
@@ -736,54 +781,36 @@ public class GeneralUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
-    private void newWorldFileLoaded(File file) {
-        worldFile = file;
-        worldFileName = worldFile.getName();
-        setTitle();
-        //worldSaved = false;
-        //unwarnWorldSave();
-    }
-    
     private void unwarnWorldSave() {
         if(!worldSaved) {
-            worldFileName = worldFileName.substring(1);
-            setTitle();
             worldSaved = true;
+            setTitle();
         }
     }
     
     protected void warnWorldSave() {
         if(worldSaved) {
-            worldFileName += " (unsaved)";
-            setTitle();
             worldSaved = false;
+            setTitle();
         }
-    }
-    
-    private void newScenariodFileLoaded(File file) {
-        scenarioFile = file;
-        scenarioSaved = false;
-        unwarnScenarioSave();
     }
     
     private void unwarnScenarioSave() {
         if(!scenarioSaved) {
-            scenarioFileName = scenarioFileName.substring(1);
-            setTitle();
             scenarioSaved = true;
+            setTitle();
         }
     }
     
     protected void warnScenarioSave() {
         if(scenarioSaved) {
-            scenarioFileName += " (unsaved)";
-            setTitle();
             scenarioSaved = false;
+            setTitle();
         }
     }
     
     private void confirmBeforeClose() {
-        if(worldSaved) {
+        if(worldSaved && scenarioSaved) {
             System.exit(0);
         } else {
             int result = confirmation("Exit the application ?\nAll unsaved changes will be discarded.", "Exit");
@@ -794,40 +821,71 @@ public class GeneralUI extends javax.swing.JFrame {
     }
     
     private boolean isXmlFile(File file) {
-        if(file.getName().endsWith(".xml")) {
-            return true;
-        } else {
-            promptError("Please select an XML file", "Wrong file type");
-            return false;
-        }
+        return file.getName().endsWith(".xml");
     }
     
-    private boolean exportWorldToXml(File file) {
+    private void exportWorldToXml(File file) {
         try {
             new ExportJDOM(world, Paths.get(file.getAbsolutePath())).exportAll();
-            return true;
+            worldFile = file;
+            unwarnWorldSave();
         } catch (IOException ex) {
             promptError("Failed to write into file "+file, "Saving error");
-            return false;
         }
     }
     
-    private boolean importWorldFromXml(File file) {
+    private void importWorldFromXml(File file) {
         try {
             world = new ImportJDOM().importAll(Paths.get(file.getAbsolutePath()));
-            return true;
+            worldFile = file;
+            unwarnWorldSave();
+            treeObjects.setModel(new SysObjectTreeModel(world.getObjects()));
+            listProperties.setModel(new DefaultListModel<String>());
+            listActions.setModel(new WorldListModel<>(world.getPossibleActions()));
+            tablePreCond.setModel(new DefaultTableModel());
+            tablePostCond.setModel(new DefaultTableModel());
+            tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
             promptError("Failed to read file "+file, "Opening error");
-            return false;
         } catch (JDOMException ex) {
-            promptError("Problem with the xml syntax in the file "+file, "Opening error");
-            return false;
+            promptError("Problem with the xml syntax in the file "+file.getName(), "Opening error");
         }
-        
-        //TODO j'ai fait ce que je comprennais mais ça ne fonctionne pas encore, ici.
+    }
+    
+    private void exportScenarioToXml(File file) {
+        //try {
+            // TODO new ExportJDOM(scenario, Paths.get(file.getAbsolutePath())).exportAll();
+            scenarioFile = file;
+            unwarnScenarioSave();
+        /*} catch (IOException ex) {
+            promptError("Failed to write into file "+file, "Saving error");
+        }*/
+    }
+    
+    private void importScenarioFromXml(File file) {
+        //try {
+            // TODO scenario = 
+            scenarioFile = file;
+            unwarnScenarioSave();
+            // TODO model updates
+            tabbedPane.setSelectedIndex(2);
+        /*} catch (IOException ex) {
+            promptError("Failed to read file "+file.getName(), "Opening error");
+        } catch (JDOMException ex) {
+            promptError("Problem with the xml syntax in the file "+file.getName(), "Opening error");
+        }*/
     }
     
     public void setTitle() {
+        String worldFileName = worldFile == null ? "" : worldFile.getName();
+        String scenarioFileName = scenarioFile == null ? "" : scenarioFile.getName();
+        if(!worldSaved){
+            worldFileName += " (unsaved)";
+        }
+        if(!scenarioSaved) {
+            scenarioFileName += " (unsaved)";
+        }
+        
         super.setTitle("Causality solver - World: "+worldFileName+" - Scenario: "+scenarioFileName);
     }
     
@@ -864,9 +922,9 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JPanel panelBtnStates;
     private javax.swing.JPanel panelLaws;
     private javax.swing.JPanel panelObjects;
-    private javax.swing.JPanel panelObservations;
     private javax.swing.JPanel panelPost;
     private javax.swing.JPanel panelPre;
+    private javax.swing.JPanel panelScenario;
     private javax.swing.JPanel panelStates;
     private javax.swing.JScrollPane scrollListActions;
     private javax.swing.JScrollPane scrollListProp;

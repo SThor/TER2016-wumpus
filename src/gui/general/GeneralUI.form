@@ -598,11 +598,11 @@
             </Container>
           </SubComponents>
         </Container>
-        <Container class="javax.swing.JPanel" name="panelObservations">
+        <Container class="javax.swing.JPanel" name="panelScenario">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Observations">
-                <Property name="tabTitle" type="java.lang.String" value="Observations"/>
+              <JTabbedPaneConstraints tabName="Scenario">
+                <Property name="tabTitle" type="java.lang.String" value="Scenario"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

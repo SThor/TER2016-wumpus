@@ -4,9 +4,12 @@ import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
 import importexport.ExportJDOM;
+import importexport.ImportJDOM;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -23,6 +26,7 @@ import model.Scenario;
 import model.SysObject;
 import model.World;
 import model.exceptions.DuplicateElementException;
+import org.jdom2.JDOMException;
 
 /**
  *
@@ -36,7 +40,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private Condition _preCond;
     private Condition _postCond;
                             
-    private final World world;
+    private World world;
     private final Scenario scenario;
     
     private File worldFile;
@@ -800,7 +804,7 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private boolean exportWorldToXml(File file) {
         try {
-            new ExportJDOM(world, Paths.get(file.getAbsolutePath())).export();
+            new ExportJDOM(world, Paths.get(file.getAbsolutePath())).exportAll();
             return true;
         } catch (IOException ex) {
             promptError("Failed to write into file "+file, "Saving error");
@@ -809,8 +813,18 @@ public class GeneralUI extends javax.swing.JFrame {
     }
     
     private boolean importWorldFromXml(File file) {
-        // TODO
-        return true;
+        try {
+            world = new ImportJDOM().importAll(Paths.get(file.getAbsolutePath()));
+            return true;
+        } catch (IOException ex) {
+            promptError("Failed to read file "+file, "Opening error");
+            return false;
+        } catch (JDOMException ex) {
+            promptError("Problem with the xml syntax in the file "+file, "Opening error");
+            return false;
+        }
+        
+        //TODO j'ai fait ce que je comprennais mais ça ne fonctionne pas encore, ici.
     }
     
     public void setTitle() {

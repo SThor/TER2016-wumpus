@@ -3,18 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package model.observations;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public abstract class Operation implements Observation {
-    protected Observation op1;
-    protected Observation op2;
-    
-    public Operation(Observation op1, Observation op2) {
-        this.op1 = op1;
-        this.op2 = op2;
+public class Or extends Operation{
+
+    public Or(Observation op1, Observation op2) {
+        super(op1, op2);
     }
+    
+    @Override
+    public boolean isVerified() {
+        return op1.isVerified() || op2.isVerified();
+    }
+    
 }

@@ -9,7 +9,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.Condition;
-import model.Scenario;
+import model.observations.Scenario;
 import model.SysObject;
 import model.World;
 

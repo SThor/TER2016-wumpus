@@ -11,7 +11,7 @@ package model;
  */
 public class And extends Operation{
 
-    public And(Operation op1, Operation op2) {
+    public And(Observation op1, Observation op2) {
         super(op1, op2);
     }
     

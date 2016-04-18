@@ -5,22 +5,22 @@
  */
 package gui.general.componentModels;
 
-import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import model.ObjectProperty;
 import model.SysObject;
+import model.World;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class SysObjectTreeModel extends DefaultTreeModel {
-    private final List<SysObject> objects;
+    private final World world;
     
-    public SysObjectTreeModel(List<SysObject> objects) {
+    public SysObjectTreeModel(World world) {
         super(new DefaultMutableTreeNode());
-        this.objects = objects;
+        this.world = world;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     @Override
     public int getChildCount(Object parent) {
         if(parent == getRoot())
-            return objects.size();
+            return world.getObjectCount();
         
         if(parent instanceof SysObject)
             return ((SysObject)parent).getPropertyCount();
@@ -42,20 +42,19 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     @Override
     public Object getChild(Object parent, int index) {
        return parent == getRoot() ? 
-               objects.get(index) : 
+               world.getObjectAt(index) : 
                ((SysObject)parent).getPropertyAt(index);
     }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
         return parent == getRoot() ? 
-                objects.indexOf(child) : 
+                world.getIndexOfObject(child) : 
                 ((SysObject)parent).getIndexOfProperty(child);
     }
     
     public void removeObject(SysObject toRemove) {
-        int index = objects.indexOf(toRemove);
-        objects.remove(index);
+        int index = world.removeObject(toRemove);
         fireTreeNodesRemoved(this, new Object[]{getRoot()}, new int[]{index}, new Object[]{toRemove});
     }
     
@@ -65,8 +64,8 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     }
     
     public void addObject(SysObject toAdd) {
-        objects.add(toAdd);
-        fireTreeNodesInserted(this, new Object[]{getRoot()}, new int[]{objects.size()-1}, new Object[]{toAdd});
+        int index = world.addObject(toAdd);
+        fireTreeNodesInserted(this, new Object[]{getRoot()}, new int[]{index}, new Object[]{toAdd});
     }
 
     public void addProperty(SysObject parent, ObjectProperty toAdd) {

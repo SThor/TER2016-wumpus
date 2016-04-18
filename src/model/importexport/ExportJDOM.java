@@ -49,8 +49,8 @@ public class ExportJDOM {
     private Element exportObjects() {
         Element objects = new Element("objects");
 
-        for (SysObject object : world.getObjects()) {
-            objects.addContent(exportObject(object));
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            objects.addContent(exportObject(world.getObjectAt(i)));
         }
 
         return objects;

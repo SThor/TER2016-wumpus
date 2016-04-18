@@ -6,15 +6,17 @@ package model.observations;
  */
 public class Or extends Operation{
 
-    public Or(Observation op1, Observation op2) {
-        super(op1, op2);
+    public Or(Observation ... observations) {
+        super(observations);
     }
     
     @Override
     public boolean isVerified() {
-        Observation op1 = observations.get(0);
-        Observation op2 = observations.get(0);
-        return op1.isVerified() || op2.isVerified();
+        boolean res = false;
+        for (Observation observation : observations) {
+            res = res || observation.isVerified();
+        }
+        return res;
     }
     
 }

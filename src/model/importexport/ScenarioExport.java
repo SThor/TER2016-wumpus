@@ -8,7 +8,10 @@ import model.Condition;
 import model.observations.Observation;
 import model.World;
 import model.exceptions.UnknownObservationException;
+import model.exceptions.UnknownOperationException;
+import model.observations.And;
 import model.observations.Operation;
+import model.observations.Or;
 import model.observations.Scenario;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -22,7 +25,6 @@ import org.jdom2.output.XMLOutputter;
  */
 public class ScenarioExport {
 
-    private final World world;
     private final Element root = new Element("scenario");
     private final Document xmlFile = new Document(root);
     private final Path file;
@@ -36,10 +38,8 @@ public class ScenarioExport {
      * @param scenario Scenario to export
      */
     public ScenarioExport(World world, Path file, Scenario scenario) {
-        this.world = world;
         this.file = file;
         this.scenario = scenario;
-
     }
 
     /**
@@ -49,7 +49,6 @@ public class ScenarioExport {
      * opening
      */
     public void exportAll() throws IOException {
-        root.setAttribute("world", "" + world.hashCode());
         for (Observation observation : scenario) {
             root.addContent(exportObservation(observation));
         }
@@ -61,8 +60,14 @@ public class ScenarioExport {
         out.output(xmlFile, new FileOutputStream(file.toFile()));
     }
 
-    public Element exportObservation(int index) {
-        return exportObservation(scenario.get(index));
+    /**
+     * Exports a single observation
+     *
+     * @param instant Instant of the desired observation
+     * @return
+     */
+    public Element exportObservation(int instant) {
+        return exportObservation(scenario.get(instant));
     }
 
     private Element exportObservation(Observation observation) {
@@ -76,6 +81,33 @@ public class ScenarioExport {
             throw new UnknownObservationException();
         }
     }
-    
-    
+
+    private Element exportOperation(Operation operation) {
+        if (operation instanceof And) {
+            Element xmlAnd = new Element("and");
+            xmlAnd.addContent(exportObservation(operation.getOp1()));
+            xmlAnd.addContent(exportObservation(operation.getOp2()));
+            return xmlAnd;
+        } else if (operation instanceof Or) {
+            Element xmlOr = new Element("or");
+            xmlOr.addContent(exportObservation(operation.getOp1()));
+            xmlOr.addContent(exportObservation(operation.getOp2()));
+            return xmlOr;
+        } else {
+            throw new UnknownOperationException();
+        }
+    }
+
+    private Element exportCondition(Condition condition) {
+        Element xmlCondition = new Element("condition");
+        xmlCondition.setAttribute("object", condition.getObject().getName());
+        xmlCondition.setAttribute("property", condition.getPropertyName());
+        xmlCondition.setAttribute("wanted_value", condition.getWantedValue());
+        return xmlCondition;
+    }
+
+    private Element exportAction(Action action) {
+        throw new UnsupportedOperationException("Observation of actions is not supported yet.");
+    }
+
 }

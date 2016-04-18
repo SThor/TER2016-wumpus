@@ -17,4 +17,12 @@ public abstract class Operation implements Observation {
         this.op1 = op1;
         this.op2 = op2;
     }
+
+    public Observation getOp1() {
+        return op1;
+    }
+
+    public Observation getOp2() {
+        return op2;
+    }
 }

@@ -101,7 +101,7 @@ public class ScenarioExport {
         Element xmlCondition = new Element("condition");
         xmlCondition.setAttribute("object", condition.getObject().getName());
         xmlCondition.setAttribute("property", condition.getPropertyName());
-        xmlCondition.setAttribute("wanted_value", condition.getWantedValue());
+        xmlCondition.setAttribute("value", condition.getWantedValue());
         return xmlCondition;
     }
 

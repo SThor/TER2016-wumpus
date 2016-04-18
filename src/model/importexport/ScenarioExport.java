@@ -29,6 +29,7 @@ public class ScenarioExport {
     private final Document xmlFile = new Document(root);
     private final Path file;
     private final Scenario scenario;
+    private final XMLOutputter out= new XMLOutputter(Format.getPrettyFormat());
 
     /**
      * Creates a new Export object
@@ -56,18 +57,18 @@ public class ScenarioExport {
     }
 
     private void save(Path file) throws IOException {
-        XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
         out.output(xmlFile, new FileOutputStream(file.toFile()));
     }
 
     /**
-     * Exports a single observation
+     * Exports a single observation to a String
      *
      * @param instant Instant of the desired observation
      * @return
      */
-    public Element exportObservation(int instant) {
-        return exportObservation(scenario.get(instant));
+    public String exportObservation(int instant) {
+        Element xmlObservation = exportObservation(scenario.get(instant));
+        return out.outputString(xmlObservation);
     }
 
     private Element exportObservation(Observation observation) {

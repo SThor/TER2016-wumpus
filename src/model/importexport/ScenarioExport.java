@@ -9,6 +9,7 @@ import model.Observation;
 import model.Operation;
 import model.Scenario;
 import model.World;
+import model.exceptions.UnknownObservationException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
@@ -66,12 +67,15 @@ public class ScenarioExport {
 
     private Element exportObservation(Observation observation) {
         if (observation instanceof Operation) {
-
+            return exportOperation((Operation) observation);
         } else if (observation instanceof Condition) {
-
+            return exportCondition((Condition) observation);
         } else if (observation instanceof Action) {
-
+            return exportAction((Action) observation);
         } else {
             throw new UnknownObservationException();
         }
     }
+    
+    
+}

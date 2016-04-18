@@ -77,6 +77,9 @@ class ScenarioView {
                     newObs = xml.parseObservation();
                 } catch (...) {
 
+                } catch (InterruptedException e) {
+                    TODO: throw InterruptedException in Observation parser
+                    return;
                 }*/
                 
                 if(!Thread.interrupted()) {

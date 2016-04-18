@@ -92,6 +92,4 @@ public class ObjectProperty {
     public String toString() {
         return name;
     }
-    
-    
 }

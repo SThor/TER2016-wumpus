@@ -166,12 +166,11 @@ public class AddConditionDialog extends javax.swing.JDialog {
         _object = (SysObject) cbObject.getSelectedItem();
         
         try {
-            List<ObjectProperty> objectProps = _object.getProperties();
-            if(objectProps.isEmpty())
+            if(_object.getPropertyCount() > 0)
                 throw new NullPointerException();
-            ObjectProperty[] properties = new ObjectProperty[objectProps.size()];
+            ObjectProperty[] properties = new ObjectProperty[_object.getPropertyCount()];
             for (int i = 0; i < properties.length; i++) {
-                properties[i] = objectProps.get(i);
+                properties[i] = _object.getPropertyAt(i);
             }
             cbProp.setModel(new DefaultComboBoxModel<>(properties));
             cbProp.setEnabled(true);

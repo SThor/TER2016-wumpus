@@ -49,8 +49,8 @@ public class ExportJDOM {
     private Element exportObjects() {
         Element objects = new Element("objects");
 
-        for (SysObject object : world.getObjects()) {
-            objects.addContent(exportObject(object));
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            objects.addContent(exportObject(world.getObjectAt(i)));
         }
 
         return objects;
@@ -71,8 +71,8 @@ public class ExportJDOM {
         xmlObject.setAttribute("name", object.getName());
         
         Element xmlProperties = new Element("properties");
-        for (ObjectProperty property : object.getProperties()) {
-            xmlProperties.addContent(exportProperty(property));
+        for (int i = 0; i < object.getPropertyCount(); i++) {
+            xmlProperties.addContent(exportProperty(object.getPropertyAt(i)));
         }
         xmlObject.addContent(xmlProperties);
 

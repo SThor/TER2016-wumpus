@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -26,6 +27,7 @@ import model.Condition;
 import model.ObjectProperty;
 import model.Scenario;
 import model.SysObject;
+import model.UniqueList;
 import model.World;
 import model.exceptions.DuplicateElementException;
 import org.jdom2.JDOMException;
@@ -197,7 +199,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelObjects.setLayout(new java.awt.BorderLayout());
 
-        treeObjects.setModel(new SysObjectTreeModel(world.getObjects()));
+        treeObjects.setModel(new SysObjectTreeModel(world));
         treeObjects.setOpaque(false);
         treeObjects.setRootVisible(false);
         treeObjects.setShowsRootHandles(true);
@@ -628,12 +630,20 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddActionActionPerformed
 
     private void btnAddPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPreActionPerformed
-        new AddConditionDialog(this, world.getObjects(), _action.getPreConditions()).setVisible(true);
+        List<SysObject> worldObjects = new UniqueList<>();
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            worldObjects.add(world.getObjectAt(i));
+        }
+        new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
         ((ConditionTableModel)tablePreCond.getModel()).triggerUpdate();
     }//GEN-LAST:event_btnAddPreActionPerformed
 
     private void btnAddPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPostActionPerformed
-        new AddConditionDialog(this, world.getObjects(), _action.getPostConditions()).setVisible(true);
+        List<SysObject> worldObjects = new UniqueList<>();
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            worldObjects.add(world.getObjectAt(i));
+        }
+        new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
         ((ConditionTableModel)tablePostCond.getModel()).triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
 
@@ -882,7 +892,7 @@ public class GeneralUI extends javax.swing.JFrame {
             world = new ImportJDOM().importAll(Paths.get(file.getAbsolutePath()));
             worldFile = file;
             unwarnWorldSave();
-            treeObjects.setModel(new SysObjectTreeModel(world.getObjects()));
+            treeObjects.setModel(new SysObjectTreeModel(world));
             listProperties.setModel(new DefaultListModel<String>());
             listActions.setModel(new WorldListModel<>(world.getPossibleActions()));
             tablePreCond.setModel(new DefaultTableModel());

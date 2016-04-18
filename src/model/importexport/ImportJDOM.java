@@ -91,7 +91,8 @@ public class ImportJDOM {
     private Condition importCondition(Element xmlCondition) {
         String objectName = xmlCondition.getAttributeValue("object");
         SysObject object = null;
-        for (SysObject objectTemp : world.getObjects()) {
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            SysObject objectTemp = world.getObjectAt(i);
             String tempName = objectTemp.getName();
             if (tempName.equals(objectName)) {
                 object = objectTemp;

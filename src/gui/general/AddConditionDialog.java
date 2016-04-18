@@ -166,9 +166,9 @@ public class AddConditionDialog extends javax.swing.JDialog {
         _object = (SysObject) cbObject.getSelectedItem();
         
         try {
-            if(_object.getPropertyNumber() > 0)
+            if(_object.getPropertyCount() > 0)
                 throw new NullPointerException();
-            ObjectProperty[] properties = new ObjectProperty[_object.getPropertyNumber()];
+            ObjectProperty[] properties = new ObjectProperty[_object.getPropertyCount()];
             for (int i = 0; i < properties.length; i++) {
                 properties[i] = _object.getPropertyAt(i);
             }

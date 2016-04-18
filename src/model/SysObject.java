@@ -332,7 +332,7 @@ public class SysObject {
         return properties.get(index);
     }
     
-    public int getPropertyNumber() {
+    public int getPropertyCount() {
         return properties.size();
     }
     

@@ -34,7 +34,7 @@ public class SysObjectTreeModel extends DefaultTreeModel {
             return objects.size();
         
         if(parent instanceof SysObject)
-            return ((SysObject)parent).getPropertyNumber();
+            return ((SysObject)parent).getPropertyCount();
         
         return 0;
     }

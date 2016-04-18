@@ -638,6 +638,9 @@
                         <Property name="editable" type="boolean" value="false"/>
                         <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
+                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="scenario.getFormula()" type="code"/>
+                        </Property>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                             <TitledBorder title="Formula">
@@ -663,6 +666,11 @@
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
                     <Component class="javax.swing.JEditorPane" name="epXmlScenario">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="scenario.getXML()" type="code"/>
+                        </Property>
+                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -679,10 +687,21 @@
               <SubComponents>
                 <Component class="javax.swing.JSlider" name="sliderInstant">
                   <Properties>
+                    <Property name="maximum" type="int" value="0"/>
                     <Property name="paintLabels" type="boolean" value="true"/>
                     <Property name="paintTicks" type="boolean" value="true"/>
                     <Property name="snapToTicks" type="boolean" value="true"/>
+                    <Property name="value" type="int" value="0"/>
+                    <Property name="model" type="javax.swing.BoundedRangeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new DefaultBoundedRangeModel(&#xd;&#xa;0,&#xd;&#xa;0,&#xd;&#xa;0,&#xd;&#xa;scenario.getMaxInstant())&#xd;&#xa;" type="code"/>
+                    </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="sliderInstantStateChanged"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="18"/>
+                  </AuxValues>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                       <BorderConstraints direction="Center"/>
@@ -703,30 +722,46 @@
                         <Property name="text" type="java.lang.String" value="Add After"/>
                         <Property name="toolTipText" type="java.lang.String" value="Add an instant after the current one"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddInstantAfterActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnAddInstantBefore">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add Before"/>
                         <Property name="toolTipText" type="java.lang.String" value="Add an instant before the current one"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddInstantBeforeActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnMoveInstantAfter">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Move After"/>
                         <Property name="toolTipText" type="java.lang.String" value="Swap this instant with the next one"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMoveInstantAfterActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnMoveInstantBefore">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Move Before"/>
                         <Property name="toolTipText" type="java.lang.String" value="Swap this instant with the previous one"/>
+                        <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMoveInstantBeforeActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnRemInstant">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Remove"/>
                         <Property name="toolTipText" type="java.lang.String" value="Remove the current instant"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRemInstantActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

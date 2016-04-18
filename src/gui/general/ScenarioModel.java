@@ -6,7 +6,10 @@
 package gui.general;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import javax.swing.SwingUtilities;
+import model.Action;
 import model.Observation;
 import model.Scenario;
 
@@ -14,18 +17,22 @@ import model.Scenario;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-class ScenarioView {
+class ScenarioModel {
     private final Scenario scenario;
     private List<String> xmlSources;
     private int instant;
     private final GeneralUI parent;
     private Thread setXMLThread;
     
-    public ScenarioView(Scenario scenario, GeneralUI parent) {
+    public ScenarioModel(Scenario scenario, GeneralUI parent) {
+        if(scenario.isEmpty()) {
+            throw new IllegalArgumentException("Empty scenario");
+        }
         this.scenario = scenario;
         xmlSources = new ArrayList<>(scenario.size());
-        for (Observation observation : scenario) {
+        for (int i=0; i<scenario.size(); i++) {
             // xmlSource.add(observation.getXML());
+            xmlSources.add("TODO_"+i);
         }
         instant = 0;
         this.parent = parent;
@@ -57,8 +64,18 @@ class ScenarioView {
     }
     
     public void addInstantBeforeCurrent() {
-        scenario.add(instant, null);
-        xmlSources.add(instant, "");
+        addInstant();
+    }
+    
+    private void addInstant() {
+        scenario.add(instant, new Observation() {
+            @Override
+            public boolean isVerified() {
+                return false;
+            }
+        });
+        
+        xmlSources.add(instant, "Generated_Test");
     }
     
     public void setXML(final String xml) {
@@ -71,8 +88,9 @@ class ScenarioView {
         setXMLThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Observation newObs = null;
+                Observation newObs = new Action("Foo_Bar");// Remove this line
                 /* TODO
+                Observation newObs = null;
                 try {
                     newObs = xml.parseObservation();
                 } catch (...) {
@@ -91,6 +109,27 @@ class ScenarioView {
             }
         });
         
-        setXMLThread.start();
+        SwingUtilities.invokeLater(setXMLThread);
+    }
+    
+    public int getMaxInstant() {
+        return scenario.size()-1;
+    }
+
+    public void swapInstantWithNext() {
+        Collections.swap(scenario, instant, instant+1);
+        Collections.swap(xmlSources, instant, instant+1);
+        instant++;
+    }
+
+    public void swapInstantWithPrevious() {
+        Collections.swap(scenario, instant-1, instant);
+        Collections.swap(xmlSources, instant-1, instant);
+        instant--;
+    }
+
+    public void removeInstant() {
+        scenario.remove(instant);
+        xmlSources.remove(instant);
     }
 }

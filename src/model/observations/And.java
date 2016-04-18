@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model.observations;
 
 /**
@@ -17,6 +12,8 @@ public class And extends Operation{
     
     @Override
     public boolean isVerified() {
+        Observation op1 = observations.get(0);
+        Observation op2 = observations.get(1);
         return op1.isVerified() && op2.isVerified();
     }
     

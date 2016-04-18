@@ -11,7 +11,7 @@ package model;
  */
 public class Or extends Operation{
 
-    public Or(Operation op1, Operation op2) {
+    public Or(Observation op1, Observation op2) {
         super(op1, op2);
     }
     

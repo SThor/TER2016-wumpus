@@ -34,7 +34,7 @@ public class SysObjectTreeModel extends DefaultTreeModel {
             return objects.size();
         
         if(parent instanceof SysObject)
-            return ((SysObject)parent).getProperties().size();
+            return ((SysObject)parent).getPropertyNumber();
         
         return 0;
     }
@@ -43,14 +43,14 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     public Object getChild(Object parent, int index) {
        return parent == getRoot() ? 
                objects.get(index) : 
-               ((SysObject)parent).getProperties().get(index);
+               ((SysObject)parent).getPropertyAt(index);
     }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
         return parent == getRoot() ? 
                 objects.indexOf(child) : 
-                ((SysObject)parent).getProperties().indexOf(child);
+                ((SysObject)parent).getIndexOfProperty(child);
     }
     
     public void removeObject(SysObject toRemove) {
@@ -60,8 +60,7 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     }
     
     public void removeProperty(SysObject parent, ObjectProperty toRemove) {
-        int index = parent.getProperties().indexOf(toRemove);
-        parent.getProperties().remove(index);
+        int index = parent.removeProperty(toRemove);
         fireTreeNodesRemoved(this, new Object[]{getRoot(), parent}, new int[]{index}, new Object[]{toRemove});
     }
     
@@ -71,8 +70,7 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     }
 
     public void addProperty(SysObject parent, ObjectProperty toAdd) {
-        parent.getProperties().add(toAdd);
-        int addIndex = parent.getProperties().size()-1;
+        int addIndex = parent.addProperty(toAdd);
         fireTreeNodesInserted(this, new Object[]{getRoot(), parent}, new int[]{addIndex}, new Object[]{toAdd});
     }
 }

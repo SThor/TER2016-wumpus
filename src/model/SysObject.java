@@ -176,18 +176,21 @@ public class SysObject {
      * Adds a new property to this object
      *
      * @param property Name of the property to add
+     * @return The index of the new property
      */
-    public void addProperty(String property) {
-        properties.add(new ObjectProperty(property));
+    public int addProperty(String property) {
+        return addProperty(new ObjectProperty(property));
     }
     
     /**
      * Adds a new property to this object
      *
      * @param property Property to add
+     * @return The index of the new property
      */
-    public void addProperty(ObjectProperty property) {
+    public int addProperty(ObjectProperty property) {
         properties.add(property);
+        return properties.size()-1;
     }
 
     /**
@@ -228,20 +231,24 @@ public class SysObject {
      * Remove a property from this object via its name
      *
      * @param property The name of the property to remove
+     * @return The index of the object or -1 if the object wasn't found
      */
-    public void removeProperty(String property) {
-        removeProperty(new ObjectProperty(property));
+    public int removeProperty(String property) {
+        return removeProperty(new ObjectProperty(property));
     }
 
     /**
      * Remove a property from this object
      *
      * @param property The property to remove
+     * @return The index of the object or -1 if the object wasn't found
      */
-    public void removeProperty(ObjectProperty property) {
+    public int removeProperty(ObjectProperty property) {
+        int index = properties.indexOf(property);
         if (properties.remove(property)) {
             world.signalPropertyRemoved(this, property.getName());
         }
+        return index;
     }
 
     @Override
@@ -321,8 +328,16 @@ public class SysObject {
         return ((SysObject) obj).name.equals(name);
     }
 
-    public List<ObjectProperty> getProperties() {
-        return properties;
+    public ObjectProperty getPropertyAt(int index) {
+        return properties.get(index);
+    }
+    
+    public int getPropertyNumber() {
+        return properties.size();
+    }
+    
+    public int getIndexOfProperty(Object property) {
+        return properties.indexOf(property);
     }
 
     public String getName() {

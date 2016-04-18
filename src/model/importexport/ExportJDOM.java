@@ -71,8 +71,8 @@ public class ExportJDOM {
         xmlObject.setAttribute("name", object.getName());
         
         Element xmlProperties = new Element("properties");
-        for (ObjectProperty property : object.getProperties()) {
-            xmlProperties.addContent(exportProperty(property));
+        for (int i = 0; i < object.getPropertyNumber(); i++) {
+            xmlProperties.addContent(exportProperty(object.getPropertyAt(i)));
         }
         xmlObject.addContent(xmlProperties);
 

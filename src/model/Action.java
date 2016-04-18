@@ -132,10 +132,11 @@ public class Action implements Observation {
     private void removeFromList(List<Condition> conditions, SysObject object, String property, String value) {
         for(Iterator<Condition> it = conditions.iterator(); it.hasNext();) {
             Condition c = it.next();
-            if(c.getObject().equals(object)
+            if (c.getObject().equals(object)
             &&(property == null || c.getPropertyName().equals(property))
-            &&(value == null || value.equals(c.getWantedValue())))
+            &&(value == null || value.equals(c.getWantedValue()))) {
                 it.remove();
+            }
         }
     }
     

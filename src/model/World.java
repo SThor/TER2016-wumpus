@@ -76,7 +76,7 @@ public class World {
      */
     public void removeObject(int index) {
         SysObject removed = worldObjects.remove(index);
-        propagateSignalToActions(removed, null, null);
+        removeActionConditions(removed, null, null);
     }
 
     /**
@@ -113,7 +113,18 @@ public class World {
      * @param property The removed property
      */
     protected void signalPropertyRemoved(SysObject object, String property) {
-        propagateSignalToActions(object, property, null);
+        removeActionConditions(object, property, null);
+    }
+
+    /**
+     * Triggered when a possible value has been removed from a property in an object
+     *
+     * @param object The object concerned by the modification
+     * @param property The property concerned by the modification
+     * @param removedValue The removed value
+     */
+    protected void signalPossibleValueRemoved(SysObject object, String property, String removedValue) {
+        removeActionConditions(object, property, removedValue);
     }
 
     /**
@@ -122,13 +133,10 @@ public class World {
      * @see Action#removeAllConditions(model.SysObject, java.lang.String,
      * java.util.List)
      */
-    private void propagateSignalToActions(SysObject object, String property, String removedValue) {
+    private void removeActionConditions(SysObject object, String property, String removedValue) {
+        System.out.println("Will remove");
         for (Action a : possibleActions) {
             a.removeAllConditions(object, property, removedValue);
         }
-    }
-
-    void signalPossibleValueRemoved(SysObject object, String property, String removedValue) {
-        propagateSignalToActions(object, property, removedValue);
     }
 }

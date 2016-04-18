@@ -3,6 +3,7 @@ package model.importexport;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import model.Action;
 import model.Condition;
 import model.observations.Observation;
@@ -10,6 +11,7 @@ import model.World;
 import model.exceptions.UnknownObservationException;
 import model.exceptions.UnknownOperationException;
 import model.observations.And;
+import model.observations.Not;
 import model.observations.Operation;
 import model.observations.Or;
 import model.observations.Scenario;
@@ -85,15 +87,17 @@ public class ScenarioExport {
 
     private Element exportOperation(Operation operation) {
         Element xmlOperation = new Element("operation");
-        xmlOperation.addContent(exportObservation(operation.getOp1()));
-        xmlOperation.addContent(exportObservation(operation.getOp2()));
-        if (operation instanceof And) {
-            xmlOperation.setAttribute("type","and");
-        } else if (operation instanceof Or) {
-            xmlOperation.setAttribute("type","or");
-        } else {
-            throw new UnknownOperationException();
+        List<Observation> observations = operation.getObservations();
+        
+        for (Observation observation : observations) {
+            xmlOperation.addContent(exportObservation(observation));
         }
+
+        String[] fullType = operation.getClass().getName().split(".");
+        String type = fullType[fullType.length - 1];
+        type = type.toLowerCase();
+        xmlOperation.setAttribute("type", type);
+        
         return xmlOperation;
     }
 

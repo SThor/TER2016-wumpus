@@ -17,4 +17,8 @@ public abstract class Operation implements Observation {
     public Observation get(int index){
         return observations.get(index);
     }
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
 }

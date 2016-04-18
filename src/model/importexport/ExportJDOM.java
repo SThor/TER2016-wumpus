@@ -1,4 +1,4 @@
-package importexport;
+package model.importexport;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,10 +69,12 @@ public class ExportJDOM {
     private Element exportObject(SysObject object) {
         Element xmlObject = new Element("object");
         xmlObject.setAttribute("name", object.getName());
-
+        
+        Element xmlProperties = new Element("properties");
         for (ObjectProperty property : object.getProperties()) {
-            xmlObject.addContent(exportProperty(property));
+            xmlProperties.addContent(exportProperty(property));
         }
+        xmlObject.addContent(xmlProperties);
 
         return xmlObject;
     }

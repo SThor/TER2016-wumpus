@@ -1,4 +1,4 @@
-package importexport;
+package model.importexport;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -84,7 +84,7 @@ public class ImportJDOM {
 
     private void importPostconditions(Action action, Element xmlPostconditions) {
         for (Element xmlCondition : xmlPostconditions.getChildren()) {
-            action.addPreCondition(importCondition(xmlCondition));
+            action.addPostCondition(importCondition(xmlCondition));
         }
     }
 

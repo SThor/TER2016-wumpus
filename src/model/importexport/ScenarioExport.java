@@ -29,7 +29,7 @@ public class ScenarioExport {
     private final Document xmlFile = new Document(root);
     private final Path file;
     private final Scenario scenario;
-    private final XMLOutputter out= new XMLOutputter(Format.getPrettyFormat());
+    private final XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 
     /**
      * Creates a new Export object
@@ -84,19 +84,17 @@ public class ScenarioExport {
     }
 
     private Element exportOperation(Operation operation) {
+        Element xmlOperation = new Element("operation");
+        xmlOperation.addContent(exportObservation(operation.getOp1()));
+        xmlOperation.addContent(exportObservation(operation.getOp2()));
         if (operation instanceof And) {
-            Element xmlAnd = new Element("and");
-            xmlAnd.addContent(exportObservation(operation.getOp1()));
-            xmlAnd.addContent(exportObservation(operation.getOp2()));
-            return xmlAnd;
+            xmlOperation.setAttribute("type","and");
         } else if (operation instanceof Or) {
-            Element xmlOr = new Element("or");
-            xmlOr.addContent(exportObservation(operation.getOp1()));
-            xmlOr.addContent(exportObservation(operation.getOp2()));
-            return xmlOr;
+            xmlOperation.setAttribute("type","or");
         } else {
             throw new UnknownOperationException();
         }
+        return xmlOperation;
     }
 
     private Element exportCondition(Condition condition) {

@@ -45,7 +45,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private Condition _postCond;
                             
     private World world;
-    private Scenario scenario;
+    private ScenarioView scenario;
     
     private File worldFile;
     private File scenarioFile;
@@ -61,7 +61,7 @@ public class GeneralUI extends javax.swing.JFrame {
      */
     public GeneralUI(World world, Scenario scenario) {
         this.world = world;
-        this.scenario = scenario;
+        //this.scenario = scenario;
    
         xmlChooser = new JFileChooser();
         xmlChooser.setFileFilter(new FileNameExtensionFilter("XML files", "xml"));
@@ -138,11 +138,20 @@ public class GeneralUI extends javax.swing.JFrame {
         panelBtnActions = new javax.swing.JPanel();
         btnAddAction = new javax.swing.JButton();
         btnRemAction = new javax.swing.JButton();
-        splitScenarioTab = new javax.swing.JSplitPane();
+        panelScenarioTab = new javax.swing.JPanel();
+        splitXmlFormula = new javax.swing.JSplitPane();
         scrollFormulaArea = new javax.swing.JScrollPane();
         taFormula = new javax.swing.JTextArea();
         scrollEditorPane = new javax.swing.JScrollPane();
         epXmlScenario = new javax.swing.JEditorPane();
+        panelInstant = new javax.swing.JPanel();
+        sliderInstant = new javax.swing.JSlider();
+        panelBtnInstant = new javax.swing.JPanel();
+        btnAddInstantAfter = new javax.swing.JButton();
+        btnAddInstantBefore = new javax.swing.JButton();
+        btnMoveInstantAfter = new javax.swing.JButton();
+        btnMoveInstantBefore = new javax.swing.JButton();
+        btnRemInstant = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuWorld = new javax.swing.JMenu();
         miOpenWorld = new javax.swing.JMenuItem();
@@ -353,7 +362,9 @@ public class GeneralUI extends javax.swing.JFrame {
 
         tabbedPane.addTab("Actions", splitActionTab);
 
-        splitScenarioTab.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        panelScenarioTab.setLayout(new java.awt.BorderLayout());
+
+        splitXmlFormula.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         taFormula.setEditable(false);
         taFormula.setColumns(20);
@@ -362,13 +373,46 @@ public class GeneralUI extends javax.swing.JFrame {
         taFormula.setOpaque(false);
         scrollFormulaArea.setViewportView(taFormula);
 
-        splitScenarioTab.setTopComponent(scrollFormulaArea);
+        splitXmlFormula.setTopComponent(scrollFormulaArea);
 
         scrollEditorPane.setViewportView(epXmlScenario);
 
-        splitScenarioTab.setRightComponent(scrollEditorPane);
+        splitXmlFormula.setRightComponent(scrollEditorPane);
 
-        tabbedPane.addTab("Scenario", splitScenarioTab);
+        panelScenarioTab.add(splitXmlFormula, java.awt.BorderLayout.CENTER);
+
+        panelInstant.setLayout(new java.awt.BorderLayout());
+
+        sliderInstant.setPaintLabels(true);
+        sliderInstant.setPaintTicks(true);
+        sliderInstant.setSnapToTicks(true);
+        panelInstant.add(sliderInstant, java.awt.BorderLayout.CENTER);
+
+        btnAddInstantAfter.setText("Add After");
+        btnAddInstantAfter.setToolTipText("Add an instant after the current one");
+        panelBtnInstant.add(btnAddInstantAfter);
+
+        btnAddInstantBefore.setText("Add Before");
+        btnAddInstantBefore.setToolTipText("Add an instant before the current one");
+        panelBtnInstant.add(btnAddInstantBefore);
+
+        btnMoveInstantAfter.setText("Move After");
+        btnMoveInstantAfter.setToolTipText("Swap this instant with the next one");
+        panelBtnInstant.add(btnMoveInstantAfter);
+
+        btnMoveInstantBefore.setText("Move Before");
+        btnMoveInstantBefore.setToolTipText("Swap this instant with the previous one");
+        panelBtnInstant.add(btnMoveInstantBefore);
+
+        btnRemInstant.setText("Remove");
+        btnRemInstant.setToolTipText("Remove the current instant");
+        panelBtnInstant.add(btnRemInstant);
+
+        panelInstant.add(panelBtnInstant, java.awt.BorderLayout.NORTH);
+
+        panelScenarioTab.add(panelInstant, java.awt.BorderLayout.NORTH);
+
+        tabbedPane.addTab("Scenario", panelScenarioTab);
 
         menuWorld.setMnemonic('F');
         menuWorld.setText("World");
@@ -790,20 +834,6 @@ public class GeneralUI extends javax.swing.JFrame {
     }
     
     private void epXmlDocumentTextChanged(DocumentEvent e) {
-        (new Thread() {
-            @Override
-            public void run() {
-                /*
-                TODO:
-                if (document is valid) {
-                    change attribute List<Scenario>
-                    change text area formula
-                } else {
-                    Display error in text area
-                }
-                */
-            }
-        }).start();
         
         warnScenarioSave();
     }
@@ -942,15 +972,26 @@ public class GeneralUI extends javax.swing.JFrame {
         super.setTitle("Causality solver - World: "+worldFileName+" - Scenario: "+scenarioFileName);
     }
     
+    protected synchronized void newFormulaAvailable(int instant) {
+        if(scenario.getInstant() == instant) {
+            taFormula.setText(scenario.getFormula());
+        }
+    }
+    
 // <editor-fold defaultstate="collapsed" desc="Variable declarations">  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
+    private javax.swing.JButton btnAddInstantAfter;
+    private javax.swing.JButton btnAddInstantBefore;
     private javax.swing.JButton btnAddObject;
     private javax.swing.JButton btnAddPost;
     private javax.swing.JButton btnAddPre;
     private javax.swing.JButton btnAddProp;
     private javax.swing.JButton btnAddValue;
+    private javax.swing.JButton btnMoveInstantAfter;
+    private javax.swing.JButton btnMoveInstantBefore;
     private javax.swing.JButton btnRemAction;
+    private javax.swing.JButton btnRemInstant;
     private javax.swing.JButton btnRemObject;
     private javax.swing.JButton btnRemPost;
     private javax.swing.JButton btnRemPre;
@@ -970,14 +1011,17 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem miSaveWorldAs;
     private javax.swing.JPanel panelActions;
     private javax.swing.JPanel panelBtnActions;
+    private javax.swing.JPanel panelBtnInstant;
     private javax.swing.JPanel panelBtnObjects;
     private javax.swing.JPanel panelBtnPost;
     private javax.swing.JPanel panelBtnPre;
     private javax.swing.JPanel panelBtnStates;
+    private javax.swing.JPanel panelInstant;
     private javax.swing.JPanel panelLaws;
     private javax.swing.JPanel panelObjects;
     private javax.swing.JPanel panelPost;
     private javax.swing.JPanel panelPre;
+    private javax.swing.JPanel panelScenarioTab;
     private javax.swing.JPanel panelStates;
     private javax.swing.JScrollPane scrollEditorPane;
     private javax.swing.JScrollPane scrollFormulaArea;
@@ -986,9 +1030,10 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollPaneObjects;
     private javax.swing.JScrollPane scrollTablePost;
     private javax.swing.JScrollPane scrollTablePre;
+    private javax.swing.JSlider sliderInstant;
     private javax.swing.JSplitPane splitActionTab;
     private javax.swing.JSplitPane splitObjectsTab;
-    private javax.swing.JSplitPane splitScenarioTab;
+    private javax.swing.JSplitPane splitXmlFormula;
     private javax.swing.JTextArea taFormula;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tablePostCond;

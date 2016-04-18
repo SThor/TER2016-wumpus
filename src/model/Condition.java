@@ -7,7 +7,7 @@ import model.exceptions.NoSuchPropertyException;
  * The condition is verified if the <tt>SysObject</tt>'s current property is the <tt>State</tt>.
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Condition implements Observation{
+public class Condition implements Observation {
     /**
      * The concerned object.
      */
@@ -100,5 +100,10 @@ public class Condition implements Observation{
             return false;
         
         return c.wantedValue.equals(wantedValue);
+    }
+
+    @Override
+    public String toString() {
+        return object+"."+propertyName+" = '"+wantedValue+"'";
     }
 }

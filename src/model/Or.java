@@ -19,5 +19,9 @@ public class Or extends Operation{
     public boolean isVerified() {
         return op1.isVerified() || op2.isVerified();
     }
-    
+
+    @Override
+    public String toString() {
+        return "("+op1.toString()+" ∨ "+op2.toString()+")";
+    }
 }

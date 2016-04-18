@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import model.Action;
-import model.Observation;
-import model.Scenario;
+import model.observations.Observation;
+import model.observations.Scenario;
 
 /**
  *

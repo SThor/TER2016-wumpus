@@ -1,5 +1,6 @@
 package model;
 
+import model.observations.Observation;
 import java.util.Iterator;
 import java.util.List;
 import model.exceptions.DuplicateElementException;

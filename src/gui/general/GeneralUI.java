@@ -26,7 +26,7 @@ import javax.swing.tree.TreeSelectionModel;
 import model.Action;
 import model.Condition;
 import model.ObjectProperty;
-import model.Scenario;
+import model.observations.Scenario;
 import model.SysObject;
 import model.UniqueList;
 import model.World;

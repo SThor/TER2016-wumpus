@@ -1,5 +1,6 @@
 package model;
 
+import model.observations.Observation;
 import model.exceptions.NoSuchPropertyException;
 
 /**

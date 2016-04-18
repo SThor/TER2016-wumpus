@@ -3,25 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package model.observations;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Or extends Operation{
+public class And extends Operation{
 
-    public Or(Observation op1, Observation op2) {
+    public And(Observation op1, Observation op2) {
         super(op1, op2);
     }
     
     @Override
     public boolean isVerified() {
-        return op1.isVerified() || op2.isVerified();
+        return op1.isVerified() && op2.isVerified();
     }
-
-    @Override
-    public String toString() {
-        return "("+op1.toString()+" ∨ "+op2.toString()+")";
-    }
+    
 }

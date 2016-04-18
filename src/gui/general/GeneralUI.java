@@ -869,6 +869,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnAddInstantAfterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddInstantAfterActionPerformed
         scenario.addInstantAfterCurrent();
         sliderInstant.setMaximum(sliderInstant.getMaximum()+1);
+        sliderInstant.setValue(1);
     }//GEN-LAST:event_btnAddInstantAfterActionPerformed
 
     private void btnAddInstantBeforeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddInstantBeforeActionPerformed
@@ -878,10 +879,12 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnMoveInstantAfterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveInstantAfterActionPerformed
         scenario.swapInstantWithNext();
+        sliderInstant.setValue(sliderInstant.getValue()+1);
     }//GEN-LAST:event_btnMoveInstantAfterActionPerformed
 
     private void btnMoveInstantBeforeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveInstantBeforeActionPerformed
         scenario.swapInstantWithPrevious();
+        sliderInstant.setValue(sliderInstant.getValue()-1);
     }//GEN-LAST:event_btnMoveInstantBeforeActionPerformed
 
     private void btnRemInstantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemInstantActionPerformed

@@ -15,10 +15,10 @@ import model.Scenario;
  * @author Paul Givel and Guillaume Hartenstein
  */
 class ScenarioView {
-    private Scenario scenario;
+    private final Scenario scenario;
     private List<String> xmlSources;
     private int instant;
-    private GeneralUI parent;
+    private final GeneralUI parent;
     private Thread setXMLThread;
     
     public ScenarioView(Scenario scenario, GeneralUI parent) {
@@ -29,20 +29,6 @@ class ScenarioView {
         }
         instant = 0;
         this.parent = parent;
-        /*setXMLThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    synchronized(scenario) {
-                        this.scenario.set(instant, xmlSources.get(instant).toFormula());
-                    }
-                } catch (...) {
-
-                }
-        
-                parent.newFormulaAvailable(instant);
-            }
-        };*/
     }
     
     public void setInstant(int instant) {
@@ -75,7 +61,33 @@ class ScenarioView {
         xmlSources.add(instant, "");
     }
     
-    public void setXML(String xml) {
+    public void setXML(final String xml) {
         xmlSources.set(instant, xml);
+        
+        if(setXMLThread != null) {
+            setXMLThread.interrupt();
+        }
+        
+        setXMLThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Observation newObs = null;
+                /* TODO
+                try {
+                    newObs = xml.parseObservation();
+                } catch (...) {
+
+                }*/
+                
+                if(!Thread.interrupted()) {
+                    synchronized(scenario) {
+                        scenario.set(instant, newObs);
+                    }
+                    parent.newFormulaAvailable(instant);
+                }
+            }
+        });
+        
+        setXMLThread.start();
     }
 }

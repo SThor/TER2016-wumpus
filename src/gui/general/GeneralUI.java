@@ -61,7 +61,7 @@ public class GeneralUI extends javax.swing.JFrame {
      */
     public GeneralUI(World world, Scenario scenario) {
         this.world = world;
-        //this.scenario = scenario;
+        this.scenario = new ScenarioView(scenario, this);
    
         xmlChooser = new JFileChooser();
         xmlChooser.setFileFilter(new FileNameExtensionFilter("XML files", "xml"));

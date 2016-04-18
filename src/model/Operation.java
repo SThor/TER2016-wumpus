@@ -10,10 +10,10 @@ package model;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public abstract class Operation implements Observation {
-    protected Operation op1;
-    protected Operation op2;
+    protected Observation op1;
+    protected Observation op2;
     
-    public Operation(Operation op1, Operation op2) {
+    public Operation(Observation op1, Observation op2) {
         this.op1 = op1;
         this.op2 = op2;
     }

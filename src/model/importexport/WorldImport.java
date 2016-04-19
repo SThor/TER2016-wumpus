@@ -14,11 +14,11 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 /**
- * Object used to import a world and scenario from a file
+ * Object used to import a world from an xml file
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class ImportJDOM {
+public class WorldImport {
 
     private Document xmlFile;
     private Element root;

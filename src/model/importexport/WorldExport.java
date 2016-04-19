@@ -14,11 +14,11 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * Object used to export a world and scenario to a file
+ * Object used to export a world to an xml file
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class ExportJDOM {
+public class WorldExport {
 
     private final World world;
     private final Element root = new Element("world");
@@ -31,7 +31,7 @@ public class ExportJDOM {
      * @param world World to export
      * @param file Path to the destination file
      */
-    public ExportJDOM(World world, Path file) {
+    public WorldExport(World world, Path file) {
         this.world = world;
         this.file = file;
     }

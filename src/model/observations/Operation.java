@@ -13,4 +13,12 @@ public abstract class Operation implements Observation {
     public Operation(Observation ... observations) {
         this.observations=Arrays.asList(observations);
     }
+
+    public Observation get(int index){
+        return observations.get(index);
+    }
+
+    public List<Observation> getObservations() {
+        return observations;
+    }
 }

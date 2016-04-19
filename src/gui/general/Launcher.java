@@ -10,9 +10,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.observations.And;
 import model.Condition;
-import model.observations.Scenario;
 import model.SysObject;
 import model.World;
+import model.observations.Scenario;
 
 /**
  *

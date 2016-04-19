@@ -26,11 +26,11 @@ import javax.swing.tree.TreeSelectionModel;
 import model.Action;
 import model.Condition;
 import model.ObjectProperty;
-import model.observations.Scenario;
 import model.SysObject;
 import model.UniqueList;
 import model.World;
 import model.exceptions.DuplicateElementException;
+import model.observations.Scenario;
 import org.jdom2.JDOMException;
 
 /**

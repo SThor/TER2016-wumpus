@@ -3,8 +3,8 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
-import model.importexport.ExportJDOM;
-import model.importexport.ImportJDOM;
+import model.importexport.WorldExport;
+import model.importexport.WorldImport;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -879,7 +879,7 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private void exportWorldToXml(File file) {
         try {
-            new ExportJDOM(world, Paths.get(file.getAbsolutePath())).exportAll();
+            new WorldExport(world, Paths.get(file.getAbsolutePath())).exportAll();
             worldFile = file;
             unwarnWorldSave();
         } catch (IOException ex) {
@@ -889,7 +889,7 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private void importWorldFromXml(File file) {
         try {
-            world = new ImportJDOM().importAll(Paths.get(file.getAbsolutePath()));
+            world = new WorldImport().importAll(Paths.get(file.getAbsolutePath()));
             worldFile = file;
             unwarnWorldSave();
             treeObjects.setModel(new SysObjectTreeModel(world));

@@ -102,7 +102,7 @@ public class Condition implements Observation {
         
         return c.wantedValue.equals(wantedValue);
     }
-
+    
     @Override
     public String toString() {
         return object+"."+propertyName+" = '"+wantedValue+"'";

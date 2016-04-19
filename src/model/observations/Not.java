@@ -15,5 +15,9 @@ public class Not extends Operation{
         Observation observation = observations.get(0);
         return !observation.isVerified();
     }
-    
+
+    @Override
+    public String toString() {
+        return "¬ "+observations.get(0);
+    }
 }

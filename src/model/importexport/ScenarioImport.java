@@ -99,7 +99,10 @@ public class ScenarioImport {
         for (Element xmlObservation : xmlOperation.getChildren()) {
             observations.add(importObservation(xmlObservation));
         }
-        Observation[] observationsArray = (Observation[]) observations.toArray();
+        Observation[] observationsArray = new Observation[observations.size()];
+        for (int i = 0; i < observationsArray.length; i++) {
+            observationsArray[i] = observations.get(i);
+        }
         switch (xmlOperation.getAttributeValue("type")) {
             case "and":
                 operation = new And(observationsArray);

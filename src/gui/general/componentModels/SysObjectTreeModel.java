@@ -16,7 +16,7 @@ import model.World;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class SysObjectTreeModel extends DefaultTreeModel {
-    private final World world;
+    private World world;
     
     public SysObjectTreeModel(World world) {
         super(new DefaultMutableTreeNode());
@@ -71,5 +71,17 @@ public class SysObjectTreeModel extends DefaultTreeModel {
     public void addProperty(SysObject parent, ObjectProperty toAdd) {
         int addIndex = parent.addProperty(toAdd);
         fireTreeNodesInserted(this, new Object[]{getRoot(), parent}, new int[]{addIndex}, new Object[]{toAdd});
+    }
+    
+    public void setData(World world) {
+        this.world = world;
+        int objectCount = world.getObjectCount();
+        int[] childIndices = new int[objectCount];
+        Object[] children = new Object[objectCount];
+        for (int i = 0; i < objectCount; i++) {
+            childIndices[i] = i;
+            children[i] = world.getObjectAt(i);
+        }
+        fireTreeStructureChanged(this, new Object[]{getRoot()}, childIndices, children);
     }
 }

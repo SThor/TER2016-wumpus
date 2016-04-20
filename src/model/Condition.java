@@ -2,13 +2,14 @@ package model;
 
 import model.observations.Observation;
 import model.exceptions.NoSuchPropertyException;
+import model.exceptions.NoSuchValueException;
 
 /**
  * Represents a condition, which is an object and a wanted value of a certain property of this object.
  * The condition is verified if the <tt>SysObject</tt>'s current property is the <tt>State</tt>.
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Condition implements Observation{
+public class Condition implements Observation {
     /**
      * The concerned object.
      */
@@ -33,11 +34,11 @@ public class Condition implements Observation{
      * @param propertyName The name of the property concerned
      * @param wantedValue The wanted value for this property
      * @throws NoSuchPropertyException If the property name is not one of the objects properties.
-     * @throws IllegalArgumentException If the wanted value is not in the property's possible values
+     * @throws NoSuchValueException If the wanted value is not in the property's possible values
      */
     public Condition(SysObject object, String propertyName, String wantedValue) {
         if(!object.isPossibleValueOf(propertyName, wantedValue))
-            throw new IllegalArgumentException(wantedValue+" is not a possible value of the property "+propertyName);
+            throw new NoSuchValueException(wantedValue, propertyName, object.getName());
         
         this.object = object;
         this.propertyName = propertyName;

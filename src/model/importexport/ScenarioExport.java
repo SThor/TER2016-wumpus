@@ -32,11 +32,10 @@ public class ScenarioExport {
     /**
      * Creates a new Export object
      *
-     * @param world World related to the scenario to export
      * @param file Path to the destination file
      * @param scenario Scenario to export
      */
-    public ScenarioExport(World world, Path file, Scenario scenario) {
+    public ScenarioExport(Path file, Scenario scenario) {
         this.file = file;
         this.scenario = scenario;
     }

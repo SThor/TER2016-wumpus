@@ -3,6 +3,8 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
+import java.awt.Color;
+import java.awt.Font;
 import model.importexport.WorldExport;
 import model.importexport.WorldImport;
 import java.io.File;
@@ -948,7 +950,7 @@ public class GeneralUI extends javax.swing.JFrame {
         return name;
     }
     
-    private void promptError(String message, String title) {
+    protected void promptError(String message, String title) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
     
@@ -1061,6 +1063,14 @@ public class GeneralUI extends javax.swing.JFrame {
         if(scenario.getInstant() == instant) {
             taFormula.setText(scenario.getFormula());
         }
+    }
+    
+    protected synchronized void xmlSyntaxError() {
+        taFormula.setText("/!\\ Syntax error in the XML file.");
+    }
+    
+    protected synchronized void xmlValueError(String message) {
+        taFormula.setText("/!\\ Error in XML:\n"+message);
     }
     
 // <editor-fold defaultstate="collapsed" desc="Variable declarations">  

@@ -11,6 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import model.World;
+import model.exceptions.NoSuchObjectException;
+import model.exceptions.NoSuchPropertyException;
+import model.exceptions.NoSuchValueException;
 import model.importexport.ScenarioExport;
 import model.importexport.ScenarioImport;
 import model.observations.Observation;
@@ -103,7 +106,28 @@ class ScenarioModel {
                 Observation newObs = null;
                 try {
                     newObs = importer.importOne(xml);
-                } catch (InterruptedException | JDOMException | IOException e) {
+                } catch (InterruptedException e) {
+                    return;
+                } catch (JDOMException e) {
+                    parent.xmlSyntaxError();
+                    return;
+                } catch (IOException e) {
+                    parent.promptError("Internal error in XML parsing.\nUnexpected behavior may happen.", "Error");
+                    return;
+                } catch (NoSuchValueException e) {
+                    parent.xmlValueError(messageStartsWithNull(e) ?
+                            "'value' attribute is missing for condition over '"+e.getObject()+"."+e.getProperty()+"'" :
+                            e.getMessage());
+                    return;
+                } catch (NoSuchPropertyException e) {
+                    parent.xmlValueError(messageStartsWithNull(e) ?
+                            "'property' attribute is missing for condition over' "+e.getObject()+"'" :
+                            e.getMessage());
+                    return;
+                } catch (NoSuchObjectException e) {
+                    parent.xmlValueError(messageStartsWithNull(e) ?
+                            "'object' attribute missing in condition" :
+                            e.getMessage());
                     return;
                 }
                 
@@ -138,5 +162,9 @@ class ScenarioModel {
     public void removeInstant() {
         scenario.remove(instant);
         xmlSources.remove(instant);
+    }
+    
+    private boolean messageStartsWithNull(Exception e) {
+        return e.getMessage().startsWith("'null'");
     }
 }

@@ -1,6 +1,7 @@
 package model.importexport;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +32,23 @@ public class ScenarioImport {
     private Document xmlFile;
     private Element root;
     private Scenario scenario;
-    private World world;
+    private final World world;
 
+    /**
+     * Creates a new import object
+     * @param world World in which the scenario import takes place
+     */
     public ScenarioImport(World world) {
         this.world = world;
     }
 
+    /**
+     * Starts the importation of the scenario to the specified file
+     * @param file Path to the xml origin file
+     * @return A scenario built from the file
+     * @throws IOException Exception thrown if there is a problem reading the file
+     * @throws JDOMException Exception thrown if there is a problem with the xml structure of the file
+     */
     public Scenario importAll(Path file) throws IOException, JDOMException {
         scenario = new Scenario();
         SAXBuilder sxb = new SAXBuilder();
@@ -49,6 +61,23 @@ public class ScenarioImport {
         }
 
         return scenario;
+    }
+    
+    /**
+     * Starts the importation of a single observation
+     * @param observationString The xml observation to import
+     * @return The observation built from the String
+     * @throws JDOMException Exception thrown if there is a problem with the xml structure of the string
+     * @throws IOException Exception thrown if there is a problem reading the string
+     */
+    public Observation importOne(String observationString) throws JDOMException, IOException{
+        SAXBuilder sxb = new SAXBuilder();
+        xmlFile = sxb.build(new StringReader(observationString));
+        root = xmlFile.getRootElement();
+
+        Observation observation = importObservation(root);
+
+        return observation;
     }
 
     private Observation importObservation(Element xmlObservation) {

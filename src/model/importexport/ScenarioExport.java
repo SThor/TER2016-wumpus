@@ -92,9 +92,7 @@ public class ScenarioExport {
             xmlOperation.addContent(exportObservation(observation));
         }
 
-        String[] fullType = operation.getClass().getName().split(".");
-        String type = fullType[fullType.length - 1];
-        type = type.toLowerCase();
+        String type = operation.getClass().getSimpleName().toLowerCase();
         xmlOperation.setAttribute("type", type);
         
         return xmlOperation;

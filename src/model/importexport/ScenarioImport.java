@@ -1,6 +1,7 @@
 package model.importexport;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,20 @@ public class ScenarioImport {
         scenario = new Scenario();
         SAXBuilder sxb = new SAXBuilder();
         xmlFile = sxb.build(file.toFile());
+        root = xmlFile.getRootElement();
+
+        List<Element> xmlScenario = root.getChildren();
+        for (Element observation : xmlScenario) {
+            scenario.add(importObservation(observation));
+        }
+
+        return scenario;
+    }
+    
+    public Scenario importAll(String file) throws JDOMException, IOException{
+        scenario = new Scenario();
+        SAXBuilder sxb = new SAXBuilder();
+        xmlFile = sxb.build(new StringReader(file));
         root = xmlFile.getRootElement();
 
         List<Element> xmlScenario = root.getChildren();

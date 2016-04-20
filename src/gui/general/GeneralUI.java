@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -20,7 +19,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import model.Action;
@@ -55,6 +53,12 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private final JFileChooser xmlChooser;
     
+    private final ConditionTableModel preCondTableModel;
+    private final ConditionTableModel postCondTableModel;
+    private final SysObjectTreeModel objectTreeModel;
+    private final WorldListModel<String> propValueListModel;
+    private final WorldListModel<Action> actionListModel;
+    
     /**
      * Creates new form GeneralUI
      * @param world The world to work on
@@ -69,6 +73,12 @@ public class GeneralUI extends javax.swing.JFrame {
         
         worldSaved = false;
         scenarioSaved = false;
+        
+        preCondTableModel = new ConditionTableModel(new UniqueList<Condition>());
+        postCondTableModel = new ConditionTableModel((new UniqueList<Condition>()));
+        objectTreeModel = new SysObjectTreeModel(world);
+        propValueListModel = new WorldListModel<>(new UniqueList<String>());
+        actionListModel = new WorldListModel<>(world.getPossibleActions());
         
         initComponents();
         
@@ -109,7 +119,7 @@ public class GeneralUI extends javax.swing.JFrame {
         splitObjectsTab = new javax.swing.JSplitPane();
         panelStates = new javax.swing.JPanel();
         scrollListProp = new javax.swing.JScrollPane();
-        listProperties = new javax.swing.JList<>();
+        listPropValue = new javax.swing.JList<>();
         panelBtnStates = new javax.swing.JPanel();
         btnAddValue = new javax.swing.JButton();
         btnRemProperty = new javax.swing.JButton();
@@ -175,14 +185,15 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelStates.setLayout(new java.awt.BorderLayout());
 
-        listProperties.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Possible values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
-        listProperties.setOpaque(false);
-        listProperties.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+        listPropValue.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Possible values", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 16))); // NOI18N
+        listPropValue.setModel(propValueListModel);
+        listPropValue.setOpaque(false);
+        listPropValue.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                listPropertiesValueChanged(evt);
+                listPropValueValueChanged(evt);
             }
         });
-        scrollListProp.setViewportView(listProperties);
+        scrollListProp.setViewportView(listPropValue);
 
         panelStates.add(scrollListProp, java.awt.BorderLayout.CENTER);
 
@@ -210,7 +221,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelObjects.setLayout(new java.awt.BorderLayout());
 
-        treeObjects.setModel(new SysObjectTreeModel(world));
+        treeObjects.setModel(objectTreeModel);
         treeObjects.setOpaque(false);
         treeObjects.setRootVisible(false);
         treeObjects.setShowsRootHandles(true);
@@ -264,7 +275,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPre.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pre-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPre.setLayout(new java.awt.BorderLayout());
 
-        tablePreCond.setModel(new DefaultTableModel());
+        tablePreCond.setModel(preCondTableModel);
         tablePreCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tablePreCond.getTableHeader().setReorderingAllowed(false);
         scrollTablePre.setViewportView(tablePreCond);
@@ -296,7 +307,7 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPost.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Post-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPost.setLayout(new java.awt.BorderLayout());
 
-        tablePostCond.setModel(new DefaultTableModel());
+        tablePostCond.setModel(postCondTableModel);
         tablePostCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tablePostCond.getTableHeader().setReorderingAllowed(false);
         scrollTablePost.setViewportView(tablePostCond);
@@ -329,8 +340,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
         panelActions.setLayout(new java.awt.BorderLayout());
 
-        listActions.setModel(new WorldListModel(world.getPossibleActions())
-        );
+        listActions.setModel(actionListModel);
         listActions.setOpaque(false);
         listActions.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -391,7 +401,6 @@ public class GeneralUI extends javax.swing.JFrame {
         sliderInstant.setPaintLabels(true);
         sliderInstant.setPaintTicks(true);
         sliderInstant.setSnapToTicks(true);
-        sliderInstant.setValue(0);
         sliderInstant.setModel(new DefaultBoundedRangeModel(
             0,
             0,
@@ -547,21 +556,21 @@ public class GeneralUI extends javax.swing.JFrame {
     pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void listPropertiesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPropertiesValueChanged
-        _propValue = listProperties.getSelectedValue();
+    private void listPropValueValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPropValueValueChanged
+        _propValue = listPropValue.getSelectedValue();
         btnRemProperty.setEnabled(_propValue != null);
-    }//GEN-LAST:event_listPropertiesValueChanged
+    }//GEN-LAST:event_listPropValueValueChanged
 
     private void listActionsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listActionsValueChanged
         _action = listActions.getSelectedValue();
         boolean notNull = _action != null;
         
         if(notNull) {
-            tablePreCond.setModel(new ConditionTableModel(_action.getPreConditions()));
-            tablePostCond.setModel(new ConditionTableModel(_action.getPostConditions()));
+            preCondTableModel.setData(_action.getPreConditions());
+            postCondTableModel.setData(_action.getPostConditions());
         } else {
-            tablePreCond.setModel(new DefaultTableModel());
-            tablePostCond.setModel(new DefaultTableModel());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
         }
         
         btnAddPre.setEnabled(notNull);
@@ -586,11 +595,11 @@ public class GeneralUI extends javax.swing.JFrame {
             if(isSysObject) {
                 _object = (SysObject) selected;
                 _property = null;
-                listProperties.setModel(new DefaultListModel<String>());
+                propValueListModel.setData(new UniqueList<String>());
             } else {
                 _object = (SysObject) parent;
                 _property = (ObjectProperty) selected;
-                listProperties.setModel(new WorldListModel(_property.getPossibleValues()));
+                propValueListModel.setData(_property.getPossibleValues());
             }
         
             btnRemObject.setEnabled(true);
@@ -600,7 +609,7 @@ public class GeneralUI extends javax.swing.JFrame {
         } catch(NullPointerException e) { // If caught, nothing is selected in the JTree
             _object = null;
             _property = null;
-            listProperties.setModel(new DefaultListModel<String>());
+            propValueListModel.setData(new UniqueList<String>());
             btnRemObject.setEnabled(false);
             btnAddProp.setEnabled(false);
             btnAddValue.setEnabled(false);
@@ -617,7 +626,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
         String message = "Delete value \""+ _propValue +"\" from property \""+ _property +"\" in object \""+ _object +"\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            ((WorldListModel)listProperties.getModel()).removeElement(_propValue);
+            propValueListModel.removeElement(_propValue);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPropertyActionPerformed
@@ -625,7 +634,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
         String message = "Delete action \""+ _action +"\" from world ?";
         if (confirmation(message, "Confirm deletion")) {
-            ((WorldListModel)listActions.getModel()).removeElement(_action);
+            actionListModel.removeElement(_action);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemActionActionPerformed
@@ -633,7 +642,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
         String message = "Delete selected pre-condition from action \""+ _action +"\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            ((ConditionTableModel)tablePreCond.getModel()).removeRow(_preCond);
+            preCondTableModel.removeRow(_preCond);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPreActionPerformed
@@ -641,7 +650,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
         String message = "Delete selected post-condition from action \""+ _action +"\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            ((ConditionTableModel)tablePostCond.getModel()).removeRow(_postCond);
+            postCondTableModel.removeRow(_postCond);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPostActionPerformed
@@ -649,7 +658,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void removeProperty() {
         String message = "Delete property \""+ _property +"\" from object \""+ _object +"\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            ((SysObjectTreeModel)treeObjects.getModel()).removeProperty(_object, _property);
+            objectTreeModel.removeProperty(_object, _property);
             warnWorldSave();
         }
     }
@@ -657,7 +666,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void removeObject() {
         String message = "Delete object \""+ _object +"\" from world ?";
         if (confirmation(message, "Confirm deletion")) {
-            ((SysObjectTreeModel)treeObjects.getModel()).removeObject(_object);
+            objectTreeModel.removeObject(_object);
             warnWorldSave();
         }
     }
@@ -666,7 +675,7 @@ public class GeneralUI extends javax.swing.JFrame {
         String name = nameInput("Name of the new object:", "Adding an object");
         if(name != null) {
             try {
-                ((SysObjectTreeModel)treeObjects.getModel()).addObject(new SysObject(name, world));
+                objectTreeModel.addObject(new SysObject(name, world));
                 warnWorldSave();
             } catch (DuplicateElementException e) {
                 promptError("The object \""+ name +"\" already exists in the world.", 
@@ -680,7 +689,7 @@ public class GeneralUI extends javax.swing.JFrame {
         String name = nameInput(message, "Adding a property");
         if(name != null) {
             try {
-                ((SysObjectTreeModel)treeObjects.getModel()).addProperty(_object, new ObjectProperty(name));
+                objectTreeModel.addProperty(_object, new ObjectProperty(name));
                 warnWorldSave();
             } catch (DuplicateElementException e) {
                 promptError("The property \""+ name +"\" already exists in object \""+ _object +"\".", 
@@ -694,7 +703,7 @@ public class GeneralUI extends javax.swing.JFrame {
         String name = nameInput(message, "Adding a value");
         if(name != null) {
             try {
-                ((WorldListModel<String>)listProperties.getModel()).addElement(name);
+                propValueListModel.addElement(name);
                 warnWorldSave();
             } catch (DuplicateElementException e) {
                 promptError("The value \""+ name +"\" already exists in property \""+ _property +"\" of object \""+ _object +"\".", 
@@ -707,7 +716,7 @@ public class GeneralUI extends javax.swing.JFrame {
         String name = nameInput("Name of the new action:", "Adding an action");
         if(name != null) {
             try {
-                ((WorldListModel<Action>)listActions.getModel()).addElement(new Action(name));
+                actionListModel.addElement(new Action(name));
                 warnWorldSave();
             } catch (DuplicateElementException e) {
                 promptError("The action \""+ name +"\" already exists in the world.", 
@@ -722,7 +731,7 @@ public class GeneralUI extends javax.swing.JFrame {
             worldObjects.add(world.getObjectAt(i));
         }
         new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
-        ((ConditionTableModel)tablePreCond.getModel()).triggerUpdate();
+        preCondTableModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPreActionPerformed
 
     private void btnAddPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPostActionPerformed
@@ -731,7 +740,7 @@ public class GeneralUI extends javax.swing.JFrame {
             worldObjects.add(world.getObjectAt(i));
         }
         new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
-        ((ConditionTableModel)tablePostCond.getModel()).triggerUpdate();
+        postCondTableModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
 
     private void miOpenWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenWorldActionPerformed
@@ -998,11 +1007,11 @@ public class GeneralUI extends javax.swing.JFrame {
             world = new WorldImport().importAll(Paths.get(file.getAbsolutePath()));
             worldFile = file;
             unwarnWorldSave();
-            treeObjects.setModel(new SysObjectTreeModel(world));
-            listProperties.setModel(new DefaultListModel<String>());
-            listActions.setModel(new WorldListModel<>(world.getPossibleActions()));
-            tablePreCond.setModel(new DefaultTableModel());
-            tablePostCond.setModel(new DefaultTableModel());
+            objectTreeModel.setData(world);
+            propValueListModel.setData(new UniqueList<String>());
+            actionListModel.setData(world.getPossibleActions());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
             tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
             promptError("Failed to read file "+file.getName(), "Opening error");
@@ -1075,7 +1084,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JEditorPane epXmlScenario;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JList<Action> listActions;
-    private javax.swing.JList<String> listProperties;
+    private javax.swing.JList<String> listPropValue;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuScenario;
     private javax.swing.JMenu menuWorld;

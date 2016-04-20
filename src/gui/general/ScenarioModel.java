@@ -51,6 +51,7 @@ class ScenarioModel {
     }
     
     public String getFormula() {
+        System.out.println(scenario.get(instant));
         return scenario.get(instant).toString();
     }
     

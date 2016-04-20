@@ -14,7 +14,7 @@ import model.Condition;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ConditionTableModel extends AbstractTableModel {
-    private final List<Condition> conditions;
+    private List<Condition> conditions;
     
     public ConditionTableModel(List<Condition> conditions) {
         this.conditions = conditions;
@@ -66,6 +66,11 @@ public class ConditionTableModel extends AbstractTableModel {
     }
     
     public void triggerUpdate() {
+        fireTableDataChanged();
+    }
+    
+    public void setData(List<Condition> conditions) {
+        this.conditions = conditions;
         fireTableDataChanged();
     }
 }

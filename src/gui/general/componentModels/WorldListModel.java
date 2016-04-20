@@ -14,7 +14,7 @@ import javax.swing.AbstractListModel;
  * @param <E> Type of list elements
  */
 public class WorldListModel<E> extends AbstractListModel {
-    private final List<E> list;
+    private List<E> list;
     
     public WorldListModel(List<E> list) {
         this.list = list;
@@ -40,5 +40,10 @@ public class WorldListModel<E> extends AbstractListModel {
         list.add(toAdd);
         int index = list.size()-1;
         fireIntervalAdded(this, index, index);
+    }
+    
+    public void setData(List<E> list) {
+        this.list = list;
+        fireContentsChanged(this, 0, list.size());
     }
 }

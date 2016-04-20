@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import model.Action;
+import model.World;
+import model.importexport.ScenarioExport;
+import model.importexport.ScenarioImport;
 import model.observations.Observation;
 import model.observations.Scenario;
 
@@ -23,19 +25,21 @@ class ScenarioModel {
     private int instant;
     private final GeneralUI parent;
     private Thread setXMLThread;
+    private World world;
     
-    public ScenarioModel(Scenario scenario, GeneralUI parent) {
+    public ScenarioModel(Scenario scenario, GeneralUI parent, World world) {
         if(scenario.isEmpty()) {
             throw new IllegalArgumentException("Empty scenario");
         }
         this.scenario = scenario;
         xmlSources = new ArrayList<>(scenario.size());
+        ScenarioExport exporter = new ScenarioExport(null, scenario);
         for (int i=0; i<scenario.size(); i++) {
-            // xmlSource.add(observation.getXML());
-            xmlSources.add("TODO_"+i);
+            xmlSources.add(exporter.exportObservation(i));
         }
         instant = 0;
         this.parent = parent;
+        this.world = world;
     }
     
     public void setInstant(int instant) {
@@ -71,11 +75,16 @@ class ScenarioModel {
         scenario.add(instant, new Observation() {
             @Override
             public boolean isVerified() {
-                return false;
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "";
             }
         });
         
-        xmlSources.add(instant, "Generated_Test");
+        xmlSources.add(instant, "");
     }
     
     public void setXML(final String xml) {
@@ -88,11 +97,10 @@ class ScenarioModel {
         setXMLThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                Observation newObs = new Action("Foo_Bar");// Remove this line
-                /* TODO
+                ScenarioImport importer = new ScenarioImport(world);
                 Observation newObs = null;
-                try {
-                    newObs = xml.parseObservation();
+                /*try {
+                    newObs = importer.importAll(file)
                 } catch (...) {
 
                 } catch (InterruptedException e) {

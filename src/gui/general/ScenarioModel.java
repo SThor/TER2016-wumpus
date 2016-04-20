@@ -5,15 +5,19 @@
  */
 package gui.general;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import model.World;
 import model.importexport.ScenarioExport;
 import model.importexport.ScenarioImport;
 import model.observations.Observation;
 import model.observations.Scenario;
+import org.jdom2.JDOMException;
 
 /**
  *
@@ -51,7 +55,6 @@ class ScenarioModel {
     }
     
     public String getFormula() {
-        System.out.println(scenario.get(instant));
         return scenario.get(instant).toString();
     }
     
@@ -100,14 +103,13 @@ class ScenarioModel {
             public void run() {
                 ScenarioImport importer = new ScenarioImport(world);
                 Observation newObs = null;
-                /*try {
-                    newObs = importer.importAll(file)
-                } catch (...) {
-
-                } catch (InterruptedException e) {
-                    TODO: throw InterruptedException in Observation parser
+                try {
+                    newObs = importer.importOne(xml);
+                    if(false) throw new InterruptedException(); // TODO remove
+                } catch (InterruptedException | JDOMException | IOException e) {
+                    //TODO: throw InterruptedException in Observation parser
                     return;
-                }*/
+                }
                 
                 if(!Thread.interrupted()) {
                     synchronized(scenario) {

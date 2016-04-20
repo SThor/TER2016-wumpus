@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import model.World;
 import model.importexport.ScenarioExport;
@@ -105,9 +103,7 @@ class ScenarioModel {
                 Observation newObs = null;
                 try {
                     newObs = importer.importOne(xml);
-                    if(false) throw new InterruptedException(); // TODO remove
                 } catch (InterruptedException | JDOMException | IOException e) {
-                    //TODO: throw InterruptedException in Observation parser
                     return;
                 }
                 

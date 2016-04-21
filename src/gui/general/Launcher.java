@@ -8,6 +8,7 @@ package gui.general;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
+import model.observations.And;
 import model.Condition;
 import model.SysObject;
 import model.World;
@@ -61,6 +62,15 @@ public class Launcher {
         
         //------------------//
         
+        //--- Demo Scenrario ---//
+        
+        final Scenario scenario = new Scenario();
+        scenario.add(new And(new Condition(person, "position", "sat"), new Condition(door, "isOpened", "false")));
+        scenario.add(new And(new Condition(person, "position", "atDoor"), new Condition(door, "isOpened", "false")));
+        scenario.add(new And(new Condition(person, "position", "atDoor"), new Condition(door, "isOpened", "true")));
+        
+        //----------------------//
+        
         // Try to set look and feel to platform.
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -72,7 +82,7 @@ public class Launcher {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new GeneralUI(world, new Scenario()).setVisible(true);
+                new GeneralUI(world, scenario).setVisible(true);
             }
         });
     }

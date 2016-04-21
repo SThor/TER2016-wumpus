@@ -1,6 +1,7 @@
 package model.importexport;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +32,25 @@ public class ScenarioImport {
     private Document xmlFile;
     private Element root;
     private Scenario scenario;
-    private World world;
+    private final World world;
 
+    /**
+     * Creates a new import object
+     * @param world World in which the scenario import takes place
+     */
     public ScenarioImport(World world) {
         this.world = world;
     }
 
-    public Scenario importAll(Path file) throws IOException, JDOMException {
+    /**
+     * Starts the importation of the scenario to the specified file
+     * @param file Path to the xml origin file
+     * @return A scenario built from the file
+     * @throws IOException Exception thrown if there is a problem reading the file
+     * @throws JDOMException Exception thrown if there is a problem with the xml structure of the file
+     * @throws java.lang.InterruptedException If the current thread has been interrupted
+     */
+    public Scenario importAll(Path file) throws IOException, JDOMException, InterruptedException {
         scenario = new Scenario();
         SAXBuilder sxb = new SAXBuilder();
         xmlFile = sxb.build(file.toFile());
@@ -50,8 +63,33 @@ public class ScenarioImport {
 
         return scenario;
     }
+    
+    /**
+     * Starts the importation of a single observation
+     * @param observationString The xml observation to import
+     * @return The observation built from the String
+     * @throws JDOMException Exception thrown if there is a problem with the xml structure of the string
+     * @throws IOException Exception thrown if there is a problem reading the string
+     * @throws java.lang.InterruptedException If the current thread has been interrupted
+     */
+    public synchronized Observation importOne(String observationString) 
+    throws JDOMException, IOException, InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        SAXBuilder sxb = new SAXBuilder();
+        xmlFile = sxb.build(new StringReader(observationString));
+        root = xmlFile.getRootElement();
+        
+        Observation observation = importObservation(root);
 
-    private Observation importObservation(Element xmlObservation) {
+        return observation;
+    }
+
+    private Observation importObservation(Element xmlObservation) throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         switch (xmlObservation.getName()) {
             case "operation":
                 return importOperation(xmlObservation);
@@ -64,13 +102,22 @@ public class ScenarioImport {
         }
     }
 
-    private Operation importOperation(Element xmlOperation) {
+    private Operation importOperation(Element xmlOperation) throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         Operation operation;
         List<Observation> observations = new ArrayList<>();
         for (Element xmlObservation : xmlOperation.getChildren()) {
             observations.add(importObservation(xmlObservation));
         }
-        Observation[] observationsArray = (Observation[]) observations.toArray();
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        Observation[] observationsArray = new Observation[observations.size()];
+        for (int i = 0; i < observationsArray.length; i++) {
+            observationsArray[i] = observations.get(i);
+        }
         switch (xmlOperation.getAttributeValue("type")) {
             case "and":
                 operation = new And(observationsArray);
@@ -88,7 +135,10 @@ public class ScenarioImport {
         return operation;
     }
 
-    private Condition importCondition(Element xmlCondition) {
+    private Condition importCondition(Element xmlCondition) throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         String objectName = xmlCondition.getAttributeValue("object");
         SysObject object = null;
         for (int i = 0; i < world.getObjectCount(); i++) {
@@ -109,7 +159,10 @@ public class ScenarioImport {
         return new Condition(object, propertyName, value);
     }
 
-    private Action importAction(Element xmlAction) {
+    private Action importAction(Element xmlAction) throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

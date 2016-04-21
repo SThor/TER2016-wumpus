@@ -9,11 +9,7 @@ import model.Condition;
 import model.observations.Observation;
 import model.World;
 import model.exceptions.UnknownObservationException;
-import model.exceptions.UnknownOperationException;
-import model.observations.And;
-import model.observations.Not;
 import model.observations.Operation;
-import model.observations.Or;
 import model.observations.Scenario;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -36,11 +32,10 @@ public class ScenarioExport {
     /**
      * Creates a new Export object
      *
-     * @param world World related to the scenario to export
      * @param file Path to the destination file
      * @param scenario Scenario to export
      */
-    public ScenarioExport(World world, Path file, Scenario scenario) {
+    public ScenarioExport(Path file, Scenario scenario) {
         this.file = file;
         this.scenario = scenario;
     }
@@ -93,9 +88,7 @@ public class ScenarioExport {
             xmlOperation.addContent(exportObservation(observation));
         }
 
-        String[] fullType = operation.getClass().getName().split(".");
-        String type = fullType[fullType.length - 1];
-        type = type.toLowerCase();
+        String type = operation.getClass().getSimpleName().toLowerCase();
         xmlOperation.setAttribute("type", type);
         
         return xmlOperation;

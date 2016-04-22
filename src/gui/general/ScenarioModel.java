@@ -102,9 +102,10 @@ class ScenarioModel {
         setXMLThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                ScenarioImport importer = new ScenarioImport(world);
-                Observation newObs = null;
+                Observation newObs;
                 try {
+                    //Thread.sleep(1000); // Wait 1 second before starting to process XML
+                    ScenarioImport importer = new ScenarioImport(world);
                     newObs = importer.importOne(xml);
                 } catch (InterruptedException e) {
                     return;

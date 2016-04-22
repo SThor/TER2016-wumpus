@@ -3,6 +3,7 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
+import gui.solver.NoSolverException;
 import gui.solver.SolverChooser;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
@@ -14,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -971,7 +974,11 @@ public class GeneralUI extends javax.swing.JFrame {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SolverChooser(world, scenario.getScenario(), GeneralUI.this).setVisible(true);
+                try {
+                    new SolverChooser(world, scenario.getScenario(), GeneralUI.this).setVisible(true);
+                } catch (NoSolverException ex) {
+                    promptError(ex.getMessage(), "Cannot find a solver");
+                }
             }
         });
     }//GEN-LAST:event_miSolveCurrentActionPerformed

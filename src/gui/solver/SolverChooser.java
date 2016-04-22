@@ -8,6 +8,9 @@ package gui.solver;
 import gui.general.GeneralUI;
 import model.World;
 import model.observations.Scenario;
+import solver.Solvers;
+import solver.Solver;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -15,20 +18,23 @@ import model.observations.Scenario;
  */
 public class SolverChooser extends javax.swing.JDialog {
 
-    private final World world;
-    private final Scenario scenario;
+    private final Solver[] solvers;
 
     /**
      * Creates new form SolverUI
      * @param world The world to operate on
      * @param scenario The scenario to operate on
      * @param parent The calling UI
+     * @throws gui.solver.NoSolverException If no solvers are implemented in the solver package
      */ 
-    public SolverChooser(World world, Scenario scenario, GeneralUI parent) {
+    public SolverChooser(World world, Scenario scenario, GeneralUI parent) throws NoSolverException {
         super(parent);
-        this.world = world;
-        this.scenario = scenario;
+        this.solvers = new Solvers(world, scenario).getAvailableSolvers();
+        if(solvers.length == 0) {
+            throw new NoSolverException();
+        }
         initComponents();
+        areaInfo.setText(((Solver)cbSolvers.getSelectedItem()).description());
         super.setLocationRelativeTo(parent);
     }
 
@@ -43,7 +49,7 @@ public class SolverChooser extends javax.swing.JDialog {
 
         panelChoose = new javax.swing.JPanel();
         lblAlgo = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbSolvers = new javax.swing.JComboBox<>();
         scrollAreaInfo = new javax.swing.JScrollPane();
         areaInfo = new javax.swing.JTextArea();
         panelButtons = new javax.swing.JPanel();
@@ -57,21 +63,24 @@ public class SolverChooser extends javax.swing.JDialog {
         lblAlgo.setText("Solving algorithm: ");
         panelChoose.add(lblAlgo);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(150, 20));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+        cbSolvers.setModel(new DefaultComboBoxModel<Solver>(solvers)
+        );
+        cbSolvers.setPreferredSize(new java.awt.Dimension(150, 20));
+        cbSolvers.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboBox1ItemStateChanged(evt);
+                cbSolversItemStateChanged(evt);
             }
         });
-        panelChoose.add(jComboBox1);
+        panelChoose.add(cbSolvers);
 
         getContentPane().add(panelChoose, java.awt.BorderLayout.NORTH);
 
         areaInfo.setEditable(false);
         areaInfo.setColumns(20);
+        areaInfo.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
         areaInfo.setLineWrap(true);
         areaInfo.setRows(5);
+        areaInfo.setWrapStyleWord(true);
         areaInfo.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Algorithm description", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         areaInfo.setOpaque(false);
         scrollAreaInfo.setViewportView(areaInfo);
@@ -107,15 +116,15 @@ public class SolverChooser extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnStartActionPerformed
 
-    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ItemStateChanged
+    private void cbSolversItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSolversItemStateChanged
+        areaInfo.setText(((Solver)cbSolvers.getSelectedItem()).description());
+    }//GEN-LAST:event_cbSolversItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaInfo;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnStart;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<Solver> cbSolvers;
     private javax.swing.JLabel lblAlgo;
     private javax.swing.JPanel panelButtons;
     private javax.swing.JPanel panelChoose;

@@ -168,4 +168,8 @@ class ScenarioModel {
     private boolean messageStartsWithNull(Exception e) {
         return e.getMessage().startsWith("'null'");
     }
+    
+    public Scenario getScenario() {
+        return scenario;
+    }
 }

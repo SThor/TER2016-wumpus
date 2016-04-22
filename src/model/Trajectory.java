@@ -5,10 +5,22 @@
  */
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Trajectory {
+    private final List<Condition[]> trajectory;
     
+    public Trajectory(Condition[] startPoint) {
+        trajectory = new ArrayList<>();
+        trajectory.add(startPoint);
+    }
+    
+    public void addPoint(Condition[] point) {
+        trajectory.add(point);
+    }
 }

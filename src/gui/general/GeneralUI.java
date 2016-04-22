@@ -3,8 +3,7 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.event.KeyEvent;
 import model.importexport.WorldExport;
 import model.importexport.WorldImport;
 import java.io.File;
@@ -21,6 +20,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.PlainDocument;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import model.Action;
@@ -103,6 +105,7 @@ public class GeneralUI extends javax.swing.JFrame {
         });
         
         epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
+        epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 2);
         
         super.setLocationRelativeTo(null);
         setTitle();
@@ -391,6 +394,11 @@ public class GeneralUI extends javax.swing.JFrame {
         splitXmlFormula.setTopComponent(scrollFormulaArea);
 
         epXmlScenario.setText(scenario.getXML());
+        epXmlScenario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                epXmlScenarioKeyPressed(evt);
+            }
+        });
         scrollEditorPane.setViewportView(epXmlScenario);
 
         splitXmlFormula.setRightComponent(scrollEditorPane);
@@ -905,6 +913,41 @@ public class GeneralUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRemInstantActionPerformed
 
+    private void epXmlScenarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_epXmlScenarioKeyPressed
+        // if CTRL+SPACE -> auto-completion
+        if (evt.getModifiers() == KeyEvent.CTRL_MASK && evt.getKeyCode() == KeyEvent.VK_SPACE) {
+            Document document = epXmlScenario.getDocument();
+            if(document.getLength() >= 4) {
+                try {
+                    int caretPos = document.createPosition(epXmlScenario.getCaretPosition()).getOffset();
+                    String toInsert = null;
+                    int lengthToRemove = 0;
+                    if(document.getText(caretPos-4, 4).equals("cond")) {
+                        lengthToRemove = 4;
+                        toInsert = "<condition object=\"\" property=\"\" value=\"\" />";
+                    } else if (document.getText(caretPos-3, 3).equals("and")) {
+                        lengthToRemove = 3;
+                        toInsert = "<operation type=\"and\">\n\t\n</operation>";
+                    } else if (document.getText(caretPos-2, 2).equals("or")) {
+                        lengthToRemove = 2;
+                        toInsert = "<operation type=\"or\">\n\t\n</operation>";
+                    } else if (document.getText(caretPos-3, 3).equals("not")) {
+                        lengthToRemove = 3;
+                        toInsert = "<operation type=\"not\">\n\t\n</operation>";
+                    }
+                    
+                    if(toInsert != null) {
+                        caretPos -= lengthToRemove;
+                        document.remove(caretPos, lengthToRemove);
+                        document.insertString(caretPos, toInsert, null);
+                    }
+                } catch (BadLocationException ex) {
+                    promptError("Auto-completion error", "Error");
+                }
+            }
+        }
+    }//GEN-LAST:event_epXmlScenarioKeyPressed
+
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
         try {
             _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
@@ -1038,6 +1081,7 @@ public class GeneralUI extends javax.swing.JFrame {
         try {
             epXmlScenario.setPage(file.toURI().toURL());
             epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
+            epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 2);
             scenarioFile = file;
             unwarnScenarioSave();
             tabbedPane.setSelectedIndex(2);

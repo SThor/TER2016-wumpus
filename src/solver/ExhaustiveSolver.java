@@ -13,7 +13,7 @@ import model.observations.Scenario;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-class ExhaustiveSolver extends Solver {
+public class ExhaustiveSolver extends Solver {
 
     public ExhaustiveSolver(World world, Scenario scenario) {
         super(world, scenario);

@@ -105,7 +105,7 @@ public class GeneralUI extends javax.swing.JFrame {
         });
         
         epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
-        epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 2);
+        epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 1);
         
         super.setLocationRelativeTo(null);
         setTitle();
@@ -927,13 +927,13 @@ public class GeneralUI extends javax.swing.JFrame {
                         toInsert = "<condition object=\"\" property=\"\" value=\"\" />";
                     } else if (document.getText(caretPos-3, 3).equals("and")) {
                         lengthToRemove = 3;
-                        toInsert = "<operation type=\"and\">\n\t\n</operation>";
+                        toInsert = "<operation type=\"and\">\n  \n</operation>";
                     } else if (document.getText(caretPos-2, 2).equals("or")) {
                         lengthToRemove = 2;
-                        toInsert = "<operation type=\"or\">\n\t\n</operation>";
+                        toInsert = "<operation type=\"or\">\n  \n</operation>";
                     } else if (document.getText(caretPos-3, 3).equals("not")) {
                         lengthToRemove = 3;
-                        toInsert = "<operation type=\"not\">\n\t\n</operation>";
+                        toInsert = "<operation type=\"not\">\n  \n</operation>";
                     }
                     
                     if(toInsert != null) {
@@ -1081,7 +1081,7 @@ public class GeneralUI extends javax.swing.JFrame {
         try {
             epXmlScenario.setPage(file.toURI().toURL());
             epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
-            epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 2);
+            epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 1);
             scenarioFile = file;
             unwarnScenarioSave();
             tabbedPane.setSelectedIndex(2);

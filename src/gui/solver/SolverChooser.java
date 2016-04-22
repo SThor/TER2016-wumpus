@@ -11,6 +11,7 @@ import model.observations.Scenario;
 import solver.Solvers;
 import solver.Solver;
 import javax.swing.DefaultComboBoxModel;
+import solver.ExhaustiveSolver;
 
 /**
  *
@@ -19,6 +20,7 @@ import javax.swing.DefaultComboBoxModel;
 public class SolverChooser extends javax.swing.JDialog {
 
     private final Solver[] solvers;
+    private Solver selected;
 
     /**
      * Creates new form SolverUI
@@ -34,7 +36,8 @@ public class SolverChooser extends javax.swing.JDialog {
             throw new NoSolverException();
         }
         initComponents();
-        areaInfo.setText(((Solver)cbSolvers.getSelectedItem()).description());
+        
+        cbSolversItemStateChanged(null);
         super.setLocationRelativeTo(parent);
     }
 
@@ -113,11 +116,17 @@ public class SolverChooser extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        // TODO add your handling code here:
+        if(selected instanceof ExhaustiveSolver) {
+            // Launch exhaustive solving interface
+        }/* else if (selected instanceof ...) {
+        
+        }
+        */
     }//GEN-LAST:event_btnStartActionPerformed
 
     private void cbSolversItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSolversItemStateChanged
-        areaInfo.setText(((Solver)cbSolvers.getSelectedItem()).description());
+        selected = (Solver) cbSolvers.getSelectedItem();
+        areaInfo.setText(selected.description());
     }//GEN-LAST:event_cbSolversItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

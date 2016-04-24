@@ -29,13 +29,14 @@ public class ExhaustiveSolver extends Solver {
         super(world, scenario);
         
         try {
-            possibleTrajectoriesCount = world.statePossibilitiesCount(); // Possible exception
+            long possibilities = world.statePossibilitiesCount(); // Possible exception
+            possibleTrajectoriesCount = 1;
             long overflowCheck;
             
             // Calculate the number of possible trajectories
             int i = scenario.size();
             while (i > 0) {
-                overflowCheck = possibleTrajectoriesCount * possibleTrajectoriesCount;
+                overflowCheck = possibleTrajectoriesCount * possibilities;
                 if (overflowCheck > POSSIBILITIES_CAP || overflowCheck < possibleTrajectoriesCount) {
                     throw new TooManyPossibilitiesException();
                 }

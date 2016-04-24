@@ -1,7 +1,9 @@
 package model;
 
+import java.math.BigInteger;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
+import model.exceptions.LongCapacityExceededException;
 
 /**
  * Represents a whole world to study.
@@ -142,5 +144,23 @@ public class World {
         for (Action a : possibleActions) {
             a.removeAllConditions(object, property, removedValue);
         }
+    }
+    
+    /**
+     * Calculate the number of different states this world can take.
+     * That is, multiplying the number 
+     * @return
+     * @throws LongCapacityExceededException 
+     */
+    public long statePossibilitiesCount() throws LongCapacityExceededException {
+        BigInteger maxValue = BigInteger.valueOf(Long.MAX_VALUE);
+        BigInteger count = BigInteger.ONE;
+        for (SysObject object : worldObjects) {
+            count = count.multiply(object.statePossibilitiesCount());
+            if (count.compareTo(maxValue) > 0) {
+                throw new LongCapacityExceededException();
+            }
+        }
+        return count.longValue();
     }
 }

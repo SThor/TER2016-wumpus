@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigInteger;
 import java.util.List;
 import model.exceptions.NoSuchPropertyException;
 
@@ -342,5 +343,26 @@ public class SysObject {
 
     public String getName() {
         return name;
+    }
+    
+    /**
+     * Calculate the number of states this object can take.
+     * Notes: 
+     * <ul>
+     *  <li>A property that has no possible value is treated as a property with a single possible value.</li>
+     *  <li>If this object has no property, this method will return <tt>BigInteger.ONE</tt></li>
+     * </ul>
+     * @return The number of different states this object can take.
+     */
+    protected BigInteger statePossibilitiesCount() {
+        BigInteger count = BigInteger.ONE;
+        int possibleValuesCount;
+        for (ObjectProperty property : properties) {
+            possibleValuesCount = property.getPossibleValues().size();
+            if (possibleValuesCount > 1) {
+                count = count.multiply(BigInteger.valueOf(possibleValuesCount));
+            }
+        }
+        return count;
     }
 }

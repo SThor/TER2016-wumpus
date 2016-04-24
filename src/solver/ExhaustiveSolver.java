@@ -5,8 +5,11 @@
  */
 package solver;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Trajectory;
 import model.World;
+import model.exceptions.LongCapacityExceededException;
 import model.observations.Scenario;
 
 /**
@@ -14,9 +17,16 @@ import model.observations.Scenario;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ExhaustiveSolver extends Solver {
-
+    private long worldPossibleStates;
+    
     public ExhaustiveSolver(World world, Scenario scenario) {
         super(world, scenario);
+        
+        try {
+            worldPossibleStates = world.statePossibilitiesCount();
+        } catch (LongCapacityExceededException ex) {
+            worldPossibleStates = -1;
+        }
     }
     
     @Override

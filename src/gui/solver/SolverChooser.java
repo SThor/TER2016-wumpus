@@ -130,7 +130,7 @@ public class SolverChooser extends javax.swing.JDialog {
         if (selected instanceof ExhaustiveSolver) {
             ExhaustiveSolver solver = (ExhaustiveSolver) selected;
             /* TODO
-            if(solver.possibleTrajectoriesCount > *some cap*) {
+            if(solver.getpossibleTrajectoriesCount > *some cap*) {
                 desc += "You will be able to set a limit for the calculation time.\n";
             }
             */

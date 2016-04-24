@@ -56,9 +56,9 @@ public class ExhaustiveSolver extends Solver {
         NumberFormat formatter = DecimalFormat.getNumberInstance();
         if (possibleTrajectoriesCount == -1) {
             desc.append("more than ");
-            desc.append(formatter.format(Long.MAX_VALUE));
+            desc.append(formatter.format(POSSIBILITIES_CAP));
             desc.append(" possible trajectories.\n");
-            desc.append("This exceeds by far the system limitation, any attempt to use this algorithm will therefore fail.\n");
+            desc.append("This exceeds the system limitation, any attempt to use this algorithm will therefore fail.\n");
         } else {
             desc.append(formatter.format(possibleTrajectoriesCount));
             desc.append(" possible trajectories.\n");

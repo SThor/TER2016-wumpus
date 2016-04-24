@@ -126,7 +126,16 @@ public class SolverChooser extends javax.swing.JDialog {
 
     private void cbSolversItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSolversItemStateChanged
         selected = (Solver) cbSolvers.getSelectedItem();
-        areaInfo.setText(selected.description());
+        String desc = selected.description();
+        if (selected instanceof ExhaustiveSolver) {
+            ExhaustiveSolver solver = (ExhaustiveSolver) selected;
+            /* TODO
+            if(solver.possibleTrajectoriesCount > *some cap*) {
+                desc += "You will be able to set a limit for the calculation time.\n";
+            }
+            */
+        }
+        areaInfo.setText(desc);
     }//GEN-LAST:event_cbSolversItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -5,12 +5,10 @@
  */
 package solver;
 
-import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import model.Trajectory;
 import model.World;
-import model.exceptions.LongCapacityExceededException;
 import model.observations.Scenario;
 
 /**
@@ -18,26 +16,36 @@ import model.observations.Scenario;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ExhaustiveSolver extends Solver {
-    public final long possibleTrajectoriesCount;
+    /**
+     * Caps the maximum number of possibilities before throwing exception
+     */
+    public static final long POSSIBILITIES_CAP = 1_000_000_000_000L;
+    
+    private long possibleTrajectoriesCount;
     
     private final String description;
     
     public ExhaustiveSolver(World world, Scenario scenario) {
         super(world, scenario);
         
-        long worldStatesCount;
         try {
-            worldStatesCount = world.statePossibilitiesCount();
-        } catch (LongCapacityExceededException ex) {
-            worldStatesCount = -1;
+            possibleTrajectoriesCount = world.statePossibilitiesCount(); // Possible exception
+            long overflowCheck;
+            
+            // Calculate the number of possible trajectories
+            int i = scenario.size();
+            while (i > 0) {
+                overflowCheck = possibleTrajectoriesCount * possibleTrajectoriesCount;
+                if (overflowCheck > POSSIBILITIES_CAP || overflowCheck < possibleTrajectoriesCount) {
+                    throw new TooManyPossibilitiesException();
+                }
+                possibleTrajectoriesCount = overflowCheck;
+                i--;
+            }
+            
+        } catch (TooManyPossibilitiesException ex) {
+            possibleTrajectoriesCount = -1;
         }
-        
-        // Calculate the number of possible trajectories
-        BigInteger trajCount = BigInteger.valueOf(worldStatesCount).multiply(BigInteger.valueOf(scenario.size()));
-        
-        // If the number of possible trajectories exceeds Long.MAX_VALUE, 
-        // set it as -1 to signal the solver not to attempt to solve the system
-        possibleTrajectoriesCount = trajCount.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0 ? -1 : trajCount.longValue();
         
         StringBuilder desc = new StringBuilder("Uses the \"proof by exhaustion\" method, or \"brute force method\".\n");
         desc.append("This algorithm will check ALL possibilities for every property value of all objects.\n");
@@ -65,6 +73,10 @@ public class ExhaustiveSolver extends Solver {
         }
         // TODO
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public long getpossibleTrajectoriesCount() {
+        return possibleTrajectoriesCount;
     }
     
     @Override

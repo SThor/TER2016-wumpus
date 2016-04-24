@@ -1,9 +1,9 @@
 package model;
 
-import java.math.BigInteger;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
-import model.exceptions.LongCapacityExceededException;
+import solver.ExhaustiveSolver;
+import solver.TooManyPossibilitiesException;
 
 /**
  * Represents a whole world to study.
@@ -150,17 +150,19 @@ public class World {
      * Calculate the number of different states this world can take.
      * That is, multiplying the number 
      * @return
-     * @throws LongCapacityExceededException 
+     * @throws TooManyPossibilitiesException 
      */
-    public long statePossibilitiesCount() throws LongCapacityExceededException {
-        BigInteger maxValue = BigInteger.valueOf(Long.MAX_VALUE);
-        BigInteger count = BigInteger.ONE;
+    public long statePossibilitiesCount() throws TooManyPossibilitiesException {
+        long count = 1;
+        long overflowCheck;
         for (SysObject object : worldObjects) {
-            count = count.multiply(object.statePossibilitiesCount());
-            if (count.compareTo(maxValue) > 0) {
-                throw new LongCapacityExceededException();
+            overflowCheck = count * object.statePossibilitiesCount();
+            // See SysObject#statePossibilitiesCount() for comment on overflowCheck
+            if (overflowCheck > ExhaustiveSolver.POSSIBILITIES_CAP || overflowCheck < count) {
+                throw new TooManyPossibilitiesException();
             }
+            count = overflowCheck;
         }
-        return count.longValue();
+        return count;
     }
 }

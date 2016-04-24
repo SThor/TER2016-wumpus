@@ -1,8 +1,9 @@
 package model;
 
-import java.math.BigInteger;
 import java.util.List;
 import model.exceptions.NoSuchPropertyException;
+import solver.ExhaustiveSolver;
+import solver.TooManyPossibilitiesException;
 
 /**
  * Represent an object of a sytem.
@@ -353,14 +354,25 @@ public class SysObject {
      *  <li>If this object has no property, this method will return <tt>BigInteger.ONE</tt></li>
      * </ul>
      * @return The number of different states this object can take.
+     * @throws solver.TooManyPossibilitiesException
+     *  If the number of possible states exceeds the system cap.
      */
-    protected BigInteger statePossibilitiesCount() {
-        BigInteger count = BigInteger.ONE;
+    protected long statePossibilitiesCount() throws TooManyPossibilitiesException {
+        long count = 1;
+        long overflowCheck;
         int possibleValuesCount;
         for (ObjectProperty property : properties) {
             possibleValuesCount = property.getPossibleValues().size();
             if (possibleValuesCount > 1) {
-                count = count.multiply(BigInteger.valueOf(possibleValuesCount));
+                overflowCheck = count * possibleValuesCount;
+                // overflowCheck is used as a long overflow checker. 
+                // If after the multiplication, overflowCheck < count, then we exceeded long capacity.
+                // /!\ This isn't a perfect overflow detection => result mod Long.MAX_VALUE can still be greater than the original value
+                // But in most cases (with reasonnable numbers of properties and property values), it will work
+                if(overflowCheck > ExhaustiveSolver.POSSIBILITIES_CAP || overflowCheck < count) {
+                    throw new TooManyPossibilitiesException();
+                }
+                count = overflowCheck;
             }
         }
         return count;

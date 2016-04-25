@@ -93,7 +93,7 @@ public class ExhaustiveSolver extends Solver {
             for (j = 0; j < curObject.getPropertyCount(); j++) {
                 curProperty = curObject.getPropertyAt(j);
                 k = curProperty.getPossibleValues().size();
-                while (k > 0) {
+                while (k >= 0) {
                     // At this point, we need to iterate again over the world, excluding the current property
                     // So we can change all other properties values
                     for (l = 0; l < world.getObjectCount(); l++) {
@@ -102,7 +102,7 @@ public class ExhaustiveSolver extends Solver {
                             if (l == i && m == j) continue; // Excludes the current property (on previous level)
                             subCurProperty = subCurObject.getPropertyAt(m);
                             n = subCurProperty.getPossibleValues().size();
-                            while (n > 0) {
+                            while (n >= 0) {
                                 subCurProperty.changeToNextValue();
                                 WorldState snapshot = world.snapShot();
                                 if(!allStates.contains(snapshot)) {
@@ -112,6 +112,7 @@ public class ExhaustiveSolver extends Solver {
                             }
                         }
                     }
+                    
                     curProperty.changeToNextValue();
                     k--;
                 }

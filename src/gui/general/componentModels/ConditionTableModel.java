@@ -7,16 +7,16 @@ package gui.general.componentModels;
 
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.Condition;
+import model.ObjectState;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ConditionTableModel extends AbstractTableModel {
-    private List<Condition> conditions;
+    private List<ObjectState> conditions;
     
-    public ConditionTableModel(List<Condition> conditions) {
+    public ConditionTableModel(List<ObjectState> conditions) {
         this.conditions = conditions;
     }
 
@@ -32,7 +32,7 @@ public class ConditionTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Condition c = conditions.get(rowIndex);
+        ObjectState c = conditions.get(rowIndex);
         switch(columnIndex) {
             case 0: return c.getObject();
             case 1: return c.getPropertyName();
@@ -53,13 +53,13 @@ public class ConditionTableModel extends AbstractTableModel {
         }
     }
     
-    public void removeRow(Condition toRemove) {
+    public void removeRow(ObjectState toRemove) {
         int index = conditions.indexOf(toRemove);
         conditions.remove(toRemove);
         fireTableRowsDeleted(index, index);
     }
     
-    public void addRow(Condition toAdd) {
+    public void addRow(ObjectState toAdd) {
         conditions.add(toAdd);
         int index = conditions.size()-1;
         fireTableRowsInserted(index, index);
@@ -69,7 +69,7 @@ public class ConditionTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
     
-    public void setData(List<Condition> conditions) {
+    public void setData(List<ObjectState> conditions) {
         this.conditions = conditions;
         fireTableDataChanged();
     }

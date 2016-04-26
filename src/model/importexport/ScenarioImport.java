@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import model.Action;
-import model.Condition;
+import model.ObjectState;
 import model.SysObject;
 import model.World;
 import model.exceptions.NoSuchObjectException;
@@ -135,7 +135,7 @@ public class ScenarioImport {
         return operation;
     }
 
-    private Condition importCondition(Element xmlCondition) throws InterruptedException {
+    private ObjectState importCondition(Element xmlCondition) throws InterruptedException {
         if(Thread.interrupted()) {
             throw new InterruptedException();
         }
@@ -156,7 +156,7 @@ public class ScenarioImport {
 
         String propertyName = xmlCondition.getAttributeValue("property");
         String value = xmlCondition.getAttributeValue("value");
-        return new Condition(object, propertyName, value);
+        return new ObjectState(object, propertyName, value);
     }
 
     private Action importAction(Element xmlAction) throws InterruptedException {

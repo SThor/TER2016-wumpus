@@ -31,7 +31,7 @@ import javax.swing.text.PlainDocument;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import model.Action;
-import model.Condition;
+import model.ObjectState;
 import model.ObjectProperty;
 import model.SysObject;
 import model.UniqueList;
@@ -49,8 +49,8 @@ public class GeneralUI extends javax.swing.JFrame {
     private ObjectProperty _property;
     private String _propValue;
     private Action _action;
-    private Condition _preCond;
-    private Condition _postCond;
+    private ObjectState _preCond;
+    private ObjectState _postCond;
                             
     private World world;
     private final ScenarioModel scenario;
@@ -83,8 +83,8 @@ public class GeneralUI extends javax.swing.JFrame {
         worldSaved = false;
         scenarioSaved = false;
         
-        preCondTableModel = new ConditionTableModel(new UniqueList<Condition>());
-        postCondTableModel = new ConditionTableModel((new UniqueList<Condition>()));
+        preCondTableModel = new ConditionTableModel(new UniqueList<ObjectState>());
+        postCondTableModel = new ConditionTableModel((new UniqueList<ObjectState>()));
         objectTreeModel = new SysObjectTreeModel(world);
         propValueListModel = new WorldListModel<>(new UniqueList<String>());
         actionListModel = new WorldListModel<>(world.getPossibleActions());
@@ -600,8 +600,8 @@ public class GeneralUI extends javax.swing.JFrame {
             preCondTableModel.setData(_action.getPreConditions());
             postCondTableModel.setData(_action.getPostConditions());
         } else {
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
+            preCondTableModel.setData(new UniqueList<ObjectState>());
+            postCondTableModel.setData(new UniqueList<ObjectState>());
         }
         
         btnAddPre.setEnabled(notNull);
@@ -1090,8 +1090,8 @@ public class GeneralUI extends javax.swing.JFrame {
             objectTreeModel.setData(world);
             propValueListModel.setData(new UniqueList<String>());
             actionListModel.setData(world.getPossibleActions());
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
+            preCondTableModel.setData(new UniqueList<ObjectState>());
+            postCondTableModel.setData(new UniqueList<ObjectState>());
             tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
             promptError("Failed to read file "+file.getName(), "Opening error");

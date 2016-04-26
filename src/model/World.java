@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 import solver.ExhaustiveSolver;
@@ -164,5 +165,25 @@ public class World {
             count = overflowCheck;
         }
         return count;
+    }
+    
+    public WorldState snapShot() {
+        WorldState snapshot = new WorldState();
+        for (SysObject object : worldObjects) {
+            for (int i = 0; i < object.getPropertyCount(); i++) {
+                ObjectProperty property = object.getPropertyAt(i);
+                snapshot.add(new ObjectState(object, property.getName(), property.getCurrentValue()));
+            }
+        }
+        
+        return snapshot;
+    }
+    
+    public void resetObjects() {
+        for (SysObject object : worldObjects) {
+            for (int i = 0; i < object.getPropertyCount(); i++) {
+                object.getPropertyAt(i).reset();
+            }
+        }
     }
 }

@@ -5,11 +5,11 @@ import model.exceptions.NoSuchPropertyException;
 import model.exceptions.NoSuchValueException;
 
 /**
- * Represents a condition, which is an object and a wanted value of a certain property of this object.
+ * Represents the state of an object, which is an object and a wanted value of a certain property of this object.
  * The condition is verified if the <tt>SysObject</tt>'s current property is the <tt>State</tt>.
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Condition implements Observation {
+public class ObjectState implements Observation {
     /**
      * The concerned object.
      */
@@ -26,8 +26,8 @@ public class Condition implements Observation {
     private String wantedValue;
 
     /**
-     * Constructs a condition.
-     * <b>Warning:</b> it is possible to create a condition on a value not 
+     * Constructs an ObjectState.
+     * <b>Warning:</b> it is possible to create a state on a value not 
      * contained in the property's possible values. Such a condition will
      * never be verified.
      * @param object The object concerned
@@ -36,7 +36,7 @@ public class Condition implements Observation {
      * @throws NoSuchPropertyException If the property name is not one of the objects properties.
      * @throws NoSuchValueException If the wanted value is not in the property's possible values
      */
-    public Condition(SysObject object, String propertyName, String wantedValue) {
+    public ObjectState(SysObject object, String propertyName, String wantedValue) {
         if(!object.isPossibleValueOf(propertyName, wantedValue))
             throw new NoSuchValueException(wantedValue, propertyName, object.getName());
         
@@ -46,7 +46,7 @@ public class Condition implements Observation {
     }
     
     /**
-     * Checks wether this condition is verified.
+     * Checks wether this state is verified (if the object is currently in that state).
      * @return <tt>true</tt> if the object's property currently has the wanted value,
      *         <tt>false</tt> otherwise.
      */
@@ -90,10 +90,10 @@ public class Condition implements Observation {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Condition))
+        if(!(obj instanceof ObjectState))
             return false;
         
-        Condition c = (Condition) obj;
+        ObjectState c = (ObjectState) obj;
         
         if(!c.object.equals(object))
             return false;

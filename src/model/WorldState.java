@@ -5,36 +5,31 @@
  */
 package model;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class WorldState {
-    private final Condition[] state;
+public class WorldState extends ArrayList<ObjectState> {
     
-    public WorldState(Condition[] state) {
-        this.state = state;
-    }
-
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Arrays.deepHashCode(this.state);
-        return hash;
+        return 14*super.hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof WorldState)) {
+    public boolean equals(Object o) {
+        if(!(o instanceof WorldState)) {
             return false;
         }
         
-        return Arrays.deepEquals(state, ((WorldState)obj).state);
-    }
-    
-    public Condition[] asArray() {
-        return state;
+        for (int i = 0; i < size(); i++) {
+            if (!get(i).equals(((WorldState)o).get(i))) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }

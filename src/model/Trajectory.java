@@ -13,14 +13,14 @@ import java.util.List;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class Trajectory {
-    private final List<Condition[]> trajectory;
+    private final List<WorldState> trajectory;
     
-    public Trajectory(Condition[] startPoint) {
+    public Trajectory(WorldState startPoint) {
         trajectory = new ArrayList<>();
         trajectory.add(startPoint);
     }
     
-    public void addPoint(Condition[] point) {
+    public void addPoint(WorldState point) {
         trajectory.add(point);
     }
 }

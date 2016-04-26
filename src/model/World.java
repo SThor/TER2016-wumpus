@@ -168,14 +168,15 @@ public class World {
     }
     
     public WorldState snapShot() {
-        List<Condition> snapshot = new ArrayList<>();
+        WorldState snapshot = new WorldState();
         for (SysObject object : worldObjects) {
             for (int i = 0; i < object.getPropertyCount(); i++) {
                 ObjectProperty property = object.getPropertyAt(i);
-                snapshot.add(new Condition(object, property.getName(), property.getCurrentValue()));
+                snapshot.add(new ObjectState(object, property.getName(), property.getCurrentValue()));
             }
         }
-        return new WorldState(snapshot.toArray(new Condition[snapshot.size()]));
+        
+        return snapshot;
     }
     
     public void resetObjects() {

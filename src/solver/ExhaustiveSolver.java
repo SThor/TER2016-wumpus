@@ -9,12 +9,13 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import model.Condition;
+import model.ObjectState;
 import model.ObjectProperty;
 import model.SysObject;
 import model.Trajectory;
 import model.World;
 import model.WorldState;
+import model.observations.Observation;
 import model.observations.Scenario;
 
 /**
@@ -29,6 +30,7 @@ public class ExhaustiveSolver extends Solver {
     
     private long possibleTrajectoriesCount;
     private long worldStatesCount;
+    private List<Trajectory> trajectories;
     
     private final String description;
     
@@ -80,6 +82,8 @@ public class ExhaustiveSolver extends Solver {
             return null;
         }
         
+        trajectories = new ArrayList<>();
+        
         world.resetObjects();
         
         // Get a list of all the world's possible states
@@ -104,6 +108,7 @@ public class ExhaustiveSolver extends Solver {
                             n = subCurProperty.getPossibleValues().size();
                             while (n >= 0) {
                                 subCurProperty.changeToNextValue();
+                                // TODO add trajectory here ?
                                 WorldState snapshot = world.snapShot();
                                 if(!allStates.contains(snapshot)) {
                                     allStates.add(snapshot);
@@ -123,11 +128,14 @@ public class ExhaustiveSolver extends Solver {
         System.out.println("Number of states: "+allStates.size());
         for (WorldState state : allStates) {
             System.out.println("----------------------");
-            for (Condition condition : state.asArray()) {
+            for (ObjectState condition : state) {
                 System.out.println(condition);
             }
         }
         //------
+        
+        // At this point we have the list of all the world possible states
+        // Or add trajectory here ?
         
         // TODO continue
         return null;
@@ -145,5 +153,11 @@ public class ExhaustiveSolver extends Solver {
     @Override
     public String toString() {
         return "Exhaustion";
+    }
+
+    private void addTrajectory() {
+        for (Observation observation : scenario) {
+            
+        }
     }
 }

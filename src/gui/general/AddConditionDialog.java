@@ -6,7 +6,7 @@
 package gui.general;
 
 import java.util.List;
-import model.Condition;
+import model.ObjectState;
 import model.ObjectProperty;
 import model.SysObject;
 import javax.swing.DefaultComboBoxModel;
@@ -20,7 +20,7 @@ import model.exceptions.DuplicateElementException;
  */
 public class AddConditionDialog extends javax.swing.JDialog {
     private SysObject[] objects;
-    private List<Condition> conditions;
+    private List<ObjectState> conditions;
     
     private SysObject _object;
     private ObjectProperty _property;
@@ -32,7 +32,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
      * @param objects
      * @param conditions
      */
-    public AddConditionDialog(java.awt.Frame parent, List<SysObject> objects, List<Condition> conditions) {
+    public AddConditionDialog(java.awt.Frame parent, List<SysObject> objects, List<ObjectState> conditions) {
         super(parent, true);
         
         this.objects = new SysObject[objects.size()];
@@ -207,7 +207,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         try {
-            conditions.add(new Condition(_object, _property.getName(), _propValue));
+            conditions.add(new ObjectState(_object, _property.getName(), _propValue));
             ((GeneralUI)getParent()).warnWorldSave();
             dispose();
         } catch (DuplicateElementException e) {

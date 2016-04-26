@@ -5,6 +5,7 @@
  */
 package solver;
 
+import java.util.List;
 import model.Trajectory;
 import model.World;
 import model.observations.Scenario;
@@ -22,7 +23,7 @@ public abstract class Solver {
         this.scenario = scenario;
     }
     
-    public abstract Trajectory[] solve();
+    public abstract List<Trajectory> solve();
     
     public abstract String description();
 }

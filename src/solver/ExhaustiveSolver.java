@@ -5,9 +5,11 @@
  */
 package solver;
 
+import com.sun.corba.se.spi.oa.OADefault;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import model.ObjectState;
 import model.ObjectProperty;
@@ -80,7 +82,7 @@ public class ExhaustiveSolver extends Solver {
     }
     
     @Override
-    public Trajectory[] solve() {
+    public List<Trajectory> solve() {
         if (possibleTrajectoriesCount == -1) {
             return null;
         }
@@ -134,17 +136,33 @@ public class ExhaustiveSolver extends Solver {
             }
         }
         
+        List<Trajectory> toAdd;
+        for (i = 1; i < scenario.size(); i++) {
+            Observation obs = scenario.get(i);
+            toAdd = new ArrayList<>();
+            for (Iterator<Trajectory> it = trajectories.iterator(); it.hasNext();) {
+                Trajectory traj = it.next();
+                for (WorldState state : allStates) {
+                    if (scenario.get(i).isVerifiedIn(state)) { // TODO Add condition over action
+                        toAdd.add(traj.append(state));
+                    }
+                }
+                it.remove();
+            }
+            trajectories.addAll(toAdd);
+        }
+        
         for (Trajectory trajectory : trajectories) {
             System.out.println("-------------------");
             for (WorldState worldState : trajectory) {
+                System.out.println("--");
                 for (ObjectState objectState : worldState) {
                     System.out.println(objectState);
                 }
             }
         }
         
-        // TODO continue
-        return null;
+        return trajectories;
     }
     
     public long getpossibleTrajectoriesCount() {

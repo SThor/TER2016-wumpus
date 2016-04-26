@@ -56,6 +56,17 @@ public class ObjectState implements Observation {
     }
     
     /**
+     * Checks wether this state is verified in a certain world state(if the object is currently in that state).
+     * @param worldState The world state to study on
+     * @return <tt>true</tt> if the object's property currently has the wanted value in the given world state,
+     *         <tt>false</tt> otherwise.
+     */
+    @Override
+    public boolean isVerifiedIn(WorldState worldState) {
+        return worldState.contains(this);
+    }
+    
+    /**
      * Accessor to the object
      * @return The concerned object
      */

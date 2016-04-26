@@ -6,21 +6,15 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Trajectory {
-    private final List<WorldState> trajectory;
+public class Trajectory extends ArrayList<WorldState>{
     
     public Trajectory(WorldState startPoint) {
-        trajectory = new ArrayList<>();
-        trajectory.add(startPoint);
-    }
-    
-    public void addPoint(WorldState point) {
-        trajectory.add(point);
+        super();
+        add(startPoint);
     }
 }

@@ -70,6 +70,8 @@ public class Launcher {
         scenario.add(new And(new ObjectState(person, "position", "atDoor"), new ObjectState(door, "isOpened", "false")));
         scenario.add(new And(new ObjectState(person, "position", "atDoor"), new ObjectState(door, "isOpened", "true")));
         
+        new ExhaustiveSolver(world, scenario).solve();
+        
         //----------------------//
         
         // Try to set look and feel to platform.

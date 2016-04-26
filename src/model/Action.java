@@ -167,7 +167,12 @@ public class Action implements Observation {
 
     @Override
     public boolean isVerified() {
-        return preConditionsVerified() && postConditionsVerified();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isVerifiedIn(WorldState state) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public String getName() {

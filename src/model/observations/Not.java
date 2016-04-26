@@ -1,5 +1,7 @@
 package model.observations;
 
+import model.WorldState;
+
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
@@ -14,6 +16,12 @@ public class Not extends Operation{
     public boolean isVerified() {
         Observation observation = observations.get(0);
         return !observation.isVerified();
+    }
+    
+    @Override
+    public boolean isVerifiedIn(WorldState state) {
+        Observation observation = observations.get(0);
+        return !observation.isVerifiedIn(state);
     }
 
     @Override

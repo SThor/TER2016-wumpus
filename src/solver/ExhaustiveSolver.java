@@ -129,8 +129,8 @@ public class ExhaustiveSolver extends Solver {
         // At this point we have the list of all the world possible states
         List<Trajectory> trajectories = new ArrayList<>();
         for (WorldState state : allStates) {
-            // On garde les trajectoires ayant pour état initial 
-            // un état vérifiant l'observation à l'instant initial
+            // Keeps the trajectories the has for initial state
+            // a state verifying the initial observation
             if (scenario.get(0).isVerifiedIn(state)) {
                 trajectories.add(new Trajectory(state));
             }
@@ -143,7 +143,7 @@ public class ExhaustiveSolver extends Solver {
             for (Iterator<Trajectory> it = trajectories.iterator(); it.hasNext();) {
                 Trajectory traj = it.next();
                 for (WorldState state : allStates) {
-                    if (scenario.get(i).isVerifiedIn(state)) { // TODO Add condition over action
+                    if (scenario.get(i).isVerifiedIn(state) && world.existsAction(traj.last(), state)) {
                         toAdd.add(traj.append(state));
                     }
                 }

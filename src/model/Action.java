@@ -178,4 +178,22 @@ public class Action implements Observation {
     public String getName() {
         return name;
     }
+
+    public boolean preConditionsVerifiedIn(WorldState before) {
+        for (ObjectState preCond : preConditions) {
+            if (!before.contains(preCond)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean postConditionsVerifiedIn(WorldState after) {
+        for (ObjectState postCond : postConditions) {
+            if (!after.contains(postCond)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

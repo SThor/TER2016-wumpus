@@ -58,8 +58,18 @@ public class Launcher {
         openDoor.addPostCondition(new ObjectState(person, "position", "atDoor"));
         openDoor.addPostCondition(new ObjectState(door, "isOpened", "true"));
         
+        Action standUp = new Action("Stand_Up");
+        standUp.addPreCondition(new ObjectState(person, "position", "sat"));
+        standUp.addPostCondition(new ObjectState(person, "position", "up"));
+        
+        Action moveToDoor = new Action("Move_To_Door");
+        moveToDoor.addPreCondition(new ObjectState(person, "position", "up"));
+        moveToDoor.addPostCondition(new ObjectState(person, "position", "atDoor"));
+        
         world.addPossibleAction(openDoor);
         world.addPossibleAction(closeDoor);
+        world.addPossibleAction(standUp);
+        world.addPossibleAction(moveToDoor);
         
         //------------------//
         
@@ -67,6 +77,7 @@ public class Launcher {
         
         final Scenario scenario = new Scenario();
         scenario.add(new And(new ObjectState(person, "position", "sat"), new ObjectState(door, "isOpened", "false")));
+        scenario.add(new ObjectState(person, "position", "up"));
         scenario.add(new And(new ObjectState(person, "position", "atDoor"), new ObjectState(door, "isOpened", "false")));
         scenario.add(new And(new ObjectState(person, "position", "atDoor"), new ObjectState(door, "isOpened", "true")));
         

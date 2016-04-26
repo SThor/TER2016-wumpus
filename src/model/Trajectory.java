@@ -28,4 +28,8 @@ public class Trajectory extends ArrayList<WorldState>{
         res.add(point);
         return res;
     }
+    
+    public WorldState last() {
+        return get(size()-1);
+    }
 }

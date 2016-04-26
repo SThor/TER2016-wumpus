@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 import solver.ExhaustiveSolver;
@@ -184,6 +183,26 @@ public class World {
             for (int i = 0; i < object.getPropertyCount(); i++) {
                 object.getPropertyAt(i).reset();
             }
+        }
+    }
+
+    /**
+     * Check wether the transition between two states is possible
+     * @param before The state before the transition
+     * @param after The state after the transition
+     * @return <tt>true</tt> if there is a transition
+     *         <tt>false</tt> otherwise.
+     */
+    public boolean existsAction(WorldState before, WorldState after) {
+        if (before.equals(after)) {
+            return true;
+        } else {
+            for (Action action : possibleActions) {
+                if (action.preConditionsVerifiedIn(before) && action.postConditionsVerifiedIn(after)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

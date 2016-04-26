@@ -12,24 +12,24 @@ import java.util.Collection;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Trajectory extends ArrayList<WorldState>{
+public class Trajectory extends ArrayList<TrajectoryStep> {
 
-    private Trajectory(Collection<? extends WorldState> c) {
+    private Trajectory(Collection<? extends TrajectoryStep> c) {
         super(c);
     }
     
     public Trajectory(WorldState startPoint) {
         super();
-        add(startPoint);
+        add(new TrajectoryStep(startPoint, null));
     }
     
-    public Trajectory append(WorldState point) {
+    public Trajectory append(TrajectoryStep step) {
         Trajectory res =  new Trajectory(this);
-        res.add(point);
+        res.add(step);
         return res;
     }
     
-    public WorldState last() {
+    public TrajectoryStep last() {
         return get(size()-1);
     }
 }

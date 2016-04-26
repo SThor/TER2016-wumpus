@@ -11,10 +11,12 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import model.Action;
 import model.ObjectState;
 import model.ObjectProperty;
 import model.SysObject;
 import model.Trajectory;
+import model.TrajectoryStep;
 import model.World;
 import model.WorldState;
 import model.observations.Observation;
@@ -143,8 +145,9 @@ public class ExhaustiveSolver extends Solver {
             for (Iterator<Trajectory> it = trajectories.iterator(); it.hasNext();) {
                 Trajectory traj = it.next();
                 for (WorldState state : allStates) {
-                    if (scenario.get(i).isVerifiedIn(state) && world.existsAction(traj.last(), state)) {
-                        toAdd.add(traj.append(state));
+                    Action executed = world.existsAction(traj.last().getState(), state);
+                    if (scenario.get(i).isVerifiedIn(state) &&  executed != null) {
+                        toAdd.add(traj.append(new TrajectoryStep(state, executed)));
                     }
                 }
                 it.remove();
@@ -154,11 +157,10 @@ public class ExhaustiveSolver extends Solver {
         
         for (Trajectory trajectory : trajectories) {
             System.out.println("-------------------");
-            for (WorldState worldState : trajectory) {
-                System.out.println("--");
-                for (ObjectState objectState : worldState) {
-                    System.out.println(objectState);
-                }
+            for (TrajectoryStep step : trajectory) {
+                System.out.print(step.getAction());
+                System.out.print("\t==> ");
+                System.out.println(step.getState());
             }
         }
         

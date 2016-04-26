@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 import solver.ExhaustiveSolver;
@@ -188,21 +189,42 @@ public class World {
 
     /**
      * Check wether the transition between two states is possible
+     * The two states need to be stated in the same order, otherwise, this method has unpredicatable behavior
      * @param before The state before the transition
      * @param after The state after the transition
      * @return <tt>true</tt> if there is a transition
      *         <tt>false</tt> otherwise.
      */
-    public boolean existsAction(WorldState before, WorldState after) {
+    public Action existsAction(WorldState before, WorldState after) {
+        if (before.size() != after.size()) {
+            throw new IllegalArgumentException("The two states have different sizes");
+        }
         if (before.equals(after)) {
-            return true;
+            return new Action("No_Action");
         } else {
             for (Action action : possibleActions) {
                 if (action.preConditionsVerifiedIn(before) && action.postConditionsVerifiedIn(after)) {
-                    return true;
+                    // Objects modified by this action
+                    List<SysObject> modifiedObjects = action.modifiedObjects();
+                    // We will now check that only the objects contained in "modifiedObjects" are
+                    // modified between the two states
+                    /* Not Working
+                    for (int i = 0; i < before.size(); i++) {
+                        ObjectState objectStateBefore = before.get(i);
+                        ObjectState objectStateAfter = after.get(i);
+                        if (objectStateBefore.getObject().equals(objectStateAfter.getObject()) 
+                        && objectStateBefore.getPropertyName().equals(objectStateBefore.getPropertyName())) {
+                            if (!objectStateBefore.getWantedValue().equals(objectStateAfter.getWantedValue())) {
+                                if (modifiedObjects.contains(objectStateBefore.getObject())) {
+                                    return action;
+                                }
+                            }
+                        }
+                    }
+                    */
                 }
             }
-            return false;
+            return null;
         }
     }
 }

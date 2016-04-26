@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import model.observations.Observation;
 import java.util.Iterator;
 import java.util.List;
@@ -122,11 +123,11 @@ public class Action implements Observation {
     }
     
     /**
-     * Remove all condition associated to an object that has a certain property
-     * which is currently at a certain value.
+     * Remove all condition associated to an postCondObject that has a certain property
+ which is currently at a certain value.
      * Note: if <tt>value</tt> is <tt>null</tt>, the value of the property is discarded.
-     *       if <tt>property</tt> is <tt>null</tt> the object is deleted wether it has this propety or not.
-     * @param object The associated object
+     *       if <tt>property</tt> is <tt>null</tt> the postCondObject is deleted wether it has this propety or not.
+     * @param object The associated postCondObject
      * @param property The associated property
      * @param values The list of possible values associated
      */
@@ -195,5 +196,32 @@ public class Action implements Observation {
             }
         }
         return true;
+    }
+    
+    /**
+     * 
+     * @return The list of objects modified by this action
+     */
+    protected List<SysObject> modifiedObjects() {
+        List<SysObject> modified = new ArrayList<>();
+        List<SysObject> objectsInPreCond = new ArrayList<>();
+        for (ObjectState preCond : preConditions) {
+            objectsInPreCond.add(preCond.getObject());
+        }
+        for (ObjectState postCond : postConditions) {
+            SysObject postCondObject = postCond.getObject();
+            if (objectsInPreCond.contains(postCondObject)) {
+                for (ObjectState preCond : preConditions) {
+                    if (preCond.getObject().equals(postCondObject) && preCond.getPropertyName().equals(postCond.getPropertyName())) {
+                        // We have found a condition acting on the same Object.property in both preConditions and postConditions
+                        // If the wanted value is changed, the object is modified by this action
+                        if (!preCond.getWantedValue().equals(postCond.getWantedValue())) {
+                            modified.add(postCondObject);
+                        }
+                    }
+                }
+            }
+        }
+        return modified;
     }
 }

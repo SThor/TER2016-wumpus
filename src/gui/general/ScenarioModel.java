@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import model.World;
+import model.WorldState;
 import model.exceptions.NoSuchObjectException;
 import model.exceptions.NoSuchPropertyException;
 import model.exceptions.NoSuchValueException;
@@ -80,6 +81,11 @@ class ScenarioModel {
         scenario.add(instant, new Observation() {
             @Override
             public boolean isVerified() {
+                return true;
+            }
+            
+            @Override
+            public boolean isVerifiedIn(WorldState state) {
                 return true;
             }
 

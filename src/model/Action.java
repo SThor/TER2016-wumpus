@@ -18,12 +18,12 @@ public class Action implements Observation {
     /**
      * List of pre-conditions for this action to be realised.
      */
-    private final List<Condition> preConditions;
+    private final List<PropertyValue> preConditions;
     
     /**
      * List of post-conditions after this action has been realised.
      */
-    private final List<Condition> postConditions;
+    private final List<PropertyValue> postConditions;
     
     /**
      * Constructs an action with no pre- and post-consitions 
@@ -44,7 +44,7 @@ public class Action implements Observation {
      * @return <tt>true</tt> if all the pre-conditions are verified, <tt>false</tt> otherwise.
      */
     public boolean preConditionsVerified() {
-        for(Condition c : preConditions)
+        for(PropertyValue c : preConditions)
             if(!c.isVerified())
                 return false;
         
@@ -56,7 +56,7 @@ public class Action implements Observation {
      * @return <tt>true</tt> if all the post-conditions are verified, <tt>false</tt> otherwise.
      */
     public boolean postConditionsVerified() {
-        for(Condition c : postConditions)
+        for(PropertyValue c : postConditions)
             if(!c.isVerified())
                 return false;
         
@@ -68,7 +68,7 @@ public class Action implements Observation {
      * @param preCondition The pre-condition to add
      * @throws DuplicateElementException If the pre-condition already exists.
      */
-    public void addPreCondition(Condition preCondition) {
+    public void addPreCondition(PropertyValue preCondition) {
         preConditions.add(preCondition);
     }
     
@@ -77,7 +77,7 @@ public class Action implements Observation {
      * @param postCondition  The post-condition to add
      * @throws DuplicateElementException If the post-condition already exists
      */
-    public void addPostCondition(Condition postCondition) {
+    public void addPostCondition(PropertyValue postCondition) {
         postConditions.add(postCondition);
     }
     
@@ -101,7 +101,7 @@ public class Action implements Observation {
      * Accessor to the pre-conditions.
      * @return The list of pre-conditions
      */
-    public List<Condition> getPreConditions() {
+    public List<PropertyValue> getPreConditions() {
         return preConditions;
     }
     
@@ -109,7 +109,7 @@ public class Action implements Observation {
      * Accessor to the post-conditions.
      * @return The list of post-conditions
      */
-    public List<Condition> getPostConditions() {
+    public List<PropertyValue> getPostConditions() {
         return postConditions;
     }
     
@@ -130,9 +130,9 @@ public class Action implements Observation {
      * @param property The associated property
      * @param values The list of possible values associated
      */
-    private void removeFromList(List<Condition> conditions, SysObject object, String property, String value) {
-        for(Iterator<Condition> it = conditions.iterator(); it.hasNext();) {
-            Condition c = it.next();
+    private void removeFromList(List<PropertyValue> conditions, SysObject object, String property, String value) {
+        for(Iterator<PropertyValue> it = conditions.iterator(); it.hasNext();) {
+            PropertyValue c = it.next();
             if (c.getObject().equals(object)
             &&(property == null || c.getPropertyName().equals(property))
             &&(value == null || value.equals(c.getWantedValue()))) {

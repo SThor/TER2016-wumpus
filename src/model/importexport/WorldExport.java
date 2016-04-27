@@ -4,7 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import model.Action;
-import model.Condition;
+import model.PropertyValue;
 import model.ObjectProperty;
 import model.SysObject;
 import model.World;
@@ -99,13 +99,13 @@ public class WorldExport {
         xmlAction.setAttribute("name", action.getName());
         
         Element xmlPre = new Element("preconditions");
-        for (Condition preCondition : action.getPreConditions()) {
+        for (PropertyValue preCondition : action.getPreConditions()) {
             xmlPre.addContent(exportCondition(preCondition));
         }
         xmlAction.addContent(xmlPre);
 
         Element xmlPost = new Element("postconditions");
-        for (Condition postCondition : action.getPostConditions()) {
+        for (PropertyValue postCondition : action.getPostConditions()) {
             xmlPost.addContent(exportCondition(postCondition));
         }
         xmlAction.addContent(xmlPost);
@@ -113,7 +113,7 @@ public class WorldExport {
         return xmlAction;
     }
 
-    private Element exportCondition(Condition condition) {
+    private Element exportCondition(PropertyValue condition) {
         Element xmlCondition = new Element("condition");
         xmlCondition.setAttribute("object", condition.getObject().getName());
         xmlCondition.setAttribute("property", condition.getPropertyName());

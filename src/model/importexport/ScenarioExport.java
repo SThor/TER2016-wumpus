@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import model.Action;
-import model.Condition;
+import model.PropertyValue;
 import model.observations.Observation;
 import model.World;
 import model.exceptions.UnknownObservationException;
@@ -71,8 +71,8 @@ public class ScenarioExport {
     private Element exportObservation(Observation observation) {
         if (observation instanceof Operation) {
             return exportOperation((Operation) observation);
-        } else if (observation instanceof Condition) {
-            return exportCondition((Condition) observation);
+        } else if (observation instanceof PropertyValue) {
+            return exportCondition((PropertyValue) observation);
         } else if (observation instanceof Action) {
             return exportAction((Action) observation);
         } else {
@@ -94,7 +94,7 @@ public class ScenarioExport {
         return xmlOperation;
     }
 
-    private Element exportCondition(Condition condition) {
+    private Element exportCondition(PropertyValue condition) {
         Element xmlCondition = new Element("condition");
         xmlCondition.setAttribute("object", condition.getObject().getName());
         xmlCondition.setAttribute("property", condition.getPropertyName());

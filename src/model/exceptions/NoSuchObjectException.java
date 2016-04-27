@@ -1,7 +1,5 @@
 package model.exceptions;
 
-import model.SysObject;
-
 /**
  * Thrown when an application attempts to get a non-existing property from an object
  * @author Paul Givel and Guillaume Hartenstein

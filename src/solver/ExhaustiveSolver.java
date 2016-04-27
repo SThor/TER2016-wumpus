@@ -143,23 +143,13 @@ public class ExhaustiveSolver extends Solver {
             for (Iterator<Trajectory> it = trajectories.iterator(); it.hasNext();) {
                 Trajectory traj = it.next();
                 for (WorldState state : allStates) {
-                    Action executed = world.existsAction(traj.last().getState(), state);
-                    if (scenario.get(i).isVerifiedIn(state) &&  executed != null) {
-                        toAdd.add(traj.append(new TrajectoryStep(state, executed)));
+                    if (scenario.get(i).isVerifiedIn(state)) {
+                        toAdd.add(traj.append(new TrajectoryStep(state, null)));
                     }
                 }
                 it.remove();
             }
             trajectories.addAll(toAdd);
-        }
-        
-        for (Trajectory trajectory : trajectories) {
-            System.out.println("-------------------");
-            for (TrajectoryStep step : trajectory) {
-                System.out.print(step.getAction());
-                System.out.print("\t==> ");
-                System.out.println(step.getState());
-            }
         }
         
         return trajectories;

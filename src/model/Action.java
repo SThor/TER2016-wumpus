@@ -200,10 +200,10 @@ public class Action implements Observation {
     
     /**
      * 
-     * @return The list of objects modified by this action
+     * @return The list of Objects.properties modified by this action
      */
-    protected List<SysObject> modifiedObjects() {
-        List<SysObject> modified = new ArrayList<>();
+    protected List<ObjectState> modifiedObjects() {
+        List<ObjectState> modified = new ArrayList<>();
         List<SysObject> objectsInPreCond = new ArrayList<>();
         for (ObjectState preCond : preConditions) {
             objectsInPreCond.add(preCond.getObject());
@@ -216,7 +216,7 @@ public class Action implements Observation {
                         // We have found a condition acting on the same Object.property in both preConditions and postConditions
                         // If the wanted value is changed, the object is modified by this action
                         if (!preCond.getWantedValue().equals(postCond.getWantedValue())) {
-                            modified.add(postCondObject);
+                            modified.add(preCond);
                         }
                     }
                 }

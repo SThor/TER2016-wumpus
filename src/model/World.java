@@ -205,26 +205,25 @@ public class World {
             for (Action action : possibleActions) {
                 if (action.preConditionsVerifiedIn(before) && action.postConditionsVerifiedIn(after)) {
                     // Objects modified by this action
-                    List<SysObject> modifiedObjects = action.modifiedObjects();
+                    List<ObjectState> modified = action.modifiedObjects();
                     // We will now check that only the objects contained in "modifiedObjects" are
                     // modified between the two states
-                    /* Not Working
                     for (int i = 0; i < before.size(); i++) {
                         ObjectState objectStateBefore = before.get(i);
                         ObjectState objectStateAfter = after.get(i);
                         if (objectStateBefore.getObject().equals(objectStateAfter.getObject()) 
                         && objectStateBefore.getPropertyName().equals(objectStateBefore.getPropertyName())) {
                             if (!objectStateBefore.getWantedValue().equals(objectStateAfter.getWantedValue())) {
-                                if (modifiedObjects.contains(objectStateBefore.getObject())) {
-                                    return action;
+                                if (!modified.contains(objectStateBefore)) {
+                                    return null;
                                 }
                             }
                         }
                     }
-                    */
+                    return action;
                 }
             }
-            return null;
+            return new Action("No_Action");
         }
     }
 }

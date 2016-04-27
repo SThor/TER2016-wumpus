@@ -5,14 +5,12 @@
  */
 package solver;
 
-import com.sun.corba.se.spi.oa.OADefault;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import model.Action;
-import model.ObjectState;
 import model.ObjectProperty;
 import model.SysObject;
 import model.Trajectory;

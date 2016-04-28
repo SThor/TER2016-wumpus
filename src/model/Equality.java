@@ -25,7 +25,8 @@ public class Equality implements Condition {
      *
      * @param object The object concerned
      * @param propertyName The name of the property concerned
-     * @param secondObject The object containing the propery we're trying to match
+     * @param secondObject The object containing the propery we're trying to
+     * match
      * @param secondPropertyName The name of the property we're trying to match
      * @throws NoSuchPropertyException If the property name for either of the
      * objects is not in its properties.
@@ -105,6 +106,11 @@ public class Equality implements Condition {
     @Override
     public String toString() {
         return object + "." + propertyName + " = " + secondObject + "." + secondPropertyName;
+    }
+
+    @Override
+    public boolean largeEquals(SysObject object, String property, String value) {
+        return (this.object.equals(object) || this.secondObject.equals(object)) && (property == null || (this.propertyName.equals(property) || this.secondPropertyName.equals(property)));
     }
 
 }

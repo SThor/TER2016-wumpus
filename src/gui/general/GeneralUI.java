@@ -26,7 +26,7 @@ import javax.swing.text.PlainDocument;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import model.Action;
-import model.PropertyValue;
+import model.Condition;
 import model.ObjectProperty;
 import model.SysObject;
 import model.UniqueList;
@@ -44,8 +44,8 @@ public class GeneralUI extends javax.swing.JFrame {
     private ObjectProperty _property;
     private String _propValue;
     private Action _action;
-    private PropertyValue _preCond;
-    private PropertyValue _postCond;
+    private Condition _preCond;
+    private Condition _postCond;
                             
     private World world;
     private final ScenarioModel scenario;
@@ -78,8 +78,8 @@ public class GeneralUI extends javax.swing.JFrame {
         worldSaved = false;
         scenarioSaved = false;
         
-        preCondTableModel = new ConditionTableModel(new UniqueList<PropertyValue>());
-        postCondTableModel = new ConditionTableModel((new UniqueList<PropertyValue>()));
+        preCondTableModel = new ConditionTableModel(new UniqueList<Condition>());
+        postCondTableModel = new ConditionTableModel((new UniqueList<Condition>()));
         objectTreeModel = new SysObjectTreeModel(world);
         propValueListModel = new WorldListModel<>(new UniqueList<String>());
         actionListModel = new WorldListModel<>(world.getPossibleActions());
@@ -579,8 +579,8 @@ public class GeneralUI extends javax.swing.JFrame {
             preCondTableModel.setData(_action.getPreConditions());
             postCondTableModel.setData(_action.getPostConditions());
         } else {
-            preCondTableModel.setData(new UniqueList<PropertyValue>());
-            postCondTableModel.setData(new UniqueList<PropertyValue>());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
         }
         
         btnAddPre.setEnabled(notNull);
@@ -740,7 +740,8 @@ public class GeneralUI extends javax.swing.JFrame {
         for (int i = 0; i < world.getObjectCount(); i++) {
             worldObjects.add(world.getObjectAt(i));
         }
-        new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
+        //new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
+        //TODO
         preCondTableModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPreActionPerformed
 
@@ -749,7 +750,8 @@ public class GeneralUI extends javax.swing.JFrame {
         for (int i = 0; i < world.getObjectCount(); i++) {
             worldObjects.add(world.getObjectAt(i));
         }
-        new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
+        //new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
+        //TODO
         postCondTableModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
 
@@ -1055,8 +1057,8 @@ public class GeneralUI extends javax.swing.JFrame {
             objectTreeModel.setData(world);
             propValueListModel.setData(new UniqueList<String>());
             actionListModel.setData(world.getPossibleActions());
-            preCondTableModel.setData(new UniqueList<PropertyValue>());
-            postCondTableModel.setData(new UniqueList<PropertyValue>());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
             tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
             promptError("Failed to read file "+file.getName(), "Opening error");

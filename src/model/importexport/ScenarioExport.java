@@ -7,7 +7,6 @@ import java.util.List;
 import model.Action;
 import model.PropertyValue;
 import model.observations.Observation;
-import model.World;
 import model.exceptions.UnknownObservationException;
 import model.observations.Operation;
 import model.observations.Scenario;

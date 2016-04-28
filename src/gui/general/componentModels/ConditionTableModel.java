@@ -7,6 +7,7 @@ package gui.general.componentModels;
 
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import model.Condition;
 import model.PropertyValue;
 
 /**
@@ -14,9 +15,9 @@ import model.PropertyValue;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ConditionTableModel extends AbstractTableModel {
-    private List<PropertyValue> conditions;
+    private List<Condition> conditions;
     
-    public ConditionTableModel(List<PropertyValue> conditions) {
+    public ConditionTableModel(List<Condition> conditions) {
         this.conditions = conditions;
     }
 
@@ -32,7 +33,8 @@ public class ConditionTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        PropertyValue c = conditions.get(rowIndex);
+        //fixme : adapt to condition
+        PropertyValue c = (PropertyValue) conditions.get(rowIndex);
         switch(columnIndex) {
             case 0: return c.getObject();
             case 1: return c.getPropertyName();
@@ -53,13 +55,13 @@ public class ConditionTableModel extends AbstractTableModel {
         }
     }
     
-    public void removeRow(PropertyValue toRemove) {
+    public void removeRow(Condition toRemove) {
         int index = conditions.indexOf(toRemove);
         conditions.remove(toRemove);
         fireTableRowsDeleted(index, index);
     }
     
-    public void addRow(PropertyValue toAdd) {
+    public void addRow(Condition toAdd) {
         conditions.add(toAdd);
         int index = conditions.size()-1;
         fireTableRowsInserted(index, index);
@@ -69,7 +71,7 @@ public class ConditionTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
     
-    public void setData(List<PropertyValue> conditions) {
+    public void setData(List<Condition> conditions) {
         this.conditions = conditions;
         fireTableDataChanged();
     }

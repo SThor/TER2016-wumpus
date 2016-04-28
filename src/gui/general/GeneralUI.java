@@ -740,8 +740,7 @@ public class GeneralUI extends javax.swing.JFrame {
         for (int i = 0; i < world.getObjectCount(); i++) {
             worldObjects.add(world.getObjectAt(i));
         }
-        //new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
-        //TODO
+        new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
         preCondTableModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPreActionPerformed
 
@@ -750,8 +749,7 @@ public class GeneralUI extends javax.swing.JFrame {
         for (int i = 0; i < world.getObjectCount(); i++) {
             worldObjects.add(world.getObjectAt(i));
         }
-        //new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
-        //TODO
+        new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
         postCondTableModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
 

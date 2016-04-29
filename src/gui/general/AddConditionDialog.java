@@ -28,7 +28,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private SysObject _object;
     private ObjectProperty _property;
     private String _propValue;
-    
+
     private SysObject _object2;
     private ObjectProperty _property2;
 
@@ -54,7 +54,8 @@ public class AddConditionDialog extends javax.swing.JDialog {
         radioButtonGroup.setSelected(propertyValueRadioButton.getModel(), true);
 
         cbObjectItemStateChanged(null);
-        cbPropItemStateChanged(null);
+        cbObject1ItemStateChanged(null);
+        cbObject2ItemStateChanged(null);
 
         super.setLocationRelativeTo(parent);
     }
@@ -100,6 +101,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
         setResizable(false);
 
         radioButtonGroup.add(propertyValueRadioButton);
+        propertyValueRadioButton.setSelected(true);
         propertyValueRadioButton.setText("One property at a specific value");
         propertyValueRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -352,20 +354,68 @@ public class AddConditionDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
+    private void checkAdd() {
+        if (propertyValueRadioButton.isSelected()) {
+            if (cbProp.isEnabled() && cbPropValue.isEnabled()) {
+                btnAdd.setEnabled(true);
+            }
+        } else if (equalityRadioButton.isSelected()) {
+            if (cbProp1.isEnabled() && cbProp2.isEnabled()) {
+                btnAdd.setEnabled(true);
+            }
+        } else {
+            btnAdd.setEnabled(false);
+        }
+    }
+
     private void cbObject2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbObject2ItemStateChanged
-        // TODO add your handling code here:
+        _object2 = (SysObject) cbObject2.getSelectedItem();
+
+        System.out.println("_object2.getName() = " + _object2.getName());
+        if (_object2.getPropertyCount() < 0) {
+            cbProp2.setModel(new DefaultComboBoxModel<ObjectProperty>());
+            cbProp2.setEnabled(false);
+        } else {
+            ObjectProperty[] properties = new ObjectProperty[_object2.getPropertyCount()];
+            for (int i = 0; i < properties.length; i++) {
+                properties[i] = _object2.getPropertyAt(i);
+            }
+            cbProp2.setModel(new DefaultComboBoxModel<>(properties));
+            cbProp2.setEnabled(true);
+        }
+
+        cbProp2ItemStateChanged(null);
+        checkAdd();
     }//GEN-LAST:event_cbObject2ItemStateChanged
 
     private void cbProp2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProp2ItemStateChanged
-        // TODO add your handling code here:
+        _property2 = (ObjectProperty) cbProp2.getSelectedItem();
+        checkAdd();
     }//GEN-LAST:event_cbProp2ItemStateChanged
 
     private void cbProp1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProp1ItemStateChanged
-        // TODO add your handling code here:
+        _property = (ObjectProperty) cbProp1.getSelectedItem();
+        checkAdd();
     }//GEN-LAST:event_cbProp1ItemStateChanged
 
     private void cbObject1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbObject1ItemStateChanged
-        // TODO add your handling code here:
+        _object = (SysObject) cbObject1.getSelectedItem();
+
+        System.out.println("_object2.getName() = " + _object.getName());
+        if (_object.getPropertyCount() < 0) {
+            cbProp1.setModel(new DefaultComboBoxModel<ObjectProperty>());
+            cbProp1.setEnabled(false);
+        } else {
+            ObjectProperty[] properties = new ObjectProperty[_object.getPropertyCount()];
+            for (int i = 0; i < properties.length; i++) {
+                properties[i] = _object.getPropertyAt(i);
+            }
+            cbProp1.setModel(new DefaultComboBoxModel<>(properties));
+            cbProp1.setEnabled(true);
+        }
+
+        cbProp1ItemStateChanged(null);
+        checkAdd();
     }//GEN-LAST:event_cbObject1ItemStateChanged
 
     private void cbPropValueItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropValueItemStateChanged
@@ -375,11 +425,12 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private void cbPropItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropItemStateChanged
         _property = (ObjectProperty) cbProp.getSelectedItem();
 
-        try {
-            List<String> propValues = _property.getPossibleValues();
-            if (propValues.isEmpty()) {
-                throw new NullPointerException();
-            }
+        List<String> propValues = _property.getPossibleValues();
+        if (propValues.isEmpty()) {
+            cbPropValue.setModel(new DefaultComboBoxModel<String>());
+            cbPropValue.setEnabled(false);
+            btnAdd.setEnabled(false);
+        } else {
             String[] values = new String[propValues.size()];
             for (int i = 0; i < values.length; i++) {
                 values[i] = propValues.get(i);
@@ -387,20 +438,15 @@ public class AddConditionDialog extends javax.swing.JDialog {
             cbPropValue.setModel(new DefaultComboBoxModel<>(values));
             cbPropValue.setEnabled(true);
             btnAdd.setEnabled(true);
-        } catch (NullPointerException e) {
-            cbPropValue.setModel(new DefaultComboBoxModel<String>());
-            cbPropValue.setEnabled(false);
-            btnAdd.setEnabled(false);
-        } finally {
-            cbPropValueItemStateChanged(null);
         }
+        cbPropValueItemStateChanged(null);
     }//GEN-LAST:event_cbPropItemStateChanged
 
     private void cbObjectItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbObjectItemStateChanged
         _object = (SysObject) cbObject.getSelectedItem();
 
         try {
-            if (_object.getPropertyCount() > 0) {
+            if (_object.getPropertyCount() < 0) {
                 throw new NullPointerException();
             }
             ObjectProperty[] properties = new ObjectProperty[_object.getPropertyCount()];
@@ -420,11 +466,23 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private void propertyValueRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_propertyValueRadioButtonActionPerformed
         CardLayout cl = (CardLayout) (inputPanel.getLayout());
         cl.show(inputPanel, "propertyValue");
+
+        cbObjectItemStateChanged(null);
+        cbObject1ItemStateChanged(null);
+        cbObject2ItemStateChanged(null);
+
+        checkAdd();
     }//GEN-LAST:event_propertyValueRadioButtonActionPerformed
 
     private void equalityRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_equalityRadioButtonActionPerformed
         CardLayout cl = (CardLayout) (inputPanel.getLayout());
         cl.show(inputPanel, "equality");
+
+        cbObjectItemStateChanged(null);
+        cbObject1ItemStateChanged(null);
+        cbObject2ItemStateChanged(null);
+
+        checkAdd();
     }//GEN-LAST:event_equalityRadioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

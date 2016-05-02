@@ -3,7 +3,7 @@ package model.importexport;
 import java.io.IOException;
 import java.nio.file.Path;
 import model.Action;
-import model.ObjectState;
+import model.PropertyValue;
 import model.ObjectProperty;
 import model.SysObject;
 import model.World;
@@ -88,7 +88,7 @@ public class WorldImport {
         }
     }
 
-    private ObjectState importCondition(Element xmlCondition) {
+    private PropertyValue importCondition(Element xmlCondition) {
         String objectName = xmlCondition.getAttributeValue("object");
         SysObject object = null;
         for (int i = 0; i < world.getObjectCount(); i++) {
@@ -106,6 +106,6 @@ public class WorldImport {
 
         String propertyName = xmlCondition.getAttributeValue("property");
         String wantedValue = xmlCondition.getAttributeValue("wanted_value");
-        return new ObjectState(object, propertyName, wantedValue);
+        return new PropertyValue(object, propertyName, wantedValue);
     }
 }

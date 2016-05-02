@@ -10,7 +10,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import model.Action;
 import model.observations.And;
-import model.ObjectState;
+import model.PropertyValue;
 import model.SysObject;
 import model.World;
 import model.observations.Scenario;
@@ -47,16 +47,16 @@ public class Launcher {
         world.addObject(person);
         
         Action closeDoor = new Action("Close_Door");
-        closeDoor.addPreCondition(new ObjectState(person, "position", "atDoor"));
-        closeDoor.addPreCondition(new ObjectState(door, "isOpened", "true"));
-        closeDoor.addPostCondition(new ObjectState(person, "position", "atDoor"));
-        closeDoor.addPostCondition(new ObjectState(door, "isOpened", "false"));
+        closeDoor.addPreCondition(new PropertyValue(person, "position", "atDoor"));
+        closeDoor.addPreCondition(new PropertyValue(door, "isOpened", "true"));
+        closeDoor.addPostCondition(new PropertyValue(person, "position", "atDoor"));
+        closeDoor.addPostCondition(new PropertyValue(door, "isOpened", "false"));
         
         Action openDoor = new Action("Open_Door");
-        openDoor.addPreCondition(new ObjectState(person, "position", "atDoor"));
-        openDoor.addPreCondition(new ObjectState(door, "isOpened", "false"));
-        openDoor.addPostCondition(new ObjectState(person, "position", "atDoor"));
-        openDoor.addPostCondition(new ObjectState(door, "isOpened", "true"));
+        openDoor.addPreCondition(new PropertyValue(person, "position", "atDoor"));
+        openDoor.addPreCondition(new PropertyValue(door, "isOpened", "false"));
+        openDoor.addPostCondition(new PropertyValue(person, "position", "atDoor"));
+        openDoor.addPostCondition(new PropertyValue(door, "isOpened", "true"));
         
         world.addPossibleAction(openDoor);
         world.addPossibleAction(closeDoor);
@@ -66,9 +66,9 @@ public class Launcher {
         //--- Demo Scenrario ---//
         
         final Scenario scenario = new Scenario();
-        scenario.add(new And(new ObjectState(person, "position", "sat"), new ObjectState(door, "isOpened", "false")));
-        scenario.add(new And(new ObjectState(person, "position", "atDoor"), new ObjectState(door, "isOpened", "false")));
-        scenario.add(new And(new ObjectState(person, "position", "atDoor"), new ObjectState(door, "isOpened", "true")));
+        scenario.add(new And(new PropertyValue(person, "position", "sat"), new PropertyValue(door, "isOpened", "false")));
+        scenario.add(new And(new PropertyValue(person, "position", "atDoor"), new PropertyValue(door, "isOpened", "false")));
+        scenario.add(new And(new PropertyValue(person, "position", "atDoor"), new PropertyValue(door, "isOpened", "true")));
         
         //----------------------//
         

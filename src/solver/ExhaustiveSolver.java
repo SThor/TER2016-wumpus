@@ -169,10 +169,4 @@ public class ExhaustiveSolver extends Solver {
     public String toString() {
         return "Exhaustion";
     }
-
-    private void addTrajectory() {
-        for (Observation observation : scenario) {
-            
-        }
-    }
 }

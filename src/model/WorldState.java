@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class WorldState extends ArrayList<ObjectState> {
+public class WorldState extends ArrayList<PropertyValue> {
     
     @Override
     public int hashCode() {

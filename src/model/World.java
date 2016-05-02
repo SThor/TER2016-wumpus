@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
 import model.exceptions.DuplicateElementException;
 import solver.ExhaustiveSolver;
@@ -172,7 +171,7 @@ public class World {
         for (SysObject object : worldObjects) {
             for (int i = 0; i < object.getPropertyCount(); i++) {
                 ObjectProperty property = object.getPropertyAt(i);
-                snapshot.add(new ObjectState(object, property.getName(), property.getCurrentValue()));
+                snapshot.add(new PropertyValue(object, property.getName(), property.getCurrentValue()));
             }
         }
         
@@ -205,17 +204,21 @@ public class World {
             for (Action action : possibleActions) {
                 if (action.preConditionsVerifiedIn(before) && action.postConditionsVerifiedIn(after)) {
                     // Objects modified by this action
-                    List<ObjectState> modified = action.modifiedObjects();
+                    List<Condition> modified = action.modifiedObjects();
                     // We will now check that only the objects contained in "modifiedObjects" are
                     // modified between the two states
                     for (int i = 0; i < before.size(); i++) {
-                        ObjectState objectStateBefore = before.get(i);
-                        ObjectState objectStateAfter = after.get(i);
-                        if (objectStateBefore.getObject().equals(objectStateAfter.getObject()) 
-                        && objectStateBefore.getPropertyName().equals(objectStateBefore.getPropertyName())) {
-                            if (!objectStateBefore.getWantedValue().equals(objectStateAfter.getWantedValue())) {
-                                if (!modified.contains(objectStateBefore)) {
-                                    return null;
+                        Condition objectStateBefore = before.get(i);
+                        Condition objectStateAfter = after.get(i);
+                        if (objectStateBefore instanceof PropertyValue) {
+                            if (objectStateBefore.getObject().equals(objectStateAfter.getObject()) 
+                            && objectStateBefore.getPropertyName().equals(objectStateBefore.getPropertyName())) {
+                                PropertyValue stateBefore = (PropertyValue) objectStateBefore;
+                                PropertyValue stateAfter = (PropertyValue) objectStateAfter;
+                                if (!stateBefore.getWantedValue().equals(stateAfter.getWantedValue())) {
+                                    if (!modified.contains(objectStateBefore)) {
+                                        return null;
+                                    }
                                 }
                             }
                         }

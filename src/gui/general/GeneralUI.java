@@ -15,8 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -31,7 +29,7 @@ import javax.swing.text.PlainDocument;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import model.Action;
-import model.ObjectState;
+import model.Condition;
 import model.ObjectProperty;
 import model.SysObject;
 import model.UniqueList;
@@ -49,8 +47,8 @@ public class GeneralUI extends javax.swing.JFrame {
     private ObjectProperty _property;
     private String _propValue;
     private Action _action;
-    private ObjectState _preCond;
-    private ObjectState _postCond;
+    private Condition _preCond;
+    private Condition _postCond;
                             
     private World world;
     private final ScenarioModel scenario;
@@ -83,8 +81,8 @@ public class GeneralUI extends javax.swing.JFrame {
         worldSaved = false;
         scenarioSaved = false;
         
-        preCondTableModel = new ConditionTableModel(new UniqueList<ObjectState>());
-        postCondTableModel = new ConditionTableModel((new UniqueList<ObjectState>()));
+        preCondTableModel = new ConditionTableModel(new UniqueList<Condition>());
+        postCondTableModel = new ConditionTableModel((new UniqueList<Condition>()));
         objectTreeModel = new SysObjectTreeModel(world);
         propValueListModel = new WorldListModel<>(new UniqueList<String>());
         actionListModel = new WorldListModel<>(world.getPossibleActions());
@@ -600,8 +598,8 @@ public class GeneralUI extends javax.swing.JFrame {
             preCondTableModel.setData(_action.getPreConditions());
             postCondTableModel.setData(_action.getPostConditions());
         } else {
-            preCondTableModel.setData(new UniqueList<ObjectState>());
-            postCondTableModel.setData(new UniqueList<ObjectState>());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
         }
         
         btnAddPre.setEnabled(notNull);
@@ -1090,8 +1088,8 @@ public class GeneralUI extends javax.swing.JFrame {
             objectTreeModel.setData(world);
             propValueListModel.setData(new UniqueList<String>());
             actionListModel.setData(world.getPossibleActions());
-            preCondTableModel.setData(new UniqueList<ObjectState>());
-            postCondTableModel.setData(new UniqueList<ObjectState>());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
             tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
             promptError("Failed to read file "+file.getName(), "Opening error");

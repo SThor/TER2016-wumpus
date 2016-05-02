@@ -3,6 +3,9 @@ package gui.general;
 import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
+import gui.solver.NoSolverException;
+import gui.solver.SolverChooser;
+import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import model.importexport.WorldExport;
 import model.importexport.WorldImport;
@@ -12,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -178,6 +183,8 @@ public class GeneralUI extends javax.swing.JFrame {
         miOpenScenario = new javax.swing.JMenuItem();
         miSaveScenario = new javax.swing.JMenuItem();
         miSaveScenarioAs = new javax.swing.JMenuItem();
+        menuSolve = new javax.swing.JMenu();
+        miSolveCurrent = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -549,6 +556,20 @@ public class GeneralUI extends javax.swing.JFrame {
     menuScenario.add(miSaveScenarioAs);
 
     menuBar.add(menuScenario);
+
+    menuSolve.setMnemonic('S');
+    menuSolve.setText("Solver");
+    menuSolve.setToolTipText("");
+
+    miSolveCurrent.setText("Solve current");
+    miSolveCurrent.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            miSolveCurrentActionPerformed(evt);
+        }
+    });
+    menuSolve.add(miSolveCurrent);
+
+    menuBar.add(menuSolve);
 
     setJMenuBar(menuBar);
 
@@ -948,6 +969,20 @@ public class GeneralUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_epXmlScenarioKeyPressed
 
+    private void miSolveCurrentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSolveCurrentActionPerformed
+        // Launcher the solver UI
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new SolverChooser(world, scenario.getScenario(), GeneralUI.this).setVisible(true);
+                } catch (NoSolverException ex) {
+                    promptError(ex.getMessage(), "Cannot find a solver");
+                }
+            }
+        });
+    }//GEN-LAST:event_miSolveCurrentActionPerformed
+
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
         try {
             _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
@@ -1141,6 +1176,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JList<String> listPropValue;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuScenario;
+    private javax.swing.JMenu menuSolve;
     private javax.swing.JMenu menuWorld;
     private javax.swing.JMenuItem miOpenScenario;
     private javax.swing.JMenuItem miOpenWorld;
@@ -1148,6 +1184,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem miSaveScenarioAs;
     private javax.swing.JMenuItem miSaveWorld;
     private javax.swing.JMenuItem miSaveWorldAs;
+    private javax.swing.JMenuItem miSolveCurrent;
     private javax.swing.JPanel panelActions;
     private javax.swing.JPanel panelBtnActions;
     private javax.swing.JPanel panelBtnInstant;

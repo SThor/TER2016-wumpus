@@ -8,6 +8,7 @@ package gui.general.componentModels;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.Condition;
+import model.PropertyValue;
 
 /**
  *
@@ -32,7 +33,8 @@ public class ConditionTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Condition c = conditions.get(rowIndex);
+        //fixme : adapt to condition
+        PropertyValue c = (PropertyValue) conditions.get(rowIndex);
         switch(columnIndex) {
             case 0: return c.getObject();
             case 1: return c.getPropertyName();

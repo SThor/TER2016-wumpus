@@ -1,6 +1,7 @@
 package model.observations;
 
 import java.util.Iterator;
+import model.WorldState;
 
 /**
  *
@@ -20,6 +21,15 @@ public class Or extends Operation{
         }
         return res;
     }
+    
+    @Override
+    public boolean isVerifiedIn(WorldState state) {
+        boolean res = false;
+        for (Observation observation : observations) {
+            res = res || observation.isVerifiedIn(state);
+        }
+        return res;
+    }
 
     @Override
     public String toString() {
@@ -27,7 +37,7 @@ public class Or extends Operation{
         for (Iterator<Observation> iterator = observations.iterator(); iterator.hasNext();) {
             str.append(iterator.next());
             if(iterator.hasNext()) {
-                str.append("∨ ");
+                str.append(" ∨ ");
             }
         }
         return str.toString();

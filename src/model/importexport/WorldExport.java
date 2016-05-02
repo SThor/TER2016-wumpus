@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import model.Action;
 import model.Condition;
+import model.Equality;
+import model.PropertyValue;
 import model.ObjectProperty;
 import model.SysObject;
 import model.World;
@@ -38,7 +40,9 @@ public class WorldExport {
 
     /**
      * Starts the exportation process
-     * @throws java.io.IOException Exception if there is a problem with the file opening
+     *
+     * @throws java.io.IOException Exception if there is a problem with the file
+     * opening
      */
     public void exportAll() throws IOException {
         root.addContent(exportObjects());
@@ -69,7 +73,7 @@ public class WorldExport {
     private Element exportObject(SysObject object) {
         Element xmlObject = new Element("object");
         xmlObject.setAttribute("name", object.getName());
-        
+
         Element xmlProperties = new Element("properties");
         for (int i = 0; i < object.getPropertyCount(); i++) {
             xmlProperties.addContent(exportProperty(object.getPropertyAt(i)));
@@ -97,7 +101,7 @@ public class WorldExport {
     private Element exportAction(Action action) {
         Element xmlAction = new Element("action");
         xmlAction.setAttribute("name", action.getName());
-        
+
         Element xmlPre = new Element("preconditions");
         for (Condition preCondition : action.getPreConditions()) {
             xmlPre.addContent(exportCondition(preCondition));
@@ -114,10 +118,25 @@ public class WorldExport {
     }
 
     private Element exportCondition(Condition condition) {
-        Element xmlCondition = new Element("condition");
-        xmlCondition.setAttribute("object", condition.getObject().getName());
-        xmlCondition.setAttribute("property", condition.getPropertyName());
-        xmlCondition.setAttribute("wanted_value", condition.getWantedValue());
+        Element xmlCondition;
+        if (condition instanceof PropertyValue) {
+            PropertyValue pv = (PropertyValue) condition;
+            
+            xmlCondition = new Element("propertyValue");
+            xmlCondition.setAttribute("object", pv.getObject().getName());
+            xmlCondition.setAttribute("property", pv.getPropertyName());
+            xmlCondition.setAttribute("wanted_value", pv.getWantedValue());
+        } else if (condition instanceof Equality) {
+            Equality e = (Equality) condition;
+            
+            xmlCondition = new Element("equality");
+            xmlCondition.setAttribute("object", e.getObject().getName());
+            xmlCondition.setAttribute("property", e.getPropertyName());
+            xmlCondition.setAttribute("second_object", e.getSecondObject().getName());
+            xmlCondition.setAttribute("second_property", e.getSecondPropertyName());
+        } else {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
         return xmlCondition;
     }
 

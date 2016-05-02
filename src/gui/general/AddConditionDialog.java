@@ -5,51 +5,61 @@
  */
 package gui.general;
 
+import java.awt.CardLayout;
 import java.util.List;
-import model.Condition;
+import model.PropertyValue;
 import model.ObjectProperty;
 import model.SysObject;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import model.Condition;
+import model.Equality;
 import model.exceptions.DuplicateElementException;
-
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class AddConditionDialog extends javax.swing.JDialog {
-    private SysObject[] objects;
-    private List<Condition> conditions;
-    
+
+    private final SysObject[] objects;
+    private final List<Condition> conditions;
+
     private SysObject _object;
     private ObjectProperty _property;
     private String _propValue;
-    
+
+    private SysObject _object2;
+    private ObjectProperty _property2;
+
     /**
      * Creates new form AddConditionDialog
+     *
      * @param parent
      * @param objects
      * @param conditions
      */
     public AddConditionDialog(java.awt.Frame parent, List<SysObject> objects, List<Condition> conditions) {
         super(parent, true);
-        
+
         this.objects = new SysObject[objects.size()];
         this.conditions = conditions;
-        
+
         for (int i = 0; i < this.objects.length; i++) {
             this.objects[i] = objects.get(i);
         }
-        
+
         initComponents();
-        
+
+        radioButtonGroup.setSelected(propertyValueRadioButton.getModel(), true);
+
         cbObjectItemStateChanged(null);
-        cbPropItemStateChanged(null);
-        
+        cbObject1ItemStateChanged(null);
+        cbObject2ItemStateChanged(null);
+
         super.setLocationRelativeTo(parent);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -59,13 +69,29 @@ public class AddConditionDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        radioButtonGroup = new javax.swing.ButtonGroup();
+        typeChooserPanel = new javax.swing.JPanel();
+        propertyValueRadioButton = new javax.swing.JRadioButton();
+        equalityRadioButton = new javax.swing.JRadioButton();
         inputPanel = new javax.swing.JPanel();
+        propertyValueInputPanel = new javax.swing.JPanel();
         lblObject = new javax.swing.JLabel();
         cbObject = new javax.swing.JComboBox<>();
         lblProp = new javax.swing.JLabel();
         lblPopValue = new javax.swing.JLabel();
         cbProp = new javax.swing.JComboBox<>();
         cbPropValue = new javax.swing.JComboBox<>();
+        equalityInputPanel = new javax.swing.JPanel();
+        object1Panel = new javax.swing.JPanel();
+        lblObject1 = new javax.swing.JLabel();
+        cbObject1 = new javax.swing.JComboBox<>();
+        lblProp1 = new javax.swing.JLabel();
+        cbProp1 = new javax.swing.JComboBox<>();
+        object2Panel = new javax.swing.JPanel();
+        lblObject2 = new javax.swing.JLabel();
+        cbObject2 = new javax.swing.JComboBox<>();
+        lblProp2 = new javax.swing.JLabel();
+        cbProp2 = new javax.swing.JComboBox<>();
         buttonsPanel = new javax.swing.JPanel();
         btnAdd = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
@@ -73,6 +99,31 @@ public class AddConditionDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Adding a condition");
         setResizable(false);
+
+        radioButtonGroup.add(propertyValueRadioButton);
+        propertyValueRadioButton.setSelected(true);
+        propertyValueRadioButton.setText("One property at a specific value");
+        propertyValueRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                propertyValueRadioButtonActionPerformed(evt);
+            }
+        });
+        typeChooserPanel.add(propertyValueRadioButton);
+
+        radioButtonGroup.add(equalityRadioButton);
+        equalityRadioButton.setText("Equality between two properties");
+        equalityRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                equalityRadioButtonActionPerformed(evt);
+            }
+        });
+        typeChooserPanel.add(equalityRadioButton);
+
+        getContentPane().add(typeChooserPanel, java.awt.BorderLayout.NORTH);
+
+        inputPanel.setLayout(new java.awt.CardLayout());
+
+        propertyValueInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Specific value parameters"));
 
         lblObject.setText("Object:");
 
@@ -103,40 +154,151 @@ public class AddConditionDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout inputPanelLayout = new javax.swing.GroupLayout(inputPanel);
-        inputPanel.setLayout(inputPanelLayout);
-        inputPanelLayout.setHorizontalGroup(
-            inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(inputPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout propertyValueInputPanelLayout = new javax.swing.GroupLayout(propertyValueInputPanel);
+        propertyValueInputPanel.setLayout(propertyValueInputPanelLayout);
+        propertyValueInputPanelLayout.setHorizontalGroup(
+            propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(propertyValueInputPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblObject, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblProp)
                     .addComponent(lblPopValue, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbObject, javax.swing.GroupLayout.Alignment.TRAILING, 0, 129, Short.MAX_VALUE)
+                .addGroup(propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbObject, javax.swing.GroupLayout.Alignment.TRAILING, 0, 418, Short.MAX_VALUE)
                     .addComponent(cbProp, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbPropValue, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        inputPanelLayout.setVerticalGroup(
-            inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(inputPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        propertyValueInputPanelLayout.setVerticalGroup(
+            propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(propertyValueInputPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblObject)
                     .addComponent(cbObject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblProp)
                     .addComponent(cbProp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(propertyValueInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPopValue)
                     .addComponent(cbPropValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
+
+        inputPanel.add(propertyValueInputPanel, "propertyValue");
+
+        equalityInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Equality parameters"));
+        equalityInputPanel.setLayout(new java.awt.GridLayout(1, 2));
+
+        object1Panel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "First object"));
+
+        lblObject1.setText("Object:");
+
+        cbObject1.setModel(new DefaultComboBoxModel<SysObject>(objects));
+        cbObject1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbObject1ItemStateChanged(evt);
+            }
+        });
+
+        lblProp1.setText("Property:");
+
+        cbProp1.setModel(new DefaultComboBoxModel<ObjectProperty>());
+        cbProp1.setEnabled(false);
+        cbProp1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbProp1ItemStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout object1PanelLayout = new javax.swing.GroupLayout(object1Panel);
+        object1Panel.setLayout(object1PanelLayout);
+        object1PanelLayout.setHorizontalGroup(
+            object1PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(object1PanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(object1PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblObject1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblProp1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(object1PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbObject1, javax.swing.GroupLayout.Alignment.TRAILING, 0, 162, Short.MAX_VALUE)
+                    .addComponent(cbProp1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        object1PanelLayout.setVerticalGroup(
+            object1PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(object1PanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(object1PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblObject1)
+                    .addComponent(cbObject1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(object1PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblProp1)
+                    .addComponent(cbProp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        equalityInputPanel.add(object1Panel);
+
+        object2Panel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Second object"));
+
+        lblObject2.setText("Object:");
+
+        cbObject2.setModel(new DefaultComboBoxModel<SysObject>(objects));
+        cbObject2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbObject2ItemStateChanged(evt);
+            }
+        });
+
+        lblProp2.setText("Property:");
+
+        cbProp2.setModel(new DefaultComboBoxModel<ObjectProperty>());
+        cbProp2.setEnabled(false);
+        cbProp2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbProp2ItemStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout object2PanelLayout = new javax.swing.GroupLayout(object2Panel);
+        object2Panel.setLayout(object2PanelLayout);
+        object2PanelLayout.setHorizontalGroup(
+            object2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(object2PanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(object2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblObject2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblProp2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(object2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbObject2, javax.swing.GroupLayout.Alignment.TRAILING, 0, 162, Short.MAX_VALUE)
+                    .addComponent(cbProp2, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        object2PanelLayout.setVerticalGroup(
+            object2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(object2PanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(object2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblObject2)
+                    .addComponent(cbObject2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(object2PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblProp2)
+                    .addComponent(cbProp2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        equalityInputPanel.add(object2Panel);
+
+        inputPanel.add(equalityInputPanel, "equality");
 
         getContentPane().add(inputPanel, java.awt.BorderLayout.CENTER);
 
@@ -162,12 +324,131 @@ public class AddConditionDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        if (propertyValueRadioButton.isSelected()) {
+            try {
+                conditions.add(new PropertyValue(_object, _property.getName(), _propValue));
+                ((GeneralUI) getParent()).warnWorldSave();
+                dispose();
+            } catch (DuplicateElementException e) {
+                JOptionPane.showMessageDialog(this,
+                        "This condition already exists",
+                        "Cannot add condition",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (equalityRadioButton.isSelected()) {
+            try {
+                conditions.add(new Equality(_object, _property.getName(), _object2, _property2.getName()));
+                ((GeneralUI) getParent()).warnWorldSave();
+                dispose();
+            } catch (DuplicateElementException e) {
+                JOptionPane.showMessageDialog(this,
+                        "This condition already exists",
+                        "Cannot add condition",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void checkAdd() {
+        if (propertyValueRadioButton.isSelected()) {
+            if (cbProp.isEnabled() && cbPropValue.isEnabled()) {
+                btnAdd.setEnabled(true);
+            }
+        } else if (equalityRadioButton.isSelected()) {
+            if (cbProp1.isEnabled() && cbProp2.isEnabled()) {
+                btnAdd.setEnabled(true);
+            }
+        } else {
+            btnAdd.setEnabled(false);
+        }
+    }
+
+    private void cbObject2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbObject2ItemStateChanged
+        _object2 = (SysObject) cbObject2.getSelectedItem();
+
+        System.out.println("_object2.getName() = " + _object2.getName());
+        if (_object2.getPropertyCount() < 0) {
+            cbProp2.setModel(new DefaultComboBoxModel<ObjectProperty>());
+            cbProp2.setEnabled(false);
+        } else {
+            ObjectProperty[] properties = new ObjectProperty[_object2.getPropertyCount()];
+            for (int i = 0; i < properties.length; i++) {
+                properties[i] = _object2.getPropertyAt(i);
+            }
+            cbProp2.setModel(new DefaultComboBoxModel<>(properties));
+            cbProp2.setEnabled(true);
+        }
+
+        cbProp2ItemStateChanged(null);
+        checkAdd();
+    }//GEN-LAST:event_cbObject2ItemStateChanged
+
+    private void cbProp2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProp2ItemStateChanged
+        _property2 = (ObjectProperty) cbProp2.getSelectedItem();
+        checkAdd();
+    }//GEN-LAST:event_cbProp2ItemStateChanged
+
+    private void cbProp1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProp1ItemStateChanged
+        _property = (ObjectProperty) cbProp1.getSelectedItem();
+        checkAdd();
+    }//GEN-LAST:event_cbProp1ItemStateChanged
+
+    private void cbObject1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbObject1ItemStateChanged
+        _object = (SysObject) cbObject1.getSelectedItem();
+
+        System.out.println("_object2.getName() = " + _object.getName());
+        if (_object.getPropertyCount() < 0) {
+            cbProp1.setModel(new DefaultComboBoxModel<ObjectProperty>());
+            cbProp1.setEnabled(false);
+        } else {
+            ObjectProperty[] properties = new ObjectProperty[_object.getPropertyCount()];
+            for (int i = 0; i < properties.length; i++) {
+                properties[i] = _object.getPropertyAt(i);
+            }
+            cbProp1.setModel(new DefaultComboBoxModel<>(properties));
+            cbProp1.setEnabled(true);
+        }
+
+        cbProp1ItemStateChanged(null);
+        checkAdd();
+    }//GEN-LAST:event_cbObject1ItemStateChanged
+
+    private void cbPropValueItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropValueItemStateChanged
+        _propValue = (String) cbPropValue.getSelectedItem();
+    }//GEN-LAST:event_cbPropValueItemStateChanged
+
+    private void cbPropItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropItemStateChanged
+        _property = (ObjectProperty) cbProp.getSelectedItem();
+
+        List<String> propValues = _property.getPossibleValues();
+        if (propValues.isEmpty()) {
+            cbPropValue.setModel(new DefaultComboBoxModel<String>());
+            cbPropValue.setEnabled(false);
+            btnAdd.setEnabled(false);
+        } else {
+            String[] values = new String[propValues.size()];
+            for (int i = 0; i < values.length; i++) {
+                values[i] = propValues.get(i);
+            }
+            cbPropValue.setModel(new DefaultComboBoxModel<>(values));
+            cbPropValue.setEnabled(true);
+            btnAdd.setEnabled(true);
+        }
+        cbPropValueItemStateChanged(null);
+    }//GEN-LAST:event_cbPropItemStateChanged
+
     private void cbObjectItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbObjectItemStateChanged
         _object = (SysObject) cbObject.getSelectedItem();
-        
+
         try {
-            if(_object.getPropertyCount() > 0)
+            if (_object.getPropertyCount() < 0) {
                 throw new NullPointerException();
+            }
             ObjectProperty[] properties = new ObjectProperty[_object.getPropertyCount()];
             for (int i = 0; i < properties.length; i++) {
                 properties[i] = _object.getPropertyAt(i);
@@ -182,60 +463,54 @@ public class AddConditionDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cbObjectItemStateChanged
 
-    private void cbPropItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropItemStateChanged
-        _property = (ObjectProperty) cbProp.getSelectedItem();
-        
-        try {
-            List<String> propValues = _property.getPossibleValues();
-            if(propValues.isEmpty())
-                throw new NullPointerException();
-            String[] values = new String[propValues.size()];
-            for (int i = 0; i < values.length; i++) {
-                values[i] = propValues.get(i);
-            }
-            cbPropValue.setModel(new DefaultComboBoxModel<>(values));
-            cbPropValue.setEnabled(true);
-            btnAdd.setEnabled(true);
-        } catch (NullPointerException e) {
-            cbPropValue.setModel(new DefaultComboBoxModel<String>());
-            cbPropValue.setEnabled(false);
-            btnAdd.setEnabled(false);
-        } finally {
-            cbPropValueItemStateChanged(null);
-        }
-    }//GEN-LAST:event_cbPropItemStateChanged
+    private void propertyValueRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_propertyValueRadioButtonActionPerformed
+        CardLayout cl = (CardLayout) (inputPanel.getLayout());
+        cl.show(inputPanel, "propertyValue");
 
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        try {
-            conditions.add(new Condition(_object, _property.getName(), _propValue));
-            ((GeneralUI)getParent()).warnWorldSave();
-            dispose();
-        } catch (DuplicateElementException e) {
-            JOptionPane.showMessageDialog(this,
-                    "This condition already exists",
-                    "Cannot add condition", 
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_btnAddActionPerformed
+        cbObjectItemStateChanged(null);
+        cbObject1ItemStateChanged(null);
+        cbObject2ItemStateChanged(null);
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCancelActionPerformed
+        checkAdd();
+    }//GEN-LAST:event_propertyValueRadioButtonActionPerformed
 
-    private void cbPropValueItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropValueItemStateChanged
-        _propValue = (String) cbPropValue.getSelectedItem();
-    }//GEN-LAST:event_cbPropValueItemStateChanged
+    private void equalityRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_equalityRadioButtonActionPerformed
+        CardLayout cl = (CardLayout) (inputPanel.getLayout());
+        cl.show(inputPanel, "equality");
+
+        cbObjectItemStateChanged(null);
+        cbObject1ItemStateChanged(null);
+        cbObject2ItemStateChanged(null);
+
+        checkAdd();
+    }//GEN-LAST:event_equalityRadioButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCancel;
     private javax.swing.JPanel buttonsPanel;
     private javax.swing.JComboBox<SysObject> cbObject;
+    private javax.swing.JComboBox<SysObject> cbObject1;
+    private javax.swing.JComboBox<SysObject> cbObject2;
     private javax.swing.JComboBox<ObjectProperty> cbProp;
+    private javax.swing.JComboBox<ObjectProperty> cbProp1;
+    private javax.swing.JComboBox<ObjectProperty> cbProp2;
     private javax.swing.JComboBox<String> cbPropValue;
+    private javax.swing.JPanel equalityInputPanel;
+    private javax.swing.JRadioButton equalityRadioButton;
     private javax.swing.JPanel inputPanel;
     private javax.swing.JLabel lblObject;
+    private javax.swing.JLabel lblObject1;
+    private javax.swing.JLabel lblObject2;
     private javax.swing.JLabel lblPopValue;
     private javax.swing.JLabel lblProp;
+    private javax.swing.JLabel lblProp1;
+    private javax.swing.JLabel lblProp2;
+    private javax.swing.JPanel object1Panel;
+    private javax.swing.JPanel object2Panel;
+    private javax.swing.JPanel propertyValueInputPanel;
+    private javax.swing.JRadioButton propertyValueRadioButton;
+    private javax.swing.ButtonGroup radioButtonGroup;
+    private javax.swing.JPanel typeChooserPanel;
     // End of variables declaration//GEN-END:variables
 }

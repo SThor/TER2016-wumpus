@@ -5,6 +5,7 @@
  */
 package solver;
 
+import ilog.concert.IloException;
 import model.World;
 import model.observations.Scenario;
 
@@ -16,10 +17,14 @@ public class Solvers {
     private final Solver[] availableSolvers;
     
     public Solvers(World world, Scenario scenario) {
-        availableSolvers = new Solver[] {
-            new ExhaustiveSolver(world, scenario),
-            new BacktrackSolver(world, scenario)
-        };
+        availableSolvers = new Solver[2];
+        availableSolvers[0] = new ExhaustiveSolver(world, scenario);
+        try {
+            availableSolvers[1] = new BacktrackSolver(world, scenario);
+        } catch (IloException ex) {
+            System.err.println("Couldn't instanciate backtrack solver");
+            System.err.println(ex);
+        }
     }
     
     public Solver[] getAvailableSolvers() {

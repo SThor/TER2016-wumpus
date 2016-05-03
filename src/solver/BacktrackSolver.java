@@ -6,11 +6,8 @@
 package solver;
 
 import ilog.concert.IloAnyDomain;
-import ilog.concert.IloCopyManager;
-import ilog.concert.IloCopyable;
 import ilog.concert.IloException;
 import ilog.solver.IlcAnyVar;
-import ilog.solver.IlcConstraint;
 import ilog.solver.IlcSolver;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +17,7 @@ import model.ObjectProperty;
 import model.SysObject;
 import model.Trajectory;
 import model.World;
+import model.observations.Observation;
 import model.observations.Scenario;
 
 /**
@@ -28,7 +26,7 @@ import model.observations.Scenario;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class BacktrackSolver extends Solver {
-    private final IlcSolver solver;
+    private IlcSolver solver;
     private final Map<SysObject, Map<String, IlcAnyVar>> worldMap;
     private final List<IlcAnyVar> varList;
 
@@ -57,12 +55,14 @@ public class BacktrackSolver extends Solver {
 
     @Override
     public List<Trajectory> solve() throws IloException {
-        // TODO
-        solver.add(scenario.get(0).solverConstraint(solver, worldMap));
-        solver.newSearch(solver.generate(varList.toArray(new IlcAnyVar[varList.size()])));
-        while (solver.next()) {
-            System.out.println(varList);
+        
+        for (Observation observation : scenario) {
+            solver.add(observation.solverConstraint(solver, worldMap));
+            solver.newSearch(solver.generate(varList.toArray(new IlcAnyVar[varList.size()])));
+            //... TODO : get the results in some form + get all possible solutions
+            solver = new IlcSolver(); // TODO : necessary ? or does newSearch() remove previous constraints ?
         }
+        
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 

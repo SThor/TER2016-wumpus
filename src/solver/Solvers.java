@@ -17,7 +17,8 @@ public class Solvers {
     
     public Solvers(World world, Scenario scenario) {
         availableSolvers = new Solver[] {
-            new ExhaustiveSolver(world, scenario)
+            new ExhaustiveSolver(world, scenario),
+            new BacktrackSolver(world, scenario)
         };
     }
     

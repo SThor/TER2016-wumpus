@@ -1,5 +1,9 @@
 package model;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
+import java.util.Map;
 import model.exceptions.NoSuchPropertyException;
 
 /**
@@ -131,5 +135,12 @@ public class Equality implements Condition {
     @Override
     public boolean largeEquals(SysObject object, String property, String value) {
         return (this.object.equals(object) || this.secondObject.equals(object)) && (property == null || (this.propertyName.equals(property) || this.secondPropertyName.equals(property)));
+    }
+
+    @Override
+    public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
+        IlcAnyVar firstVar = worldMap.get(object).get(propertyName);
+        IlcAnyVar secondVar = worldMap.get(secondObject).get(secondPropertyName);
+        return solver.eq(firstVar, secondVar);
     }
 }

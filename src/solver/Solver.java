@@ -5,6 +5,7 @@
  */
 package solver;
 
+import ilog.concert.IloException;
 import java.util.List;
 import model.Trajectory;
 import model.World;
@@ -23,7 +24,7 @@ public abstract class Solver {
         this.scenario = scenario;
     }
     
-    public abstract List<Trajectory> solve();
+    public abstract List<Trajectory> solve() throws IloException;
     
     public abstract String description();
 }

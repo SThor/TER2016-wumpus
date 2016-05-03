@@ -1,5 +1,10 @@
 package model.observations;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
+import java.util.Map;
+import model.SysObject;
 import model.WorldState;
 
 /**
@@ -27,5 +32,10 @@ public class Not extends Operation{
     @Override
     public String toString() {
         return "¬ "+observations.get(0);
+    }
+
+    @Override
+    public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
+        return solver.not(observations.get(0).solverConstraint(solver, worldMap));
     }
 }

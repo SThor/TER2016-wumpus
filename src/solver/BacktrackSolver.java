@@ -12,6 +12,7 @@ import ilog.concert.IloException;
 import ilog.solver.IlcAnyVar;
 import ilog.solver.IlcConstraint;
 import ilog.solver.IlcSolver;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +30,14 @@ import model.observations.Scenario;
 public class BacktrackSolver extends Solver {
     private final IlcSolver solver;
     private final Map<SysObject, Map<String, IlcAnyVar>> worldMap;
+    private final List<IlcAnyVar> varList;
 
     public BacktrackSolver(World world, Scenario scenario) throws IloException {
         super(world, scenario);
         
         solver = new IlcSolver();
         worldMap = new HashMap<>();
+        varList = new ArrayList<>();
         
         // Create all variables (one for each Object.property)
         for (int i = 0; i < world.getObjectCount(); i++) {
@@ -45,15 +48,21 @@ public class BacktrackSolver extends Solver {
                 ObjectProperty property = object.getPropertyAt(i);
                 List<String> listValues = property.getPossibleValues();
                 IloAnyDomain propDomain = solver.anyDomain(listValues.toArray(new String[listValues.size()])); // Create a domain for every property
-                objectMap.put(property.getName(), solver.anyVar(propDomain, object.getName()+"."+property.getName()));
+                IlcAnyVar var = solver.anyVar(propDomain, object.getName()+"."+property.getName());
+                objectMap.put(property.getName(), var);
+                varList.add(var);
             }
         }
     }
 
     @Override
-    public List<Trajectory> solve() {
+    public List<Trajectory> solve() throws IloException {
         // TODO
-        
+        solver.add(scenario.get(0).solverConstraint(solver, worldMap));
+        solver.newSearch(solver.generate(varList.toArray(new IlcAnyVar[varList.size()])));
+        while (solver.next()) {
+            System.out.println(varList);
+        }
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 

@@ -1,9 +1,13 @@
 package model;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
 import java.util.ArrayList;
 import model.observations.Observation;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import model.exceptions.DuplicateElementException;
 
 /**
@@ -247,5 +251,10 @@ public class Action implements Observation {
             }
         }
         return modified;
+    }
+
+    @Override
+    public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

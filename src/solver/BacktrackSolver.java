@@ -56,12 +56,17 @@ public class BacktrackSolver extends Solver {
     @Override
     public List<Trajectory> solve() throws IloException {
         
-        for (Observation observation : scenario) {
+        solver.add(scenario.get(0).solverConstraint(solver, worldMap));
+        solver.newSearch(solver.generate(varList.toArray(new IlcAnyVar[varList.size()])));
+        while (solver.next()) {
+            System.out.println(varList);
+        }
+        /*for (Observation observation : scenario) {
             solver.add(observation.solverConstraint(solver, worldMap));
             solver.newSearch(solver.generate(varList.toArray(new IlcAnyVar[varList.size()])));
             //... TODO : get the results in some form + get all possible solutions
             solver = new IlcSolver(); // TODO : necessary ? or does newSearch() remove previous constraints ?
-        }
+        }*/
         
         throw new UnsupportedOperationException("Not yet implemented.");
     }

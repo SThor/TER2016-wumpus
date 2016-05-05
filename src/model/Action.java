@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import model.observations.Observation;
 import java.util.Iterator;
 import java.util.List;
@@ -187,10 +188,64 @@ public class Action implements Observation {
     
     @Override
     public boolean isVerified() {
-        return preConditionsVerified() && postConditionsVerified();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isVerifiedIn(WorldState state) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public String getName() {
         return name;
+    }
+
+    public boolean preConditionsVerifiedIn(WorldState before) {
+        for (Condition preCond : preConditions) {
+            if (!preCond.isVerifiedIn(before)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean postConditionsVerifiedIn(WorldState after) {
+        for (Condition postCond : postConditions) {
+            if (!postCond.isVerifiedIn(after)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * 
+     * @return The list of Objects.properties modified by this action
+     */
+    protected List<Condition> modifiedObjects() {
+        List<Condition> modified = new ArrayList<>();
+        List<SysObject> objectsInPreCond = new ArrayList<>();
+        for (Condition preCond : preConditions) {
+            objectsInPreCond.add(preCond.getObject());
+        }
+        for (Condition postCond : postConditions) {
+            SysObject postCondObject = postCond.getObject();
+            if (objectsInPreCond.contains(postCondObject)) {
+                for (Condition preCond : preConditions) {
+                    if (preCond instanceof PropertyValue) {
+                        if (preCond.getObject().equals(postCondObject) && preCond.getPropertyName().equals(postCond.getPropertyName())) {
+                            // We have found a condition acting on the same Object.property in both preConditions and postConditions
+                            // If the wanted value is changed, the object is modified by this action
+                            PropertyValue pre = (PropertyValue) preCond;
+                            PropertyValue post = (PropertyValue) postCond;
+                            if (!pre.getWantedValue().equals(post.getWantedValue())) {
+                                modified.add(preCond);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return modified;
     }
 }

@@ -22,8 +22,8 @@ import model.exceptions.DuplicateElementException;
  */
 public class AddConditionDialog extends javax.swing.JDialog {
 
-    private SysObject[] objects;
-    private List<Condition> conditions;
+    private final SysObject[] objects;
+    private final List<Condition> conditions;
 
     private SysObject _object;
     private ObjectProperty _property;

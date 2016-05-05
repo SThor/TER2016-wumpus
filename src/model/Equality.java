@@ -83,6 +83,26 @@ public class Equality implements Condition {
     }
 
     @Override
+    public boolean isVerifiedIn(WorldState state) {
+        String firstValue = null;
+        String secondValue = null;
+        for (PropertyValue propertyValue : state) {
+            if (propertyValue.getObject().equals(object) && propertyValue.getPropertyName().equals(propertyName)) {
+                firstValue = propertyValue.getWantedValue();
+            }
+            if (propertyValue.getObject().equals(secondObject) && propertyValue.getPropertyName().equals(secondPropertyName)) {
+                secondValue = propertyValue.getWantedValue();
+            }
+        }
+        
+        if (firstValue != null && secondValue != null) {
+            return firstValue.equals(secondValue);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public int hashCode() {
         int hash = 5;
         hash = 11 * hash + object.hashCode();
@@ -112,5 +132,4 @@ public class Equality implements Condition {
     public boolean largeEquals(SysObject object, String property, String value) {
         return (this.object.equals(object) || this.secondObject.equals(object)) && (property == null || (this.propertyName.equals(property) || this.secondPropertyName.equals(property)));
     }
-
 }

@@ -63,6 +63,11 @@ public class PropertyValue implements Condition {
         return object.getCurrentValueOf(propertyName).equals(wantedValue);
     }
 
+    @Override
+    public boolean isVerifiedIn(WorldState state) {
+        return state.contains(this);
+    }
+
     /**
      * Accessor to the object
      *

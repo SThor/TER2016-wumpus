@@ -39,12 +39,20 @@ public class ObjectProperty {
     }
     
     public void changeToNextValue() {
-        currentValueIndex++;
-        currentValueIndex %= possibleValues.size();
+        if(!possibleValues.isEmpty()) {
+            currentValueIndex++;
+            currentValueIndex %= possibleValues.size();
+        }
     }
     
     public void setToUndefined() {
         currentValueIndex = -1;
+    }
+    
+    public void reset() {
+        if(!possibleValues.isEmpty()) {
+            currentValueIndex = 0;
+        }
     }
 
     @Override

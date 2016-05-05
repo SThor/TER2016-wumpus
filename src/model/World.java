@@ -2,6 +2,8 @@ package model;
 
 import java.util.List;
 import model.exceptions.DuplicateElementException;
+import solver.ExhaustiveSolver;
+import solver.TooManyPossibilitiesException;
 
 /**
  * Represents a whole world to study.
@@ -141,6 +143,90 @@ public class World {
     private void removeActionConditions(SysObject object, String property, String removedValue) {
         for (Action a : possibleActions) {
             a.removeAllConditions(object, property, removedValue);
+        }
+    }
+    
+    /**
+     * Calculate the number of different states this world can take.
+     * That is, multiplying the number 
+     * @return
+     * @throws TooManyPossibilitiesException 
+     */
+    public long statePossibilitiesCount() throws TooManyPossibilitiesException {
+        long count = 1;
+        long overflowCheck;
+        for (SysObject object : worldObjects) {
+            overflowCheck = count * object.statePossibilitiesCount();
+            // See SysObject#statePossibilitiesCount() for comment on overflowCheck
+            if (overflowCheck > ExhaustiveSolver.POSSIBILITIES_CAP || overflowCheck < count) {
+                throw new TooManyPossibilitiesException();
+            }
+            count = overflowCheck;
+        }
+        return count;
+    }
+    
+    public WorldState snapShot() {
+        WorldState snapshot = new WorldState();
+        for (SysObject object : worldObjects) {
+            for (int i = 0; i < object.getPropertyCount(); i++) {
+                ObjectProperty property = object.getPropertyAt(i);
+                snapshot.add(new PropertyValue(object, property.getName(), property.getCurrentValue()));
+            }
+        }
+        
+        return snapshot;
+    }
+    
+    public void resetObjects() {
+        for (SysObject object : worldObjects) {
+            for (int i = 0; i < object.getPropertyCount(); i++) {
+                object.getPropertyAt(i).reset();
+            }
+        }
+    }
+
+    /**
+     * Check wether the transition between two states is possible
+     * The two states need to be stated in the same order, otherwise, this method has unpredicatable behavior
+     * @param before The state before the transition
+     * @param after The state after the transition
+     * @return <tt>true</tt> if there is a transition
+     *         <tt>false</tt> otherwise.
+     */
+    public Action existsAction(WorldState before, WorldState after) {
+        if (before.size() != after.size()) {
+            throw new IllegalArgumentException("The two states have different sizes");
+        }
+        if (before.equals(after)) {
+            return new Action("No_Action");
+        } else {
+            for (Action action : possibleActions) {
+                if (action.preConditionsVerifiedIn(before) && action.postConditionsVerifiedIn(after)) {
+                    // Objects modified by this action
+                    List<Condition> modified = action.modifiedObjects();
+                    // We will now check that only the objects contained in "modifiedObjects" are
+                    // modified between the two states
+                    for (int i = 0; i < before.size(); i++) {
+                        Condition objectStateBefore = before.get(i);
+                        Condition objectStateAfter = after.get(i);
+                        if (objectStateBefore instanceof PropertyValue) {
+                            if (objectStateBefore.getObject().equals(objectStateAfter.getObject()) 
+                            && objectStateBefore.getPropertyName().equals(objectStateBefore.getPropertyName())) {
+                                PropertyValue stateBefore = (PropertyValue) objectStateBefore;
+                                PropertyValue stateAfter = (PropertyValue) objectStateAfter;
+                                if (!stateBefore.getWantedValue().equals(stateAfter.getWantedValue())) {
+                                    if (!modified.contains(objectStateBefore)) {
+                                        return null;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return action;
+                }
+            }
+            return new Action("No_Action");
         }
     }
 }

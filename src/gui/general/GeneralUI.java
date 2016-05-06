@@ -34,6 +34,7 @@ import model.ObjectProperty;
 import model.SysObject;
 import model.UniqueList;
 import model.World;
+import model.WumpusWorld;
 import model.exceptions.DuplicateElementException;
 import model.observations.Scenario;
 import org.jdom2.JDOMException;
@@ -177,6 +178,7 @@ public class GeneralUI extends javax.swing.JFrame {
         miOpenWorld = new javax.swing.JMenuItem();
         miSaveWorld = new javax.swing.JMenuItem();
         miSaveWorldAs = new javax.swing.JMenuItem();
+        miLoadWumpusWorld = new javax.swing.JMenuItem();
         menuScenario = new javax.swing.JMenu();
         miOpenScenario = new javax.swing.JMenuItem();
         miSaveScenario = new javax.swing.JMenuItem();
@@ -515,6 +517,17 @@ public class GeneralUI extends javax.swing.JFrame {
         }
     });
     menuWorld.add(miSaveWorldAs);
+
+    miLoadWumpusWorld.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+    miLoadWumpusWorld.setMnemonic('O');
+    miLoadWumpusWorld.setText("Load Wumpus World");
+    miLoadWumpusWorld.setToolTipText("Import from XML file");
+    miLoadWumpusWorld.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            miLoadWumpusWorldActionPerformed(evt);
+        }
+    });
+    menuWorld.add(miLoadWumpusWorld);
 
     menuBar.add(menuWorld);
 
@@ -981,6 +994,28 @@ public class GeneralUI extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_miSolveCurrentActionPerformed
 
+    private void miLoadWumpusWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLoadWumpusWorldActionPerformed
+        boolean confirm = true;
+        
+        if (!worldSaved) {
+            confirm = confirmation(
+                "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
+                "Open world");
+        }
+        
+        if (confirm) {
+            world = new WumpusWorld().generateWorld();
+            worldFile = null;
+            unwarnWorldSave();
+            objectTreeModel.setData(world);
+            propValueListModel.setData(new UniqueList<String>());
+            actionListModel.setData(world.getPossibleActions());
+            preCondTableModel.setData(new UniqueList<Condition>());
+            postCondTableModel.setData(new UniqueList<Condition>());
+            tabbedPane.setSelectedIndex(0);
+        }
+    }//GEN-LAST:event_miLoadWumpusWorldActionPerformed
+
     private void tablePreCondValueChanged(ListSelectionEvent evt) {
         try {
             _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
@@ -1176,6 +1211,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JMenu menuScenario;
     private javax.swing.JMenu menuSolve;
     private javax.swing.JMenu menuWorld;
+    private javax.swing.JMenuItem miLoadWumpusWorld;
     private javax.swing.JMenuItem miOpenScenario;
     private javax.swing.JMenuItem miOpenWorld;
     private javax.swing.JMenuItem miSaveScenario;

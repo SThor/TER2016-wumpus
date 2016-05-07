@@ -46,4 +46,8 @@ public class WorldListModel<E> extends AbstractListModel {
         this.list = list;
         fireContentsChanged(this, 0, list.size());
     }
+    
+    public void triggerUpdate() {
+        fireContentsChanged(this, 0, list.size());
+    }
 }

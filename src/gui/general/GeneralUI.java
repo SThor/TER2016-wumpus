@@ -1,6 +1,5 @@
 package gui.general;
 
-import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
 import gui.solver.NoSolverException;
@@ -20,8 +19,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -61,8 +58,8 @@ public class GeneralUI extends javax.swing.JFrame {
     
     private final JFileChooser xmlChooser;
     
-    private final ConditionTableModel preCondTableModel;
-    private final ConditionTableModel postCondTableModel;
+    private final WorldListModel<Condition> preCondListModel;
+    private final WorldListModel<Condition> postCondListModel;
     private final SysObjectTreeModel objectTreeModel;
     private final WorldListModel<String> propValueListModel;
     private final WorldListModel<Action> actionListModel;
@@ -82,8 +79,8 @@ public class GeneralUI extends javax.swing.JFrame {
         worldSaved = false;
         scenarioSaved = false;
         
-        preCondTableModel = new ConditionTableModel(new UniqueList<Condition>());
-        postCondTableModel = new ConditionTableModel((new UniqueList<Condition>()));
+        preCondListModel = new WorldListModel<>(new UniqueList<Condition>());
+        postCondListModel = new WorldListModel<>((new UniqueList<Condition>()));
         objectTreeModel = new SysObjectTreeModel(world);
         propValueListModel = new WorldListModel<>(new UniqueList<String>());
         actionListModel = new WorldListModel<>(world.getPossibleActions());
@@ -93,20 +90,6 @@ public class GeneralUI extends javax.swing.JFrame {
         sliderInstant.setLabelTable(sliderInstant.createStandardLabels(1));
         
         treeObjects.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        
-        tablePreCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                tablePreCondValueChanged(e);
-            }
-        });
-        
-        tablePostCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                tablePostCondValueChanged(e);
-            }
-        });
         
         epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
         epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 1);
@@ -143,14 +126,14 @@ public class GeneralUI extends javax.swing.JFrame {
         splitActionTab = new javax.swing.JSplitPane();
         panelLaws = new javax.swing.JPanel();
         panelPre = new javax.swing.JPanel();
-        scrollTablePre = new javax.swing.JScrollPane();
-        tablePreCond = new javax.swing.JTable();
+        scrollListPre = new javax.swing.JScrollPane();
+        listPreCond = new javax.swing.JList<>();
         panelBtnPre = new javax.swing.JPanel();
         btnAddPre = new javax.swing.JButton();
         btnRemPre = new javax.swing.JButton();
         panelPost = new javax.swing.JPanel();
-        scrollTablePost = new javax.swing.JScrollPane();
-        tablePostCond = new javax.swing.JTable();
+        scrollListPost = new javax.swing.JScrollPane();
+        listPostCond = new javax.swing.JList<>();
         panelBtnPost = new javax.swing.JPanel();
         btnAddPost = new javax.swing.JButton();
         btnRemPost = new javax.swing.JButton();
@@ -287,12 +270,16 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPre.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pre-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPre.setLayout(new java.awt.BorderLayout());
 
-        tablePreCond.setModel(preCondTableModel);
-        tablePreCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tablePreCond.getTableHeader().setReorderingAllowed(false);
-        scrollTablePre.setViewportView(tablePreCond);
+        listPreCond.setModel(preCondListModel);
+        listPreCond.setOpaque(false);
+        listPreCond.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listPreCondValueChanged(evt);
+            }
+        });
+        scrollListPre.setViewportView(listPreCond);
 
-        panelPre.add(scrollTablePre, java.awt.BorderLayout.CENTER);
+        panelPre.add(scrollListPre, java.awt.BorderLayout.CENTER);
 
         btnAddPre.setText("Add");
         btnAddPre.setEnabled(false);
@@ -319,12 +306,16 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPost.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Post-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPost.setLayout(new java.awt.BorderLayout());
 
-        tablePostCond.setModel(postCondTableModel);
-        tablePostCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tablePostCond.getTableHeader().setReorderingAllowed(false);
-        scrollTablePost.setViewportView(tablePostCond);
+        listPostCond.setModel(postCondListModel);
+        listPostCond.setOpaque(false);
+        listPostCond.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listPostCondValueChanged(evt);
+            }
+        });
+        scrollListPost.setViewportView(listPostCond);
 
-        panelPost.add(scrollTablePost, java.awt.BorderLayout.CENTER);
+        panelPost.add(scrollListPost, java.awt.BorderLayout.CENTER);
 
         btnAddPost.setText("Add");
         btnAddPost.setEnabled(false);
@@ -608,11 +599,11 @@ public class GeneralUI extends javax.swing.JFrame {
         boolean notNull = _action != null;
         
         if(notNull) {
-            preCondTableModel.setData(_action.getPreConditions());
-            postCondTableModel.setData(_action.getPostConditions());
+            preCondListModel.setData(_action.getPreConditions());
+            postCondListModel.setData(_action.getPostConditions());
         } else {
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
+            preCondListModel.setData(new UniqueList<Condition>());
+            postCondListModel.setData(new UniqueList<Condition>());
         }
         
         btnAddPre.setEnabled(notNull);
@@ -684,7 +675,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
         String message = "Delete selected pre-condition from action \""+ _action +"\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            preCondTableModel.removeRow(_preCond);
+            preCondListModel.removeElement(_preCond);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPreActionPerformed
@@ -692,7 +683,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
         String message = "Delete selected post-condition from action \""+ _action +"\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            postCondTableModel.removeRow(_postCond);
+            postCondListModel.removeElement(_postCond);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPostActionPerformed
@@ -773,7 +764,7 @@ public class GeneralUI extends javax.swing.JFrame {
             worldObjects.add(world.getObjectAt(i));
         }
         new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
-        preCondTableModel.triggerUpdate();
+        preCondListModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPreActionPerformed
 
     private void btnAddPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPostActionPerformed
@@ -782,7 +773,7 @@ public class GeneralUI extends javax.swing.JFrame {
             worldObjects.add(world.getObjectAt(i));
         }
         new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
-        postCondTableModel.triggerUpdate();
+        postCondListModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
 
     private void miOpenWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenWorldActionPerformed
@@ -1010,30 +1001,30 @@ public class GeneralUI extends javax.swing.JFrame {
             objectTreeModel.setData(world);
             propValueListModel.setData(new UniqueList<String>());
             actionListModel.setData(world.getPossibleActions());
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
+            preCondListModel.setData(new UniqueList<Condition>());
+            preCondListModel.setData(new UniqueList<Condition>());
             tabbedPane.setSelectedIndex(0);
         }
     }//GEN-LAST:event_miLoadWumpusWorldActionPerformed
 
-    private void tablePreCondValueChanged(ListSelectionEvent evt) {
+    private void listPreCondValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPreCondValueChanged
         try {
-            _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
+            _preCond = _action.getPreConditions().get(listPreCond.getSelectedIndex());
         } catch (IndexOutOfBoundsException e) {
             _preCond = null;
         }
         btnRemPre.setEnabled(_preCond != null);
-    }
+    }//GEN-LAST:event_listPreCondValueChanged
 
-    private void tablePostCondValueChanged(ListSelectionEvent evt) {
+    private void listPostCondValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPostCondValueChanged
         try {
-            _postCond = _action.getPostConditions().get(tablePostCond.getSelectedRow());
+            _postCond = _action.getPostConditions().get(listPostCond.getSelectedIndex());
         } catch (IndexOutOfBoundsException e) {
             _postCond = null;
         }
         btnRemPost.setEnabled(_postCond != null);
-    }
-    
+    }//GEN-LAST:event_listPostCondValueChanged
+  
     private void epXmlDocumentTextChanged(DocumentEvent e) {
         scenario.setXML(epXmlScenario.getText());
         warnScenarioSave();
@@ -1123,8 +1114,8 @@ public class GeneralUI extends javax.swing.JFrame {
             objectTreeModel.setData(world);
             propValueListModel.setData(new UniqueList<String>());
             actionListModel.setData(world.getPossibleActions());
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
+            preCondListModel.setData(new UniqueList<Condition>());
+            postCondListModel.setData(new UniqueList<Condition>());
             tabbedPane.setSelectedIndex(0);
         } catch (IOException ex) {
             promptError("Failed to read file "+file.getName(), "Opening error");
@@ -1206,6 +1197,8 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JEditorPane epXmlScenario;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JList<Action> listActions;
+    private javax.swing.JList<String> listPostCond;
+    private javax.swing.JList<String> listPreCond;
     private javax.swing.JList<String> listPropValue;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuScenario;
@@ -1236,18 +1229,16 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollEditorPane;
     private javax.swing.JScrollPane scrollFormulaArea;
     private javax.swing.JScrollPane scrollListActions;
+    private javax.swing.JScrollPane scrollListPost;
+    private javax.swing.JScrollPane scrollListPre;
     private javax.swing.JScrollPane scrollListProp;
     private javax.swing.JScrollPane scrollPaneObjects;
-    private javax.swing.JScrollPane scrollTablePost;
-    private javax.swing.JScrollPane scrollTablePre;
     private final javax.swing.JSlider sliderInstant = new javax.swing.JSlider();
     private javax.swing.JSplitPane splitActionTab;
     private javax.swing.JSplitPane splitObjectsTab;
     private javax.swing.JSplitPane splitXmlFormula;
     private javax.swing.JTextArea taFormula;
     private javax.swing.JTabbedPane tabbedPane;
-    private javax.swing.JTable tablePostCond;
-    private javax.swing.JTable tablePreCond;
     private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
 

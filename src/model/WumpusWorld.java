@@ -1,9 +1,6 @@
 package model;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import model.observations.Scenario;
 
 /**
@@ -206,5 +203,13 @@ public class WumpusWorld {
         pickUpGold.addPreCondition(new PropertyValue(agent, "hasGold", "true"));
         pickUpGold.addPreCondition(new PropertyValue(gold, "isPickedUp", "true"));
         wumpusWorld.addPossibleAction(pickUpGold);
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 }

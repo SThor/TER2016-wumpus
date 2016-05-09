@@ -88,9 +88,9 @@ public class WorldExport {
         xmlProperty.setAttribute("name", property.getName());
 
         Element xmlValues = new Element("values");
-        for (String value : property.getPossibleValues()) {
+        for (Integer value : property.getPossibleValues()) {
             Element xmlValue = new Element("value");
-            xmlValue.setAttribute("name", value);
+            xmlValue.setAttribute("name", value.toString());
             xmlValues.addContent(xmlValue);
         }
         xmlProperty.addContent(xmlValues);
@@ -125,7 +125,7 @@ public class WorldExport {
             xmlCondition = new Element("propertyValue");
             xmlCondition.setAttribute("object", pv.getObject().getName());
             xmlCondition.setAttribute("property", pv.getPropertyName());
-            xmlCondition.setAttribute("wanted_value", pv.getWantedValue());
+            xmlCondition.setAttribute("wanted_value", pv.getWantedValue().toString());
         } else if (condition instanceof Equality) {
             Equality e = (Equality) condition;
             

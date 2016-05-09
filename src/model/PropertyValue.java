@@ -25,7 +25,7 @@ public class PropertyValue implements Condition {
     /**
      * The wanted value for this property
      */
-    private String wantedValue;
+    private Integer wantedValue;
 
     /**
      * Constructs a property value condition.
@@ -41,7 +41,7 @@ public class PropertyValue implements Condition {
      * @throws NoSuchValueException If the wanted value is not in the property's
      * possible values
      */
-    public PropertyValue(SysObject object, String propertyName, String wantedValue) {
+    public PropertyValue(SysObject object, String propertyName, Integer wantedValue) {
         if (!object.isPossibleValueOf(propertyName, wantedValue)) {
             throw new NoSuchValueException(wantedValue, propertyName, object.getName());
         }
@@ -93,7 +93,7 @@ public class PropertyValue implements Condition {
      *
      * @return The wanted value
      */
-    public String getWantedValue() {
+    public Integer getWantedValue() {
         return wantedValue;
     }
 
@@ -127,11 +127,11 @@ public class PropertyValue implements Condition {
 
     @Override
     public String toString() {
-        return object + "." + propertyName + " = '" + wantedValue + "'";
+        return object + "." + propertyName + " = " + wantedValue;
     }
 
     @Override
-    public boolean largeEquals(SysObject object, String property, String value) {
+    public boolean largeEquals(SysObject object, String property, Integer value) {
         return this.object.equals(object) && (
                     property == null || (
                         this.propertyName.equals(property) && (

@@ -25,5 +25,5 @@ public interface Condition extends Observation{
      * @return <tt>true</tt> if the conditions are of the same class, and every attribute is either equal to the corresponding argument or null,
      * <tt>false</tt> otherwise.
      */
-    public boolean largeEquals(SysObject object, String property, String value);
+    public boolean largeEquals(SysObject object, String property, Integer value);
 }

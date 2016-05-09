@@ -60,7 +60,8 @@ public class WorldImport {
     private void importPropertyValues(ObjectProperty property, Element xmlValues) {
         for (Element xmlValue : xmlValues.getChildren()) {
             String value = xmlValue.getAttributeValue("name");
-            property.addPossibleValue(value);
+            Integer intValue = Integer.parseInt(value);
+            property.addPossibleValue(intValue);
         }
     }
 
@@ -106,6 +107,7 @@ public class WorldImport {
 
         String propertyName = xmlCondition.getAttributeValue("property");
         String wantedValue = xmlCondition.getAttributeValue("wanted_value");
-        return new PropertyValue(object, propertyName, wantedValue);
+        Integer intWantedValue = Integer.parseInt(wantedValue);
+        return new PropertyValue(object, propertyName, intWantedValue);
     }
 }

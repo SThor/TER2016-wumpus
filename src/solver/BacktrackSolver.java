@@ -8,16 +8,17 @@ package solver;
 import ilog.concert.IloAnyDomain;
 import ilog.concert.IloException;
 import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
 import ilog.solver.IlcSolver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.Action;
 import model.ObjectProperty;
 import model.SysObject;
 import model.Trajectory;
 import model.World;
-import model.observations.Observation;
 import model.observations.Scenario;
 
 /**
@@ -61,10 +62,61 @@ public class BacktrackSolver extends Solver {
 
     @Override
     public List<Trajectory> solve() throws IloException {
-        // Add constraints for each observations
-        for (int i = 0; i < scenario.size(); i++) {
+        int i;
+        // Add constraints for each observation => observational constraints
+        for (i = 0; i < scenario.size(); i++) {
             solver.add(scenario.get(i).solverConstraint(solver, worldMaps.get(i)));
         }
+        
+        IlcConstraint transitionCons = null;
+        // Add constraints for each transition (is there an action which allows the transition ?)
+        // => transitional constraints
+        for (i = 1; i < scenario.size(); i++) {
+            IlcConstraint instantTransConstraint = null;
+            for (Action action : world.getPossibleActions()) {
+                IlcConstraint actionTransConstraint = action.transitionConstraint(solver, worldMaps.get(i-1), worldMaps.get(i));
+                if (instantTransConstraint == null) {
+                    instantTransConstraint = actionTransConstraint;
+                } else {
+                    instantTransConstraint = solver.or(instantTransConstraint, actionTransConstraint);
+                }
+                System.out.println(actionTransConstraint);
+            }
+            
+            // TODO
+            // For each variable, add the "unchanged" possibility
+            /*for (int j = 1; j < varList.get(i-1).size(); j++) {
+                List<IlcAnyVar> listBefore = varList.get(j-1);
+                List<IlcAnyVar> listAfter = varList.get(j);
+                for (int k = 0; k < listBefore.size(); k++) {
+                    IlcConstraint unchanged = solver.imply(,);
+                    if (instantTransConstraint == null) {
+                    }
+                }
+                
+            }*/
+            
+            if (transitionCons == null) {
+                transitionCons = instantTransConstraint;
+            } else {
+                transitionCons = solver.and(transitionCons, instantTransConstraint);
+            }
+        }
+        
+        solver.add(transitionCons);
+        
+        List<IlcAnyVar> flatVarList = new ArrayList<>();
+        for (List<IlcAnyVar> list : varList) {
+            for (IlcAnyVar var : list) {
+                flatVarList.add(var);
+            }
+        }
+        
+        solver.newSearch(solver.generate(flatVarList.toArray(new IlcAnyVar[flatVarList.size()])));
+        while (solver.next()) {
+            System.out.println(flatVarList);
+        }
+        solver.endSearch();
         
         return null;
     }

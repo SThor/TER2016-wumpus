@@ -147,9 +147,9 @@ public class Action implements Observation {
 
     /**
      * Remove all condition associated to an object that has a certain property
-     * which is currently at a certain value. Note: if <tt>value</tt> is
-     * <tt>null</tt>, the value of the property is discarded. if
-     * <tt>property</tt> is <tt>null</tt> the object is deleted wether it has
+ which is currently at a certain objectMap. Note: if <tt>objectMap</tt> is
+     * <tt>null</tt>, the objectMap of the property is discarded. if
+ <tt>property</tt> is <tt>null</tt> the object is deleted wether it has
      * this propety or not.
      *
      * @param object The associated object
@@ -239,7 +239,7 @@ public class Action implements Observation {
                     if (preCond instanceof PropertyValue) {
                         if (preCond.getObject().equals(postCondObject) && preCond.getPropertyName().equals(postCond.getPropertyName())) {
                             // We have found a condition acting on the same Object.property in both preConditions and postConditions
-                            // If the wanted value is changed, the object is modified by this action
+                            // If the wanted objectMap is changed, the object is modified by this action
                             PropertyValue pre = (PropertyValue) preCond;
                             PropertyValue post = (PropertyValue) postCond;
                             if (!pre.getWantedValue().equals(post.getWantedValue())) {
@@ -256,5 +256,59 @@ public class Action implements Observation {
     @Override
     public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * Return the transitionnal constraints for a backtrack solver
+     * @param solver Solver to constraint
+     * @param worldMapBefore Map of the world before the action
+     * @param worldMapAfter Map of the world after the action
+     * @return 
+     */
+    public IlcConstraint transitionConstraint(IlcSolver solver, 
+    Map<SysObject, Map<String, IlcAnyVar>> worldMapBefore, 
+    Map<SysObject, Map<String, IlcAnyVar>> worldMapAfter) {
+        if (preConditions.isEmpty() || postConditions.isEmpty()) {
+            return null;
+        }
+        
+        List<String> concernedProperties = new ArrayList<>();
+        int i;
+        
+        Condition preCond = preConditions.get(0);
+        IlcConstraint preCondConstraint = preCond.solverConstraint(solver, worldMapBefore);
+        concernedProperties.addAll(preCond.getPropertiesNames());
+        for (i = 1; i < preConditions.size(); i++) {
+            preCond = preConditions.get(i);
+            preCondConstraint = solver.and(preCondConstraint, preCond.solverConstraint(solver, worldMapBefore));
+            concernedProperties.addAll(preCond.getPropertiesNames());
+        }
+        
+        Condition postCond = postConditions.get(0);
+        IlcConstraint postCondConstraint = postCond.solverConstraint(solver, worldMapAfter);
+        concernedProperties.addAll(postCond.getPropertiesNames());
+        for (i = 1; i < postConditions.size(); i++) {
+            postCond = postConditions.get(i);
+            postCondConstraint = solver.and(postCondConstraint, postCond.solverConstraint(solver, worldMapAfter));
+            concernedProperties.addAll(postCond.getPropertiesNames());
+        }
+        
+        IlcConstraint transitionConstraint = solver.imply(preCondConstraint, postCondConstraint);
+        
+        for (Map.Entry<SysObject, Map<String, IlcAnyVar>> objectEntry : worldMapBefore.entrySet()) {
+            SysObject objectKey = objectEntry.getKey();
+            Map<String, IlcAnyVar> objectMap = objectEntry.getValue();
+            for (Map.Entry<String, IlcAnyVar> propEntry : objectMap.entrySet()) {
+                String propKey = propEntry.getKey();
+                IlcAnyVar var = propEntry.getValue();
+                // If the property is not concerned by the action, constrain to equality
+                if (!concernedProperties.contains(propKey)) {
+                    transitionConstraint = solver.and(transitionConstraint, solver.eq(var, worldMapAfter.get(objectKey).get(propKey)));
+                }
+            }
+            
+        }
+        
+        return transitionConstraint;
     }
 }

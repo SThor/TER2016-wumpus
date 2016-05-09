@@ -27,7 +27,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
 
     private SysObject _object;
     private ObjectProperty _property;
-    private String _propValue;
+    private Integer _propValue;
 
     private SysObject _object2;
     private ObjectProperty _property2;
@@ -146,7 +146,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
             }
         });
 
-        cbPropValue.setModel(new DefaultComboBoxModel<String>());
+        cbPropValue.setModel(new DefaultComboBoxModel<Integer>());
         cbPropValue.setEnabled(false);
         cbPropValue.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -419,19 +419,19 @@ public class AddConditionDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cbObject1ItemStateChanged
 
     private void cbPropValueItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropValueItemStateChanged
-        _propValue = (String) cbPropValue.getSelectedItem();
+        _propValue = (Integer) cbPropValue.getSelectedItem();
     }//GEN-LAST:event_cbPropValueItemStateChanged
 
     private void cbPropItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPropItemStateChanged
         _property = (ObjectProperty) cbProp.getSelectedItem();
 
-        List<String> propValues = _property.getPossibleValues();
+        List<Integer> propValues = _property.getPossibleValues();
         if (propValues.isEmpty()) {
-            cbPropValue.setModel(new DefaultComboBoxModel<String>());
+            cbPropValue.setModel(new DefaultComboBoxModel<Integer>());
             cbPropValue.setEnabled(false);
             btnAdd.setEnabled(false);
         } else {
-            String[] values = new String[propValues.size()];
+            Integer[] values = new Integer[propValues.size()];
             for (int i = 0; i < values.length; i++) {
                 values[i] = propValues.get(i);
             }
@@ -495,7 +495,7 @@ public class AddConditionDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<ObjectProperty> cbProp;
     private javax.swing.JComboBox<ObjectProperty> cbProp1;
     private javax.swing.JComboBox<ObjectProperty> cbProp2;
-    private javax.swing.JComboBox<String> cbPropValue;
+    private javax.swing.JComboBox<Integer> cbPropValue;
     private javax.swing.JPanel equalityInputPanel;
     private javax.swing.JRadioButton equalityRadioButton;
     private javax.swing.JPanel inputPanel;

@@ -12,15 +12,15 @@ import java.util.List;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class ObjectProperty {
-    private List<String> possibleValues;
+    private List<Integer> possibleValues;
     private int currentValueIndex;
     private String name;
     
     public ObjectProperty(String name) {
-        this(new UniqueList<String>(), name);
+        this(new UniqueList<Integer>(), name);
     }
     
-    public ObjectProperty(UniqueList<String> possibleValues, String name) {
+    public ObjectProperty(UniqueList<Integer> possibleValues, String name) {
         this.possibleValues = possibleValues;
         currentValueIndex = -1;
         this.name = name;
@@ -30,11 +30,11 @@ public class ObjectProperty {
         return name;
     }
     
-    public List<String> getPossibleValues() {
+    public List<Integer> getPossibleValues() {
         return possibleValues;
     }
     
-    public String getCurrentValue() {
+    public Integer getCurrentValue() {
         return currentValueIndex == -1 ? null : possibleValues.get(currentValueIndex);
     }
     
@@ -74,7 +74,7 @@ public class ObjectProperty {
      * Replaces all of the possible values
      * @param newPossibleValues The possible values for the property
      */
-    public void setPossibleValues(UniqueList<String> newPossibleValues) {
+    public void setPossibleValues(UniqueList<Integer> newPossibleValues) {
         possibleValues = newPossibleValues;
     }
     
@@ -82,7 +82,7 @@ public class ObjectProperty {
      * Adds a possible value to the list
      * @param possibleValue Value to add
      */
-    public void addPossibleValue(String possibleValue){
+    public void addPossibleValue(Integer possibleValue){
         possibleValues.add(possibleValue);
         
     }
@@ -92,7 +92,7 @@ public class ObjectProperty {
      * @param index index of the value to remove
      * @return Value that was removed
      */
-    public String removePossibleValue(int index){
+    public Integer removePossibleValue(int index){
         return possibleValues.remove(index);
     }
 

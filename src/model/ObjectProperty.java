@@ -21,7 +21,7 @@ public class ObjectProperty {
     }
     
     public ObjectProperty(UniqueList<String> possibleValues, String name) {
-        this.possibleValues = new UniqueList<>();
+        this.possibleValues = possibleValues;
         currentValueIndex = -1;
         this.name = name;
     }

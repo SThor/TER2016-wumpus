@@ -1,6 +1,5 @@
 package gui.general;
 
-import gui.general.componentModels.ConditionTableModel;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
 import gui.solver.NoSolverException;
@@ -20,8 +19,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -34,6 +31,7 @@ import model.ObjectProperty;
 import model.SysObject;
 import model.UniqueList;
 import model.World;
+import model.WumpusWorld;
 import model.exceptions.DuplicateElementException;
 import model.observations.Scenario;
 import org.jdom2.JDOMException;
@@ -43,75 +41,74 @@ import org.jdom2.JDOMException;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class GeneralUI extends javax.swing.JFrame {
+
     private SysObject _object;
     private ObjectProperty _property;
     private String _propValue;
     private Action _action;
     private Condition _preCond;
     private Condition _postCond;
-                            
+
     private World world;
     private final ScenarioModel scenario;
-    
+
     private File worldFile;
     private File scenarioFile;
     private boolean worldSaved;
     private boolean scenarioSaved;
-    
+
     private final JFileChooser xmlChooser;
-    
-    private final ConditionTableModel preCondTableModel;
-    private final ConditionTableModel postCondTableModel;
+
+    private final WorldListModel<Condition> preCondListModel;
+    private final WorldListModel<Condition> postCondListModel;
     private final SysObjectTreeModel objectTreeModel;
     private final WorldListModel<String> propValueListModel;
     private final WorldListModel<Action> actionListModel;
-    
+
     /**
      * Creates new form GeneralUI
+     *
      * @param world The world to work on
      * @param scenario The scenario to work on
      */
     public GeneralUI(World world, Scenario scenario) {
         this.world = world;
         this.scenario = new ScenarioModel(scenario, this, world);
-   
+
         xmlChooser = new JFileChooser();
         xmlChooser.setFileFilter(new FileNameExtensionFilter("XML files", "xml"));
-        
+
         worldSaved = false;
         scenarioSaved = false;
-        
-        preCondTableModel = new ConditionTableModel(new UniqueList<Condition>());
-        postCondTableModel = new ConditionTableModel((new UniqueList<Condition>()));
+
+        preCondListModel = new WorldListModel<>(new UniqueList<Condition>());
+        postCondListModel = new WorldListModel<>((new UniqueList<Condition>()));
         objectTreeModel = new SysObjectTreeModel(world);
         propValueListModel = new WorldListModel<>(new UniqueList<String>());
         actionListModel = new WorldListModel<>(world.getPossibleActions());
-        
+
         initComponents();
-        
+
         sliderInstant.setLabelTable(sliderInstant.createStandardLabels(1));
-        
+
         treeObjects.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        
-        tablePreCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                tablePreCondValueChanged(e);
-            }
-        });
-        
-        tablePostCond.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                tablePostCondValueChanged(e);
-            }
-        });
-        
+
         epXmlScenario.getDocument().addDocumentListener(new XmlEditorListener());
         epXmlScenario.getDocument().putProperty(PlainDocument.tabSizeAttribute, 1);
-        
+
         super.setLocationRelativeTo(null);
         setTitle();
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+        unwarnWorldSave();
+        objectTreeModel.setData(this.world);
+        propValueListModel.setData(new UniqueList<String>());
+        actionListModel.setData(world.getPossibleActions());
+        preCondListModel.setData(new UniqueList<Condition>());
+        preCondListModel.setData(new UniqueList<Condition>());
+        tabbedPane.setSelectedIndex(0);
     }
 
     /**
@@ -142,14 +139,14 @@ public class GeneralUI extends javax.swing.JFrame {
         splitActionTab = new javax.swing.JSplitPane();
         panelLaws = new javax.swing.JPanel();
         panelPre = new javax.swing.JPanel();
-        scrollTablePre = new javax.swing.JScrollPane();
-        tablePreCond = new javax.swing.JTable();
+        scrollListPre = new javax.swing.JScrollPane();
+        listPreCond = new javax.swing.JList<>();
         panelBtnPre = new javax.swing.JPanel();
         btnAddPre = new javax.swing.JButton();
         btnRemPre = new javax.swing.JButton();
         panelPost = new javax.swing.JPanel();
-        scrollTablePost = new javax.swing.JScrollPane();
-        tablePostCond = new javax.swing.JTable();
+        scrollListPost = new javax.swing.JScrollPane();
+        listPostCond = new javax.swing.JList<>();
         panelBtnPost = new javax.swing.JPanel();
         btnAddPost = new javax.swing.JButton();
         btnRemPost = new javax.swing.JButton();
@@ -177,6 +174,7 @@ public class GeneralUI extends javax.swing.JFrame {
         miOpenWorld = new javax.swing.JMenuItem();
         miSaveWorld = new javax.swing.JMenuItem();
         miSaveWorldAs = new javax.swing.JMenuItem();
+        miLoadWumpusWorld = new javax.swing.JMenuItem();
         menuScenario = new javax.swing.JMenu();
         miOpenScenario = new javax.swing.JMenuItem();
         miSaveScenario = new javax.swing.JMenuItem();
@@ -285,12 +283,16 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPre.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pre-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPre.setLayout(new java.awt.BorderLayout());
 
-        tablePreCond.setModel(preCondTableModel);
-        tablePreCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tablePreCond.getTableHeader().setReorderingAllowed(false);
-        scrollTablePre.setViewportView(tablePreCond);
+        listPreCond.setModel(preCondListModel);
+        listPreCond.setOpaque(false);
+        listPreCond.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listPreCondValueChanged(evt);
+            }
+        });
+        scrollListPre.setViewportView(listPreCond);
 
-        panelPre.add(scrollTablePre, java.awt.BorderLayout.CENTER);
+        panelPre.add(scrollListPre, java.awt.BorderLayout.CENTER);
 
         btnAddPre.setText("Add");
         btnAddPre.setEnabled(false);
@@ -317,12 +319,16 @@ public class GeneralUI extends javax.swing.JFrame {
         panelPost.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Post-conditions", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
         panelPost.setLayout(new java.awt.BorderLayout());
 
-        tablePostCond.setModel(postCondTableModel);
-        tablePostCond.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tablePostCond.getTableHeader().setReorderingAllowed(false);
-        scrollTablePost.setViewportView(tablePostCond);
+        listPostCond.setModel(postCondListModel);
+        listPostCond.setOpaque(false);
+        listPostCond.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                listPostCondValueChanged(evt);
+            }
+        });
+        scrollListPost.setViewportView(listPostCond);
 
-        panelPost.add(scrollTablePost, java.awt.BorderLayout.CENTER);
+        panelPost.add(scrollListPost, java.awt.BorderLayout.CENTER);
 
         btnAddPost.setText("Add");
         btnAddPost.setEnabled(false);
@@ -516,6 +522,17 @@ public class GeneralUI extends javax.swing.JFrame {
     });
     menuWorld.add(miSaveWorldAs);
 
+    miLoadWumpusWorld.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+    miLoadWumpusWorld.setMnemonic('O');
+    miLoadWumpusWorld.setText("Load Wumpus World");
+    miLoadWumpusWorld.setToolTipText("Import from XML file");
+    miLoadWumpusWorld.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            miLoadWumpusWorldActionPerformed(evt);
+        }
+    });
+    menuWorld.add(miLoadWumpusWorld);
+
     menuBar.add(menuWorld);
 
     menuScenario.setMnemonic('F');
@@ -593,15 +610,15 @@ public class GeneralUI extends javax.swing.JFrame {
     private void listActionsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listActionsValueChanged
         _action = listActions.getSelectedValue();
         boolean notNull = _action != null;
-        
-        if(notNull) {
-            preCondTableModel.setData(_action.getPreConditions());
-            postCondTableModel.setData(_action.getPostConditions());
+
+        if (notNull) {
+            preCondListModel.setData(_action.getPreConditions());
+            postCondListModel.setData(_action.getPostConditions());
         } else {
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
+            preCondListModel.setData(new UniqueList<Condition>());
+            postCondListModel.setData(new UniqueList<Condition>());
         }
-        
+
         btnAddPre.setEnabled(notNull);
         btnAddPost.setEnabled(notNull);
         btnRemAction.setEnabled(notNull);
@@ -610,18 +627,18 @@ public class GeneralUI extends javax.swing.JFrame {
     private void treeObjectsValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_treeObjectsValueChanged
         Object selected;
         Object parent;
-        
+
         _propValue = null;
-        
+
         try {
             TreePath path = treeObjects.getSelectionPath();
             selected = path.getLastPathComponent();
             parent = path.getParentPath().getLastPathComponent();
-            
+
             // If true, a SysObject has been selected, else it's an ObjectProperty
             boolean isSysObject = selected instanceof SysObject;
-        
-            if(isSysObject) {
+
+            if (isSysObject) {
                 _object = (SysObject) selected;
                 _property = null;
                 propValueListModel.setData(new UniqueList<String>());
@@ -630,12 +647,12 @@ public class GeneralUI extends javax.swing.JFrame {
                 _property = (ObjectProperty) selected;
                 propValueListModel.setData(_property.getPossibleValues());
             }
-        
+
             btnRemObject.setEnabled(true);
             btnAddProp.setEnabled(true);
             btnAddValue.setEnabled(!isSysObject);
-            
-        } catch(NullPointerException e) { // If caught, nothing is selected in the JTree
+
+        } catch (NullPointerException e) { // If caught, nothing is selected in the JTree
             _object = null;
             _property = null;
             propValueListModel.setData(new UniqueList<String>());
@@ -646,14 +663,15 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_treeObjectsValueChanged
 
     private void btnRemObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemObjectActionPerformed
-        if(_property != null)
+        if (_property != null) {
             removeProperty();
-        else
+        } else {
             removeObject();
+        }
     }//GEN-LAST:event_btnRemObjectActionPerformed
 
     private void btnRemPropertyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPropertyActionPerformed
-        String message = "Delete value \""+ _propValue +"\" from property \""+ _property +"\" in object \""+ _object +"\" ?";
+        String message = "Delete value \"" + _propValue + "\" from property \"" + _property + "\" in object \"" + _object + "\" ?";
         if (confirmation(message, "Confirm deletion")) {
             propValueListModel.removeElement(_propValue);
             warnWorldSave();
@@ -661,7 +679,7 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRemPropertyActionPerformed
 
     private void btnRemActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemActionActionPerformed
-        String message = "Delete action \""+ _action +"\" from world ?";
+        String message = "Delete action \"" + _action + "\" from world ?";
         if (confirmation(message, "Confirm deletion")) {
             actionListModel.removeElement(_action);
             warnWorldSave();
@@ -669,23 +687,23 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRemActionActionPerformed
 
     private void btnRemPreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPreActionPerformed
-        String message = "Delete selected pre-condition from action \""+ _action +"\" ?";
+        String message = "Delete selected pre-condition from action \"" + _action + "\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            preCondTableModel.removeRow(_preCond);
+            preCondListModel.removeElement(_preCond);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPreActionPerformed
 
     private void btnRemPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemPostActionPerformed
-        String message = "Delete selected post-condition from action \""+ _action +"\" ?";
+        String message = "Delete selected post-condition from action \"" + _action + "\" ?";
         if (confirmation(message, "Confirm deletion")) {
-            postCondTableModel.removeRow(_postCond);
+            postCondListModel.removeElement(_postCond);
             warnWorldSave();
         }
     }//GEN-LAST:event_btnRemPostActionPerformed
-    
+
     private void removeProperty() {
-        String message = "Delete property \""+ _property +"\" from object \""+ _object +"\" ?";
+        String message = "Delete property \"" + _property + "\" from object \"" + _object + "\" ?";
         if (confirmation(message, "Confirm deletion")) {
             objectTreeModel.removeProperty(_object, _property);
             warnWorldSave();
@@ -693,63 +711,63 @@ public class GeneralUI extends javax.swing.JFrame {
     }
 
     private void removeObject() {
-        String message = "Delete object \""+ _object +"\" from world ?";
+        String message = "Delete object \"" + _object + "\" from world ?";
         if (confirmation(message, "Confirm deletion")) {
             objectTreeModel.removeObject(_object);
             warnWorldSave();
         }
     }
-    
+
     private void btnAddObjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddObjectActionPerformed
         String name = nameInput("Name of the new object:", "Adding an object");
-        if(name != null) {
+        if (name != null) {
             try {
                 objectTreeModel.addObject(new SysObject(name, world));
                 warnWorldSave();
             } catch (DuplicateElementException e) {
-                promptError("The object \""+ name +"\" already exists in the world.", 
-                            "Cannot create new object");
+                promptError("The object \"" + name + "\" already exists in the world.",
+                        "Cannot create new object");
             }
         }
     }//GEN-LAST:event_btnAddObjectActionPerformed
 
     private void btnAddPropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPropActionPerformed
-        String message = "Name of the new property for object \""+ _object +"\":";
+        String message = "Name of the new property for object \"" + _object + "\":";
         String name = nameInput(message, "Adding a property");
-        if(name != null) {
+        if (name != null) {
             try {
                 objectTreeModel.addProperty(_object, new ObjectProperty(name));
                 warnWorldSave();
             } catch (DuplicateElementException e) {
-                promptError("The property \""+ name +"\" already exists in object \""+ _object +"\".", 
-                            "Cannot create new property");
+                promptError("The property \"" + name + "\" already exists in object \"" + _object + "\".",
+                        "Cannot create new property");
             }
         }
     }//GEN-LAST:event_btnAddPropActionPerformed
 
     private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
-        String message = "Name of the new value for property \""+ _property +"\" in object \""+ _object +"\":";
+        String message = "Name of the new value for property \"" + _property + "\" in object \"" + _object + "\":";
         String name = nameInput(message, "Adding a value");
-        if(name != null) {
+        if (name != null) {
             try {
                 propValueListModel.addElement(name);
                 warnWorldSave();
             } catch (DuplicateElementException e) {
-                promptError("The value \""+ name +"\" already exists in property \""+ _property +"\" of object \""+ _object +"\".", 
-                            "Cannot create new value");
+                promptError("The value \"" + name + "\" already exists in property \"" + _property + "\" of object \"" + _object + "\".",
+                        "Cannot create new value");
             }
         }
     }//GEN-LAST:event_btnAddValueActionPerformed
 
     private void btnAddActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionActionPerformed
         String name = nameInput("Name of the new action:", "Adding an action");
-        if(name != null) {
+        if (name != null) {
             try {
                 actionListModel.addElement(new Action(name));
                 warnWorldSave();
             } catch (DuplicateElementException e) {
-                promptError("The action \""+ name +"\" already exists in the world.", 
-                            "Cannot create new action");
+                promptError("The action \"" + name + "\" already exists in the world.",
+                        "Cannot create new action");
             }
         }
     }//GEN-LAST:event_btnAddActionActionPerformed
@@ -760,7 +778,7 @@ public class GeneralUI extends javax.swing.JFrame {
             worldObjects.add(world.getObjectAt(i));
         }
         new AddConditionDialog(this, worldObjects, _action.getPreConditions()).setVisible(true);
-        preCondTableModel.triggerUpdate();
+        preCondListModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPreActionPerformed
 
     private void btnAddPostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPostActionPerformed
@@ -769,26 +787,26 @@ public class GeneralUI extends javax.swing.JFrame {
             worldObjects.add(world.getObjectAt(i));
         }
         new AddConditionDialog(this, worldObjects, _action.getPostConditions()).setVisible(true);
-        postCondTableModel.triggerUpdate();
+        postCondListModel.triggerUpdate();
     }//GEN-LAST:event_btnAddPostActionPerformed
 
     private void miOpenWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenWorldActionPerformed
         boolean confirm = true;
-        
+
         if (!worldSaved) {
             confirm = confirmation(
-                "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
-                "Open world");
+                    "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
+                    "Open world");
         }
-        
+
         if (confirm) {
             if (worldFile != null) {
                 xmlChooser.setCurrentDirectory(worldFile.getParentFile());
             }
-            
-            if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+            if (xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = xmlChooser.getSelectedFile();
-                if(isXmlFile(file)) {
+                if (isXmlFile(file)) {
                     importWorldFromXml(file);
                 } else {
                     promptError("Selected file was not an XML file.", "Cannot open file");
@@ -798,32 +816,30 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_miOpenWorldActionPerformed
 
     private void miSaveWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveWorldActionPerformed
-        if(worldFile == null) {
+        if (worldFile == null) {
             miSaveWorldAsActionPerformed(null);
         } else {
-           exportWorldToXml(worldFile);
+            exportWorldToXml(worldFile);
         }
     }//GEN-LAST:event_miSaveWorldActionPerformed
 
     private void miSaveWorldAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveWorldAsActionPerformed
-        if(worldFile != null) {
-                xmlChooser.setCurrentDirectory(worldFile.getParentFile());
+        if (worldFile != null) {
+            xmlChooser.setCurrentDirectory(worldFile.getParentFile());
         }
-        
-        if(xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+        if (xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = xmlChooser.getSelectedFile();
             boolean confirm = true;
-            if(file.exists()) {
-                if(isXmlFile(file)) {
-                    confirm = confirmation(file.getName()+" already exists.\n Override ?", "File already exists");
+            if (file.exists()) {
+                if (isXmlFile(file)) {
+                    confirm = confirmation(file.getName() + " already exists.\n Override ?", "File already exists");
                 } else {
-                    promptError(file.getName()+" is not an XML file", "Failed to save file");
+                    promptError(file.getName() + " is not an XML file", "Failed to save file");
                     return;
                 }
-            } else {
-                if(!isXmlFile(file)) {
-                    file = new File(file.getAbsolutePath()+".xml");
-                }
+            } else if (!isXmlFile(file)) {
+                file = new File(file.getAbsolutePath() + ".xml");
             }
 
             if (confirm) {
@@ -838,21 +854,21 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void miOpenScenarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miOpenScenarioActionPerformed
         boolean confirm = true;
-        
-        if(!scenarioSaved) {
+
+        if (!scenarioSaved) {
             confirm = confirmation(
-                "Current scenario will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
-                "Open scenario");
+                    "Current scenario will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
+                    "Open scenario");
         }
-        
-        if(confirm) {
-            if(scenarioFile != null) {
+
+        if (confirm) {
+            if (scenarioFile != null) {
                 xmlChooser.setCurrentDirectory(scenarioFile.getParentFile());
             }
-            
-            if(xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+            if (xmlChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = xmlChooser.getSelectedFile();
-                if(isXmlFile(file)) {
+                if (isXmlFile(file)) {
                     openScenarioXml(file);
                 } else {
                     promptError("Selected file was not an XML file.", "Cannot open file");
@@ -862,7 +878,7 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_miOpenScenarioActionPerformed
 
     private void miSaveScenarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveScenarioActionPerformed
-        if(scenarioFile == null) {
+        if (scenarioFile == null) {
             miSaveScenarioAsActionPerformed(null);
         } else {
             saveScenarioXml(scenarioFile);
@@ -870,27 +886,25 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_miSaveScenarioActionPerformed
 
     private void miSaveScenarioAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveScenarioAsActionPerformed
-        if(scenarioFile != null) {
-                xmlChooser.setCurrentDirectory(scenarioFile.getParentFile());
+        if (scenarioFile != null) {
+            xmlChooser.setCurrentDirectory(scenarioFile.getParentFile());
         }
-        
-        if(xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+        if (xmlChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = xmlChooser.getSelectedFile();
             boolean confirm = true;
-            if(file.exists()) {
-                if(isXmlFile(file)) {
-                    confirm = confirmation(file.getName()+" already exists.\n Override ?", "File already exists");
+            if (file.exists()) {
+                if (isXmlFile(file)) {
+                    confirm = confirmation(file.getName() + " already exists.\n Override ?", "File already exists");
                 } else {
-                    promptError(file.getName()+" is not an XML file", "Failed to save file");
+                    promptError(file.getName() + " is not an XML file", "Failed to save file");
                     return;
                 }
-            } else {
-                if(!isXmlFile(file)) {
-                    file = new File(file.getAbsolutePath()+".xml");
-                }
+            } else if (!isXmlFile(file)) {
+                file = new File(file.getAbsolutePath() + ".xml");
             }
 
-            if(confirm) {
+            if (confirm) {
                 saveScenarioXml(file);
             }
         }
@@ -906,29 +920,29 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnAddInstantAfterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddInstantAfterActionPerformed
         scenario.addInstantAfterCurrent();
-        sliderInstant.setMaximum(sliderInstant.getMaximum()+1);
+        sliderInstant.setMaximum(sliderInstant.getMaximum() + 1);
         sliderInstant.setValue(1);
     }//GEN-LAST:event_btnAddInstantAfterActionPerformed
 
     private void btnAddInstantBeforeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddInstantBeforeActionPerformed
         scenario.addInstantBeforeCurrent();
-        sliderInstant.setMaximum(sliderInstant.getMaximum()+1);
+        sliderInstant.setMaximum(sliderInstant.getMaximum() + 1);
     }//GEN-LAST:event_btnAddInstantBeforeActionPerformed
 
     private void btnMoveInstantAfterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveInstantAfterActionPerformed
         scenario.swapInstantWithNext();
-        sliderInstant.setValue(sliderInstant.getValue()+1);
+        sliderInstant.setValue(sliderInstant.getValue() + 1);
     }//GEN-LAST:event_btnMoveInstantAfterActionPerformed
 
     private void btnMoveInstantBeforeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveInstantBeforeActionPerformed
         scenario.swapInstantWithPrevious();
-        sliderInstant.setValue(sliderInstant.getValue()-1);
+        sliderInstant.setValue(sliderInstant.getValue() - 1);
     }//GEN-LAST:event_btnMoveInstantBeforeActionPerformed
 
     private void btnRemInstantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemInstantActionPerformed
-        if (confirmation("Remove instant "+ scenario.getInstant() +" ?", "Deletion confirmation")) {
+        if (confirmation("Remove instant " + scenario.getInstant() + " ?", "Deletion confirmation")) {
             scenario.removeInstant();
-            sliderInstant.setMaximum(sliderInstant.getMaximum()-1);
+            sliderInstant.setMaximum(sliderInstant.getMaximum() - 1);
         }
     }//GEN-LAST:event_btnRemInstantActionPerformed
 
@@ -936,26 +950,26 @@ public class GeneralUI extends javax.swing.JFrame {
         // if CTRL+SPACE -> auto-completion
         if (evt.getModifiers() == KeyEvent.CTRL_MASK && evt.getKeyCode() == KeyEvent.VK_SPACE) {
             Document document = epXmlScenario.getDocument();
-            if(document.getLength() >= 4) {
+            if (document.getLength() >= 4) {
                 try {
                     int caretPos = document.createPosition(epXmlScenario.getCaretPosition()).getOffset();
                     String toInsert = null;
                     int lengthToRemove = 0;
-                    if(document.getText(caretPos-4, 4).equals("cond")) {
+                    if (document.getText(caretPos - 4, 4).equals("cond")) {
                         lengthToRemove = 4;
                         toInsert = "<condition object=\"\" property=\"\" value=\"\" />";
-                    } else if (document.getText(caretPos-3, 3).equals("and")) {
+                    } else if (document.getText(caretPos - 3, 3).equals("and")) {
                         lengthToRemove = 3;
                         toInsert = "<operation type=\"and\">\n  \n</operation>";
-                    } else if (document.getText(caretPos-2, 2).equals("or")) {
+                    } else if (document.getText(caretPos - 2, 2).equals("or")) {
                         lengthToRemove = 2;
                         toInsert = "<operation type=\"or\">\n  \n</operation>";
-                    } else if (document.getText(caretPos-3, 3).equals("not")) {
+                    } else if (document.getText(caretPos - 3, 3).equals("not")) {
                         lengthToRemove = 3;
                         toInsert = "<operation type=\"not\">\n  \n</operation>";
                     }
-                    
-                    if(toInsert != null) {
+
+                    if (toInsert != null) {
                         caretPos -= lengthToRemove;
                         document.remove(caretPos, lengthToRemove);
                         document.insertString(caretPos, toInsert, null);
@@ -981,135 +995,146 @@ public class GeneralUI extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_miSolveCurrentActionPerformed
 
-    private void tablePreCondValueChanged(ListSelectionEvent evt) {
+    private void miLoadWumpusWorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miLoadWumpusWorldActionPerformed
+        boolean confirm = true;
+
+        if (!worldSaved) {
+            confirm = confirmation(
+                    "Current world will be closed and all unsaved changes will be discarded.\n Continue anyway ?",
+                    "Open world");
+        }
+
+        if (confirm) {
+            new WumpusWorldDialog(this).setVisible(true);
+            worldFile = null;
+        }
+    }//GEN-LAST:event_miLoadWumpusWorldActionPerformed
+
+    private void listPreCondValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPreCondValueChanged
         try {
-            _preCond = _action.getPreConditions().get(tablePreCond.getSelectedRow());
+            _preCond = _action.getPreConditions().get(listPreCond.getSelectedIndex());
         } catch (IndexOutOfBoundsException e) {
             _preCond = null;
         }
         btnRemPre.setEnabled(_preCond != null);
-    }
+    }//GEN-LAST:event_listPreCondValueChanged
 
-    private void tablePostCondValueChanged(ListSelectionEvent evt) {
+    private void listPostCondValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listPostCondValueChanged
         try {
-            _postCond = _action.getPostConditions().get(tablePostCond.getSelectedRow());
+            _postCond = _action.getPostConditions().get(listPostCond.getSelectedIndex());
         } catch (IndexOutOfBoundsException e) {
             _postCond = null;
         }
         btnRemPost.setEnabled(_postCond != null);
-    }
-    
+    }//GEN-LAST:event_listPostCondValueChanged
+
     private void epXmlDocumentTextChanged(DocumentEvent e) {
         scenario.setXML(epXmlScenario.getText());
         warnScenarioSave();
     }
-    
+
     private boolean confirmation(String message, String title) {
-        return JOptionPane.showConfirmDialog(this, 
-                message, 
-                title, 
-                JOptionPane.YES_NO_OPTION, 
+        return JOptionPane.showConfirmDialog(this,
+                message,
+                title,
+                JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
     }
-    
+
     private String nameInput(String message, String title) {
         String name = JOptionPane.showInputDialog(this, message, title, JOptionPane.QUESTION_MESSAGE);
-        if(name != null)
+        if (name != null) {
             name = name.trim();
-        
-        while("".equals(name)) {
-            name = JOptionPane.showInputDialog(this, "Please enter a valid name:", title, JOptionPane.ERROR_MESSAGE);
-            if(name != null)
-                name = name.trim();
         }
-        
+
+        while ("".equals(name)) {
+            name = JOptionPane.showInputDialog(this, "Please enter a valid name:", title, JOptionPane.ERROR_MESSAGE);
+            if (name != null) {
+                name = name.trim();
+            }
+        }
+
         return name;
     }
-    
+
     protected void promptError(String message, String title) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
-    
+
     private void unwarnWorldSave() {
-        if(!worldSaved) {
+        if (!worldSaved) {
             worldSaved = true;
             setTitle();
         }
     }
-    
+
     protected void warnWorldSave() {
-        if(worldSaved) {
+        if (worldSaved) {
             worldSaved = false;
             setTitle();
         }
     }
-    
+
     private void unwarnScenarioSave() {
-        if(!scenarioSaved) {
+        if (!scenarioSaved) {
             scenarioSaved = true;
             setTitle();
         }
     }
-    
+
     private void warnScenarioSave() {
-        if(scenarioSaved) {
+        if (scenarioSaved) {
             scenarioSaved = false;
             setTitle();
         }
     }
-    
+
     private void confirmBeforeClose() {
-        if(worldSaved && scenarioSaved) {
+        if (worldSaved && scenarioSaved) {
             System.exit(0);
-        } else if(confirmation("Exit the application ?\nAll unsaved changes will be discarded.", "Exit")) {
+        } else if (confirmation("Exit the application ?\nAll unsaved changes will be discarded.", "Exit")) {
             System.exit(0);
         }
     }
-    
+
     private boolean isXmlFile(File file) {
         return file.getName().endsWith(".xml");
     }
-    
+
     private void exportWorldToXml(File file) {
         try {
             new WorldExport(world, Paths.get(file.getAbsolutePath())).exportAll();
             worldFile = file;
             unwarnWorldSave();
         } catch (IOException ex) {
-            promptError("Failed to write into file "+file.getName(), "Saving error");
+            promptError("Failed to write into file " + file.getName(), "Saving error");
         }
     }
-    
+
     private void importWorldFromXml(File file) {
         try {
-            world = new WorldImport().importAll(Paths.get(file.getAbsolutePath()));
+            World newWorld = new WorldImport().importAll(Paths.get(file.getAbsolutePath()));
             worldFile = file;
-            unwarnWorldSave();
-            objectTreeModel.setData(world);
-            propValueListModel.setData(new UniqueList<String>());
-            actionListModel.setData(world.getPossibleActions());
-            preCondTableModel.setData(new UniqueList<Condition>());
-            postCondTableModel.setData(new UniqueList<Condition>());
-            tabbedPane.setSelectedIndex(0);
+            setWorld(newWorld);
         } catch (IOException ex) {
-            promptError("Failed to read file "+file.getName(), "Opening error");
+            promptError("Failed to read file " + file.getName(), "Opening error");
         } catch (JDOMException ex) {
-            promptError("Problem with the xml syntax in the file "+file.getName(), "Opening error");
+            promptError("Problem with the xml syntax in the file " + file.getName(), "Opening error");
         }
     }
-    
-    private void saveScenarioXml(File file)  {
+
+    private void saveScenarioXml(File file) {
         try {
-            Files.write(Paths.get(file.getAbsolutePath()), 
-                    epXmlScenario.getText().getBytes(), 
+            Files.write(Paths.get(file.getAbsolutePath()),
+                    epXmlScenario.getText().getBytes(),
                     StandardOpenOption.WRITE);
             scenarioFile = file;
             unwarnScenarioSave();
         } catch (IOException ex) {
-            promptError("Error while writing in file "+file.getName(), "Saving error");
+            promptError("Error while writing in file " + file.getName(), "Saving error");
         }
     }
-    
+
     private void openScenarioXml(File file) {
         try {
             epXmlScenario.setPage(file.toURI().toURL());
@@ -1119,37 +1144,37 @@ public class GeneralUI extends javax.swing.JFrame {
             unwarnScenarioSave();
             tabbedPane.setSelectedIndex(2);
         } catch (IOException ex) {
-            promptError("Failed to read file "+file.getName(), "Opening error");
+            promptError("Failed to read file " + file.getName(), "Opening error");
         }
     }
-    
+
     public void setTitle() {
         String worldFileName = worldFile == null ? "" : worldFile.getName();
         String scenarioFileName = scenarioFile == null ? "" : scenarioFile.getName();
-        if(!worldSaved){
+        if (!worldSaved) {
             worldFileName += " (unsaved)";
         }
-        if(!scenarioSaved) {
+        if (!scenarioSaved) {
             scenarioFileName += " (unsaved)";
         }
-        
-        super.setTitle("Causality solver - World: "+worldFileName+" - Scenario: "+scenarioFileName);
+
+        super.setTitle("Causality solver - World: " + worldFileName + " - Scenario: " + scenarioFileName);
     }
-    
+
     protected synchronized void newFormulaAvailable(int instant) {
-        if(scenario.getInstant() == instant) {
+        if (scenario.getInstant() == instant) {
             taFormula.setText(scenario.getFormula());
         }
     }
-    
+
     protected synchronized void xmlSyntaxError() {
         taFormula.setText("/!\\ Syntax error in the XML file.");
     }
-    
+
     protected synchronized void xmlValueError(String message) {
-        taFormula.setText("/!\\ Error in XML:\n"+message);
+        taFormula.setText("/!\\ Error in XML:\n" + message);
     }
-    
+
 // <editor-fold defaultstate="collapsed" desc="Variable declarations">  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddAction;
@@ -1171,11 +1196,14 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JEditorPane epXmlScenario;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JList<Action> listActions;
+    private javax.swing.JList<String> listPostCond;
+    private javax.swing.JList<String> listPreCond;
     private javax.swing.JList<String> listPropValue;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuScenario;
     private javax.swing.JMenu menuSolve;
     private javax.swing.JMenu menuWorld;
+    private javax.swing.JMenuItem miLoadWumpusWorld;
     private javax.swing.JMenuItem miOpenScenario;
     private javax.swing.JMenuItem miOpenWorld;
     private javax.swing.JMenuItem miSaveScenario;
@@ -1200,24 +1228,22 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane scrollEditorPane;
     private javax.swing.JScrollPane scrollFormulaArea;
     private javax.swing.JScrollPane scrollListActions;
+    private javax.swing.JScrollPane scrollListPost;
+    private javax.swing.JScrollPane scrollListPre;
     private javax.swing.JScrollPane scrollListProp;
     private javax.swing.JScrollPane scrollPaneObjects;
-    private javax.swing.JScrollPane scrollTablePost;
-    private javax.swing.JScrollPane scrollTablePre;
     private final javax.swing.JSlider sliderInstant = new javax.swing.JSlider();
     private javax.swing.JSplitPane splitActionTab;
     private javax.swing.JSplitPane splitObjectsTab;
     private javax.swing.JSplitPane splitXmlFormula;
     private javax.swing.JTextArea taFormula;
     private javax.swing.JTabbedPane tabbedPane;
-    private javax.swing.JTable tablePostCond;
-    private javax.swing.JTable tablePreCond;
     private javax.swing.JTree treeObjects;
     // End of variables declaration//GEN-END:variables
 
     // </editor-fold> 
-    
     private class XmlEditorListener implements DocumentListener {
+
         @Override
         public void insertUpdate(DocumentEvent e) {
             epXmlDocumentTextChanged(e);

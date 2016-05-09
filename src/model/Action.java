@@ -86,7 +86,7 @@ public class Action implements Observation {
      * @param preCondition The pre-condition to add
      * @throws DuplicateElementException If the pre-condition already exists.
      */
-    public void addPreCondition(PropertyValue preCondition) {
+    public void addPreCondition(Condition preCondition) {
         preConditions.add(preCondition);
     }
 
@@ -96,7 +96,7 @@ public class Action implements Observation {
      * @param postCondition The post-condition to add
      * @throws DuplicateElementException If the post-condition already exists
      */
-    public void addPostCondition(PropertyValue postCondition) {
+    public void addPostCondition(Condition postCondition) {
         postConditions.add(postCondition);
     }
 

@@ -5,6 +5,7 @@
  */
 package gui;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -20,8 +21,11 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
     private Scenario scenario;
     private WumpusWorld wumpusWorld;
     private int instant = 0;
-    private int cellHeight = 20;
-    private int cellWidth = 20;
+    private int cellHeight;
+    private int cellWidth;
+    private int xShift;
+    private int yShift;
+    private int fontSize;
 
     /**
      * Creates new form WumpusWorldPanel
@@ -36,10 +40,11 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.drawString("It's a Wumpus World", 20, 20);
+        //g2.drawString("It's a Wumpus World", 20, 20);
         if (scenario != null && wumpusWorld != null) {
+            computeConstants();
             paintGrid(g2);
-            //paintObjects(g2);
+            paintObjects(g2);
         }
     }
 
@@ -80,9 +85,36 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
     private void paintGrid(Graphics2D g2) {
         for (int i = 0; i < wumpusWorld.getHeight(); i++) {
             for (int j = 0; j < wumpusWorld.getWidth(); j++) {
-                g2.drawRect(j * cellWidth, i * cellHeight, WIDTH, HEIGHT);
+                int x = (j * cellWidth) + xShift;
+                int y = (i * cellHeight) + yShift;
+                g2.drawRect(x, y, cellWidth, cellHeight);
             }
         }
+    }
+
+    private void computeConstants() {
+        int gridWidth = cellWidth * wumpusWorld.getWidth();
+        int gridHeight = cellHeight * wumpusWorld.getHeight();
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        xShift = (panelWidth - gridWidth) / 2;
+        yShift = (panelHeight - gridHeight) / 2;
+
+        cellHeight = panelHeight/5;
+        cellWidth = panelWidth/5;
+        
+        int min = Math.min(cellWidth, cellHeight);
+        fontSize = (int) (min * 0.9);
+    }
+
+    private void paintObjects(Graphics2D g2) {
+        int agentX = 1;
+        int agentY = 0;
+        g2.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
+        int x = (int) ((agentX*cellWidth)+xShift+(cellWidth*0.3));
+        int y = (int) ((agentY*cellHeight)+yShift+(cellHeight*0.8));
+        g2.drawString("A", x, y);
+        
     }
 
 

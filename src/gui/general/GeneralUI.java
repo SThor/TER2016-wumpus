@@ -1181,6 +1181,7 @@ public class GeneralUI extends javax.swing.JFrame {
     
     public void showWumpusFrame(WumpusWorld wumpusWorld){
         wumpusFrame = new WumpusWorldFrame(scenario.getScenario(), wumpusWorld);
+        wumpusFrame.setVisible(true);
     }
 
 // <editor-fold defaultstate="collapsed" desc="Variable declarations">  

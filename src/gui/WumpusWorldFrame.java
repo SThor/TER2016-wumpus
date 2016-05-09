@@ -18,9 +18,9 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
     public WumpusWorldFrame(Scenario scenario, WumpusWorld wumpusWorld) {
         this.wumpusWorld = wumpusWorld;
         this.scenario = scenario;
+        initComponents();
         wumpusWorldPanel1.setWumpusWorld(wumpusWorld);
         wumpusWorldPanel1.setScenario(scenario);
-        initComponents();
     }
 
     /**

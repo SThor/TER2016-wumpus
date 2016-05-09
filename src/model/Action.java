@@ -295,6 +295,8 @@ public class Action implements Observation {
         
         IlcConstraint transitionConstraint = solver.imply(preCondConstraint, postCondConstraint);
         
+        // Now we need to declare that all property not modified by this action must stay
+        // equal between the two states
         for (Map.Entry<SysObject, Map<String, IlcAnyVar>> objectEntry : worldMapBefore.entrySet()) {
             SysObject objectKey = objectEntry.getKey();
             Map<String, IlcAnyVar> objectMap = objectEntry.getValue();

@@ -19,6 +19,7 @@ import model.ObjectProperty;
 import model.SysObject;
 import model.Trajectory;
 import model.World;
+import model.observations.Observation;
 import model.observations.Scenario;
 
 /**
@@ -62,6 +63,10 @@ public class BacktrackSolver extends Solver {
 
     @Override
     public List<Trajectory> solve() throws IloException {
+        if (scenario.isEmpty()) {
+            return null;
+        }
+        
         int i;
         // Add constraints for each observation => observational constraints
         for (i = 0; i < scenario.size(); i++) {
@@ -80,27 +85,36 @@ public class BacktrackSolver extends Solver {
                 } else {
                     instantTransConstraint = solver.or(instantTransConstraint, actionTransConstraint);
                 }
-                System.out.println(actionTransConstraint);
             }
-            
-            // TODO
-            // For each variable, add the "unchanged" possibility
-            /*for (int j = 1; j < varList.get(i-1).size(); j++) {
-                List<IlcAnyVar> listBefore = varList.get(j-1);
-                List<IlcAnyVar> listAfter = varList.get(j);
-                for (int k = 0; k < listBefore.size(); k++) {
-                    IlcConstraint unchanged = solver.imply(,);
-                    if (instantTransConstraint == null) {
-                    }
-                }
-                
-            }*/
             
             if (transitionCons == null) {
                 transitionCons = instantTransConstraint;
             } else {
                 transitionCons = solver.and(transitionCons, instantTransConstraint);
             }
+        }
+        
+        // Add the possibility of "unchanged"
+        IlcConstraint unchangedConstraint = null;
+        for (i = 1; i< worldMaps.size(); i++) {
+            for (Map.Entry<SysObject, Map<String, IlcAnyVar>> worldEntry : worldMaps.get(i-1).entrySet()) {
+                SysObject objectKey = worldEntry.getKey();
+                Map<String, IlcAnyVar> objectMap = worldEntry.getValue();
+                for (Map.Entry<String, IlcAnyVar> objectEntry : objectMap.entrySet()) {
+                    String propKey = objectEntry.getKey();
+                    IlcAnyVar var = objectEntry.getValue();
+                    IlcConstraint constraint = solver.eq(var, worldMaps.get(i).get(objectKey).get(propKey));
+                    if (unchangedConstraint == null) {
+                        unchangedConstraint = constraint;
+                    } else {
+                        unchangedConstraint = solver.and(unchangedConstraint, constraint);
+                    }
+                }
+            }
+        }
+        
+        if (unchangedConstraint != null) {
+            transitionCons = solver.or(transitionCons, unchangedConstraint);
         }
         
         solver.add(transitionCons);

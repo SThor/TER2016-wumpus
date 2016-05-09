@@ -32,4 +32,14 @@ public class Trajectory extends ArrayList<TrajectoryStep> {
     public TrajectoryStep last() {
         return get(size()-1);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        for (TrajectoryStep step : this) {
+            str.append(step);
+            str.append('\n');
+        }
+        return str.toString();
+    }
 }

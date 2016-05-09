@@ -1,6 +1,11 @@
 package model.observations;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
 import java.util.Iterator;
+import java.util.Map;
+import model.SysObject;
 import model.WorldState;
 
 /**
@@ -41,5 +46,18 @@ public class Or extends Operation{
             }
         }
         return str.toString();
+    }
+
+    @Override
+    public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
+        if (observations.isEmpty()) {
+            return null;
+        }
+        
+        IlcConstraint constraint = observations.get(0).solverConstraint(solver, worldMap);
+        for (int i = 1; i < observations.size(); i++) {
+            constraint = solver.or(constraint, observations.get(i).solverConstraint(solver, worldMap));
+        }
+        return constraint;
     }
 }

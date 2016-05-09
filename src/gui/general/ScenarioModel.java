@@ -5,11 +5,16 @@
  */
 package gui.general;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javax.swing.SwingUtilities;
+import model.SysObject;
 import model.World;
 import model.WorldState;
 import model.exceptions.NoSuchObjectException;
@@ -92,6 +97,11 @@ class ScenarioModel {
             @Override
             public String toString() {
                 return "";
+            }
+
+            @Override
+            public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
+                return null;
             }
         });
         

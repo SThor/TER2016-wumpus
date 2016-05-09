@@ -1,5 +1,11 @@
 package model;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import model.exceptions.NoSuchPropertyException;
 import model.exceptions.NoSuchValueException;
 
@@ -140,5 +146,18 @@ public class PropertyValue implements Condition {
                     )
                 );
 
+    }
+
+    @Override
+    public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
+        IlcAnyVar concernedVar = worldMap.get(object).get(propertyName);
+        return solver.eq(concernedVar, wantedValue);
+    }
+
+    @Override
+    public List<String> getPropertiesNames() {
+        List<String> propName = new ArrayList<>();
+        propName.add(propertyName);
+        return propName;
     }
 }

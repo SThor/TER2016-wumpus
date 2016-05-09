@@ -1,5 +1,8 @@
 package model;
 
+import ilog.solver.IlcAnyVar;
+import java.util.List;
+import java.util.Map;
 import model.observations.Observation;
 
 /**
@@ -26,4 +29,10 @@ public interface Condition extends Observation{
      * <tt>false</tt> otherwise.
      */
     public boolean largeEquals(SysObject object, String property, String value);
+    
+    /**
+     * Return the names of the properties concerned by this condition
+     * @return A list of concerned properties
+     */
+    public List<String> getPropertiesNames();
 }

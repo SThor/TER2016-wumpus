@@ -25,7 +25,7 @@ import org.jdom2.JDOMException;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-class ScenarioModel {
+public class ScenarioModel {
     private final Scenario scenario;
     private List<String> xmlSources;
     private int instant;

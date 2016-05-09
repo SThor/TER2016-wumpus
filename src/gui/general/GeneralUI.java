@@ -1,5 +1,6 @@
 package gui.general;
 
+import gui.WumpusWorldFrame;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
 import gui.solver.NoSolverException;
@@ -64,6 +65,8 @@ public class GeneralUI extends javax.swing.JFrame {
     private final SysObjectTreeModel objectTreeModel;
     private final WorldListModel<String> propValueListModel;
     private final WorldListModel<Action> actionListModel;
+    
+    private WumpusWorldFrame wumpusFrame;
 
     /**
      * Creates new form GeneralUI
@@ -1173,6 +1176,10 @@ public class GeneralUI extends javax.swing.JFrame {
 
     protected synchronized void xmlValueError(String message) {
         taFormula.setText("/!\\ Error in XML:\n" + message);
+    }
+    
+    public void showWumpusFrame(WumpusWorld wumpusWorld){
+        wumpusFrame = new WumpusWorldFrame(scenario.getScenario(), wumpusWorld);
     }
 
 // <editor-fold defaultstate="collapsed" desc="Variable declarations">  

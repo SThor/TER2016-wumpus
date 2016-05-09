@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Map;
 import model.Action;
 import model.ObjectProperty;
+import model.PropertyValue;
 import model.SysObject;
 import model.Trajectory;
+import model.TrajectoryStep;
 import model.World;
-import model.observations.Observation;
+import model.WorldState;
 import model.observations.Scenario;
 
 /**
@@ -28,7 +30,7 @@ import model.observations.Scenario;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class BacktrackSolver extends Solver {
-    private IlcSolver solver;
+    private final IlcSolver solver;
     private final List<Map<SysObject, Map<String, IlcAnyVar>>> worldMaps;
     private final List<List<IlcAnyVar>> varList;
 
@@ -126,13 +128,19 @@ public class BacktrackSolver extends Solver {
             }
         }
         
+        List<Trajectory> trajectories = new ArrayList<>();
+        
         solver.newSearch(solver.generate(flatVarList.toArray(new IlcAnyVar[flatVarList.size()])));
         while (solver.next()) {
-            System.out.println(flatVarList);
+            Trajectory traj = new Trajectory(mapToState(0));
+            for (i = 1; i < worldMaps.size(); i++) {
+                traj.add(new TrajectoryStep(mapToState(i), null));
+            }
+            trajectories.add(traj);
         }
         solver.endSearch();
         
-        return null;
+        return trajectories;
     }
 
     @Override
@@ -143,5 +151,25 @@ public class BacktrackSolver extends Solver {
     @Override
     public String toString() {
         return "Backtrack";
+    }
+    
+    /**
+     * Convert a world map to a world state
+     * @param index The index of the world map
+     * @return The WorldState associated
+     */
+    private WorldState mapToState(int index) {
+        WorldState state = new WorldState();
+        for (Map.Entry<SysObject, Map<String, IlcAnyVar>> worldEntry : worldMaps.get(index).entrySet()) {
+            SysObject object = worldEntry.getKey();
+            Map<String, IlcAnyVar> propMap = worldEntry.getValue();
+            for (Map.Entry<String, IlcAnyVar> objectEntry : propMap.entrySet()) {
+                String propertyName = objectEntry.getKey();
+                IlcAnyVar var = objectEntry.getValue();
+                state.add(new PropertyValue(object, propertyName, (String)var.getDomainValue()));
+            }
+        }
+        
+        return state;
     }
 }

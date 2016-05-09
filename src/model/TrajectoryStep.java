@@ -25,4 +25,9 @@ public class TrajectoryStep {
     public Action getAction() {
         return action;
     }
+
+    @Override
+    public String toString() {
+        return action+" => "+state;
+    }
 }

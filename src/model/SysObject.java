@@ -116,7 +116,7 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    public String getCurrentValueOf(String property) {
+    public Integer getCurrentValueOf(String property) {
         return getCurrentValueOf(new ObjectProperty(property));
     }
 
@@ -128,9 +128,9 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    private String getCurrentValueOf(ObjectProperty propertyWanted) {
+    private Integer getCurrentValueOf(ObjectProperty propertyWanted) {
         boolean found = false;
-        String value = null;
+        Integer value = null;
         for (ObjectProperty property : properties) {
             if (property.equals(propertyWanted)) {
                 value = property.getCurrentValue();
@@ -150,7 +150,7 @@ public class SysObject {
      * @param property Name of the property to change
      * @param value Value to add
      */
-    public void addPossibleValue(String property, String value) {
+    public void addPossibleValue(String property, Integer value) {
         addPossibleValue(new ObjectProperty(property), value);
     }
 
@@ -160,7 +160,7 @@ public class SysObject {
      * @param property Property to change
      * @param value Value to add
      */
-    private void addPossibleValue(ObjectProperty property, String value) {
+    private void addPossibleValue(ObjectProperty property, Integer value) {
         boolean found = false;
         for (ObjectProperty prop : properties) {
             if (prop.equals(property)) {
@@ -214,7 +214,7 @@ public class SysObject {
      */
     public void removePossibleValue(ObjectProperty property, int valueIndex) {
         boolean found = false;
-        String value = null;
+        Integer value = null;
         for (ObjectProperty prop : properties) {
             if (prop.equals(property)) {
                 value = prop.removePossibleValue(valueIndex);
@@ -283,7 +283,7 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    public boolean isPossibleValueOf(String property, String value) {
+    public boolean isPossibleValueOf(String property, Integer value) {
         return isPossibleValueOf(new ObjectProperty(property), value);
     }
 
@@ -298,7 +298,7 @@ public class SysObject {
      * @throws NoSuchPropertyException If the property doesn't exist in this
      * object.
      */
-    public boolean isPossibleValueOf(ObjectProperty propertyToCheck, String value) {
+    public boolean isPossibleValueOf(ObjectProperty propertyToCheck, Integer value) {
         boolean found = false;
         boolean res = false;
         for (ObjectProperty property : properties) {

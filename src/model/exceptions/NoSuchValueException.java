@@ -8,7 +8,7 @@ public class NoSuchValueException extends RuntimeException {
     
     private final String object;
     private final String property;
-    private final String value;
+    private final Integer value;
     
     /**
      * Create a <tt>NoSuchValueException</tt>
@@ -16,7 +16,7 @@ public class NoSuchValueException extends RuntimeException {
      * @param property The name of the concerned property
      * @param object The name of the concerned object
      */
-    public NoSuchValueException(String value, String property, String object) {
+    public NoSuchValueException(Integer value, String property, String object) {
         super("'"+value + "' is not a possible value of the property '"+property+"' in object '"+object+"'");
         this.object = object;
         this.property = property;
@@ -31,7 +31,7 @@ public class NoSuchValueException extends RuntimeException {
         return property;
     }
 
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
 }

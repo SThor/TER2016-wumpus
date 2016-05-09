@@ -140,7 +140,7 @@ public class Action implements Observation {
      * @see Action#removeFromList(java.util.List, model.SysObject,
      * java.lang.String, java.lang.String)
      */
-    protected void removeAllConditions(SysObject object, String property, String value) {
+    protected void removeAllConditions(SysObject object, String property, Integer value) {
         removeFromList(preConditions, object, property, value);
         removeFromList(postConditions, object, property, value);
     }
@@ -156,7 +156,7 @@ public class Action implements Observation {
      * @param property The associated property
      * @param values The list of possible values associated
      */
-    private void removeFromList(List<Condition> conditions, SysObject object, String property, String value) {
+    private void removeFromList(List<Condition> conditions, SysObject object, String property, Integer value) {
         for (Iterator<Condition> it = conditions.iterator(); it.hasNext();) {
             Condition c = it.next();
             if (c.largeEquals(object, property, value)) {

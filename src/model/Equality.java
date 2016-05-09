@@ -84,14 +84,14 @@ public class Equality implements Condition {
 
     @Override
     public boolean isVerified() {
-        String wantedValue = secondObject.getCurrentValueOf(secondPropertyName);
+        Integer wantedValue = secondObject.getCurrentValueOf(secondPropertyName);
         return object.getCurrentValueOf(propertyName).equals(wantedValue);
     }
 
     @Override
     public boolean isVerifiedIn(WorldState state) {
-        String firstValue = null;
-        String secondValue = null;
+        Integer firstValue = null;
+        Integer secondValue = null;
         for (PropertyValue propertyValue : state) {
             if (propertyValue.getObject().equals(object) && propertyValue.getPropertyName().equals(propertyName)) {
                 firstValue = propertyValue.getWantedValue();
@@ -135,7 +135,7 @@ public class Equality implements Condition {
     }
 
     @Override
-    public boolean largeEquals(SysObject object, String property, String value) {
+    public boolean largeEquals(SysObject object, String property, Integer value) {
         return (this.object.equals(object) || this.secondObject.equals(object)) && (property == null || (this.propertyName.equals(property) || this.secondPropertyName.equals(property)));
     }
 

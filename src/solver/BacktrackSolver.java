@@ -53,8 +53,8 @@ public class BacktrackSolver extends Solver {
                 mapAtInstant.put(object, objectMap);
                 for (int j = 0; j < object.getPropertyCount(); j++) {
                     ObjectProperty property = object.getPropertyAt(j);
-                    List<String> listValues = property.getPossibleValues();
-                    IloAnyDomain propDomain = solver.anyDomain(listValues.toArray(new String[listValues.size()])); // Create a domain for every property
+                    List<Integer> listValues = property.getPossibleValues();
+                    IloAnyDomain propDomain = solver.anyDomain(listValues.toArray(new Integer[listValues.size()])); // Create a domain for every property
                     IlcAnyVar var = solver.anyVar(propDomain, k+"_"+object.getName()+"."+property.getName());
                     objectMap.put(property.getName(), var);
                     listAtInstant.add(var);
@@ -166,7 +166,7 @@ public class BacktrackSolver extends Solver {
             for (Map.Entry<String, IlcAnyVar> objectEntry : propMap.entrySet()) {
                 String propertyName = objectEntry.getKey();
                 IlcAnyVar var = objectEntry.getValue();
-                state.add(new PropertyValue(object, propertyName, (String)var.getDomainValue()));
+                state.add(new PropertyValue(object, propertyName, (Integer)var.getDomainValue()));
             }
         }
         

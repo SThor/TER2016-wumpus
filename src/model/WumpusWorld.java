@@ -16,7 +16,7 @@ public class WumpusWorld {
 //    private int goldQty = 1;
     private int height = 2;
     private int width = 3;
-    private final UniqueList<String> trueFalseList = new UniqueList<>();
+    private final UniqueList<Integer> trueFalseList = new UniqueList<>();
     private World wumpusWorld = new World();
     private SysObject agent = new SysObject("agent", wumpusWorld);
     private SysObject wumpus = new SysObject("wumpus", wumpusWorld);
@@ -24,8 +24,8 @@ public class WumpusWorld {
     private SysObject gold = new SysObject("gold", wumpusWorld);
 
     public WumpusWorld() {
-        trueFalseList.add("true");
-        trueFalseList.add("false");
+        trueFalseList.add(0);
+        trueFalseList.add(1);
     }
 
     public void setDimensions(int width, int height) {
@@ -89,7 +89,7 @@ public class WumpusWorld {
     private ObjectProperty generateXPositionProperty() {
         ObjectProperty xPositionProperty = new ObjectProperty("xPosition");
         for (int i = 0; i < width; i++) {
-            xPositionProperty.addPossibleValue("" + i);
+            xPositionProperty.addPossibleValue(i);
         }
         return xPositionProperty;
     }
@@ -97,7 +97,7 @@ public class WumpusWorld {
     private ObjectProperty generateYPositionProperty() {
         ObjectProperty yPositionProperty = new ObjectProperty("yPosition");
         for (int i = 0; i < height; i++) {
-            yPositionProperty.addPossibleValue("" + i);
+            yPositionProperty.addPossibleValue(i);
         }
         return yPositionProperty;
     }
@@ -114,64 +114,64 @@ public class WumpusWorld {
 
     private void addMoveAgent() {
         Action moveAgent = new Action("moveAgent");
-        moveAgent.addPreCondition(new PropertyValue(agent, "isAlive", "true"));
+        moveAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
         wumpusWorld.addPossibleAction(moveAgent);
     }
     
     private void addFallAgent() {
         Action fallAgent = new Action("fallAgent");
-        fallAgent.addPreCondition(new PropertyValue(agent, "isAlive", "true"));
+        fallAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
         fallAgent.addPreCondition(new Equality(agent, "xPosition", pit, "xPosition"));
         fallAgent.addPreCondition(new Equality(agent, "yPosition", pit, "yPosition"));
-        fallAgent.addPostCondition(new PropertyValue(agent, "isAlive", "false"));
+        fallAgent.addPostCondition(new PropertyValue(agent, "isAlive", 0));
         wumpusWorld.addPossibleAction(fallAgent);
     }
     
     private void addFallWumpus() {
         Action fallWumpus = new Action("fallWumpus");
-        fallWumpus.addPreCondition(new PropertyValue(wumpus, "isAlive", "true"));
+        fallWumpus.addPreCondition(new PropertyValue(wumpus, "isAlive", 1));
         fallWumpus.addPreCondition(new Equality(wumpus, "xPosition", pit, "xPosition"));
         fallWumpus.addPreCondition(new Equality(wumpus, "yPosition", pit, "yPosition"));
-        fallWumpus.addPostCondition(new PropertyValue(wumpus, "isAlive", "false"));
+        fallWumpus.addPostCondition(new PropertyValue(wumpus, "isAlive", 0));
         wumpusWorld.addPossibleAction(fallWumpus);
     }
 
     private void addMoveWumpus() {
         Action moveWumpus = new Action("moveWumpus");
-        moveWumpus.addPreCondition(new PropertyValue(wumpus, "isAlive", "true"));
+        moveWumpus.addPreCondition(new PropertyValue(wumpus, "isAlive", 1));
         wumpusWorld.addPossibleAction(moveWumpus);
     }
 
     private void addShootWumpus() {
         Action shootWumpus = new Action("shootWumpus");
-        shootWumpus.addPreCondition(new PropertyValue(agent, "isAlive", "true"));
-        shootWumpus.addPreCondition(new PropertyValue(agent, "hasShot", "false"));
+        shootWumpus.addPreCondition(new PropertyValue(agent, "isAlive", 1));
+        shootWumpus.addPreCondition(new PropertyValue(agent, "hasShot", 0));
         shootWumpus.addPreCondition(new Equality(agent, "xPosition", wumpus, "xPosition"));
         shootWumpus.addPreCondition(new Equality(agent, "yPosition", wumpus, "yPosition"));
-        shootWumpus.addPostCondition(new PropertyValue(wumpus, "isAlive", "false"));
-        shootWumpus.addPostCondition(new PropertyValue(agent, "hasShot", "true"));
+        shootWumpus.addPostCondition(new PropertyValue(wumpus, "isAlive", 0));
+        shootWumpus.addPostCondition(new PropertyValue(agent, "hasShot", 1));
         wumpusWorld.addPossibleAction(shootWumpus);
     }
     
     private void addEatAgent() {
         Action eatAgent = new Action("eatAgent");
-        eatAgent.addPreCondition(new PropertyValue(agent, "isAlive", "true"));
-        eatAgent.addPostCondition(new PropertyValue(wumpus, "isAlive", "true"));
+        eatAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
+        eatAgent.addPostCondition(new PropertyValue(wumpus, "isAlive", 1));
         eatAgent.addPreCondition(new Equality(agent, "xPosition", wumpus, "xPosition"));
         eatAgent.addPreCondition(new Equality(agent, "yPosition", wumpus, "yPosition"));
-        eatAgent.addPostCondition(new PropertyValue(agent, "isAlive", "false"));
+        eatAgent.addPostCondition(new PropertyValue(agent, "isAlive", 0));
         wumpusWorld.addPossibleAction(eatAgent);
     }
     
     private void addPickUpGold() {
         Action pickUpGold = new Action("pickUpGold");
-        pickUpGold.addPreCondition(new PropertyValue(agent, "isAlive", "true"));
-        pickUpGold.addPreCondition(new PropertyValue(agent, "hasGold", "false"));
-        pickUpGold.addPreCondition(new PropertyValue(gold, "isPickedUp", "false"));
+        pickUpGold.addPreCondition(new PropertyValue(agent, "isAlive", 1));
+        pickUpGold.addPreCondition(new PropertyValue(agent, "hasGold", 0));
+        pickUpGold.addPreCondition(new PropertyValue(gold, "isPickedUp", 0));
         pickUpGold.addPreCondition(new Equality(agent, "xPosition", gold, "xPosition"));
         pickUpGold.addPreCondition(new Equality(agent, "yPosition", gold, "yPosition"));
-        pickUpGold.addPreCondition(new PropertyValue(agent, "hasGold", "true"));
-        pickUpGold.addPreCondition(new PropertyValue(gold, "isPickedUp", "true"));
+        pickUpGold.addPreCondition(new PropertyValue(agent, "hasGold", 1));
+        pickUpGold.addPreCondition(new PropertyValue(gold, "isPickedUp", 1));
         wumpusWorld.addPossibleAction(pickUpGold);
     }
 

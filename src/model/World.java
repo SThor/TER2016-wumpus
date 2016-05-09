@@ -130,7 +130,7 @@ public class World {
      * @param property The property concerned by the modification
      * @param removedValue The removed value
      */
-    protected void signalPossibleValueRemoved(SysObject object, String property, String removedValue) {
+    protected void signalPossibleValueRemoved(SysObject object, String property, Integer removedValue) {
         removeActionConditions(object, property, removedValue);
     }
 
@@ -140,7 +140,7 @@ public class World {
      * @see Action#removeAllConditions(model.SysObject, java.lang.String,
      * java.util.List)
      */
-    private void removeActionConditions(SysObject object, String property, String removedValue) {
+    private void removeActionConditions(SysObject object, String property, Integer removedValue) {
         for (Action a : possibleActions) {
             a.removeAllConditions(object, property, removedValue);
         }

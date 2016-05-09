@@ -1,5 +1,10 @@
 package model.observations;
 
+import ilog.solver.IlcAnyVar;
+import ilog.solver.IlcConstraint;
+import ilog.solver.IlcSolver;
+import java.util.Map;
+import model.SysObject;
 import model.WorldState;
 
 /**
@@ -21,4 +26,12 @@ public interface Observation {
      *         <tt>false</tt> otherwise.
      */
     boolean isVerifiedIn(WorldState state);
+    
+    /**
+     * Return the constraint represented by this observation
+     * @param solver The solver to constraint
+     * @param worldMap The map representing the world
+     * @return The IlcConstraint
+     */
+    IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap);
 }

@@ -156,7 +156,8 @@ public class ScenarioImport {
 
         String propertyName = xmlCondition.getAttributeValue("property");
         String value = xmlCondition.getAttributeValue("value");
-        return new PropertyValue(object, propertyName, value);
+        Integer intValue = Integer.parseInt(value);
+        return new PropertyValue(object, propertyName, intValue);
     }
 
     private Action importAction(Element xmlAction) throws InterruptedException {

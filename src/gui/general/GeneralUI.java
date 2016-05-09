@@ -45,7 +45,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private SysObject _object;
     private ObjectProperty _property;
-    private String _propValue;
+    private Integer _propValue;
     private Action _action;
     private Condition _preCond;
     private Condition _postCond;
@@ -63,7 +63,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private final WorldListModel<Condition> preCondListModel;
     private final WorldListModel<Condition> postCondListModel;
     private final SysObjectTreeModel objectTreeModel;
-    private final WorldListModel<String> propValueListModel;
+    private final WorldListModel<Integer> propValueListModel;
     private final WorldListModel<Action> actionListModel;
     
     private WumpusWorldFrame wumpusFrame;
@@ -87,7 +87,7 @@ public class GeneralUI extends javax.swing.JFrame {
         preCondListModel = new WorldListModel<>(new UniqueList<Condition>());
         postCondListModel = new WorldListModel<>((new UniqueList<Condition>()));
         objectTreeModel = new SysObjectTreeModel(world);
-        propValueListModel = new WorldListModel<>(new UniqueList<String>());
+        propValueListModel = new WorldListModel<>(new UniqueList<Integer>());
         actionListModel = new WorldListModel<>(world.getPossibleActions());
 
         initComponents();
@@ -107,7 +107,7 @@ public class GeneralUI extends javax.swing.JFrame {
         this.world = world;
         unwarnWorldSave();
         objectTreeModel.setData(this.world);
-        propValueListModel.setData(new UniqueList<String>());
+        propValueListModel.setData(new UniqueList<Integer>());
         actionListModel.setData(world.getPossibleActions());
         preCondListModel.setData(new UniqueList<Condition>());
         preCondListModel.setData(new UniqueList<Condition>());
@@ -644,7 +644,7 @@ public class GeneralUI extends javax.swing.JFrame {
             if (isSysObject) {
                 _object = (SysObject) selected;
                 _property = null;
-                propValueListModel.setData(new UniqueList<String>());
+                propValueListModel.setData(new UniqueList<Integer>());
             } else {
                 _object = (SysObject) parent;
                 _property = (ObjectProperty) selected;
@@ -658,7 +658,7 @@ public class GeneralUI extends javax.swing.JFrame {
         } catch (NullPointerException e) { // If caught, nothing is selected in the JTree
             _object = null;
             _property = null;
-            propValueListModel.setData(new UniqueList<String>());
+            propValueListModel.setData(new UniqueList<Integer>());
             btnRemObject.setEnabled(false);
             btnAddProp.setEnabled(false);
             btnAddValue.setEnabled(false);
@@ -750,13 +750,14 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
         String message = "Name of the new value for property \"" + _property + "\" in object \"" + _object + "\":";
-        String name = nameInput(message, "Adding a value");
-        if (name != null) {
+        String value = nameInput(message, "Adding a value");
+        if (value != null) {
             try {
-                propValueListModel.addElement(name);
+                Integer intValue = Integer.parseInt(value);
+                propValueListModel.addElement(intValue);
                 warnWorldSave();
             } catch (DuplicateElementException e) {
-                promptError("The value \"" + name + "\" already exists in property \"" + _property + "\" of object \"" + _object + "\".",
+                promptError("The value \"" + value + "\" already exists in property \"" + _property + "\" of object \"" + _object + "\".",
                         "Cannot create new value");
             }
         }
@@ -1205,7 +1206,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private javax.swing.JList<Action> listActions;
     private javax.swing.JList<String> listPostCond;
     private javax.swing.JList<String> listPreCond;
-    private javax.swing.JList<String> listPropValue;
+    private javax.swing.JList<Integer> listPropValue;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu menuScenario;
     private javax.swing.JMenu menuSolve;

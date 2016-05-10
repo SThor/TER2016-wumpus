@@ -20,7 +20,7 @@ public class TrajectoryMatrixPanel extends JPanel {
     
     public TrajectoryMatrixPanel(boolean isFilled) {
         this.isFilled = isFilled;
-        super.setPreferredSize(new Dimension(20, 20));
+        super.setPreferredSize(new Dimension(30, 30));
         super.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.black));
     }
     
@@ -29,13 +29,9 @@ public class TrajectoryMatrixPanel extends JPanel {
         super.paintComponent(g);
         if (isFilled) {
             int diameter, x, y;
-            diameter = (getWidth() + getHeight()) / 20;
+            diameter = (getWidth() + getHeight()) / 15;
             x = (getWidth() - diameter) / 2;
             y = (getHeight() - diameter) / 2;
-            System.out.println(diameter);
-            System.out.println(x);
-            System.out.println(y);
-            
             g.setColor(Color.black);
             g.fillOval(x, y, diameter, diameter);
         }

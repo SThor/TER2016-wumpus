@@ -7,8 +7,17 @@ package gui.solver;
 
 import ilog.concert.IloException;
 import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import model.Trajectory;
 import solver.BacktrackSolver;
 
@@ -32,13 +41,21 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
         initComponents();
         
         for (Trajectory trajectory : trajectories) {
-            panelTrajectoryGraph.add(_solution.toString(), new TrajectoryGraphPanel(trajectory, solver.getInstantCount()));
+            TrajectoryGraphPanel graphPane = new TrajectoryGraphPanel(trajectory, solver.getInstantCount());
+            panelTrajectoryGraph.add(_solution.toString(), new JScrollPane(graphPane));
+        }
+        
+        if (panelTrajectoryGraph.getComponentCount() > 0) {
+            panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(0).getPreferredSize());
+        } else {
+            panelTrajectoryGraph.setPreferredSize(new Dimension(50, 50));
         }
         
         btnNext.setEnabled(!trajectories.isEmpty());
         btnPrevious.setEnabled(!trajectories.isEmpty());
         
         super.setLocationRelativeTo(null);
+        super.pack();
     }
 
     /**
@@ -58,12 +75,16 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
         btnNext = new javax.swing.JButton();
         panelTrajectoryGraph = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
-        menuSave = new javax.swing.JMenu();
+        menuFile = new javax.swing.JMenu();
+        miSaveAsJPG = new javax.swing.JMenuItem();
+        miSaveAsPNG = new javax.swing.JMenuItem();
+        miSaveAsGIF = new javax.swing.JMenuItem();
 
         jButton2.setText("jButton2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Backtrack algorithm results");
+        setMinimumSize(new java.awt.Dimension(315, 100));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -72,6 +93,7 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
 
         panelGraphics.setLayout(new java.awt.BorderLayout());
 
+        panelNav.setMinimumSize(new java.awt.Dimension(315, 35));
         panelNav.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 30, 5));
 
         btnPrevious.setText("Previous");
@@ -98,14 +120,40 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
 
         panelGraphics.add(panelNav, java.awt.BorderLayout.NORTH);
 
-        panelTrajectoryGraph.setPreferredSize(new java.awt.Dimension(500, 400));
+        panelTrajectoryGraph.setPreferredSize(new java.awt.Dimension(0, 0));
         panelTrajectoryGraph.setLayout(new java.awt.CardLayout());
         panelGraphics.add(panelTrajectoryGraph, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(panelGraphics, java.awt.BorderLayout.CENTER);
 
-        menuSave.setText("Save");
-        menuBar.add(menuSave);
+        menuFile.setText("File");
+
+        miSaveAsJPG.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        miSaveAsJPG.setText("Save as JPG");
+        miSaveAsJPG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSaveAsJPGActionPerformed(evt);
+            }
+        });
+        menuFile.add(miSaveAsJPG);
+
+        miSaveAsPNG.setText("Save as PNG");
+        miSaveAsPNG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSaveAsPNGActionPerformed(evt);
+            }
+        });
+        menuFile.add(miSaveAsPNG);
+
+        miSaveAsGIF.setText("Save as GIF");
+        miSaveAsGIF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSaveAsGIFActionPerformed(evt);
+            }
+        });
+        menuFile.add(miSaveAsGIF);
+
+        menuBar.add(menuFile);
 
         setJMenuBar(menuBar);
 
@@ -119,6 +167,7 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
         }
         setNavInfo();
         ((CardLayout)panelTrajectoryGraph.getLayout()).previous(panelTrajectoryGraph);
+        panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(_solution).getPreferredSize());
     }//GEN-LAST:event_btnPreviousActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
@@ -126,15 +175,76 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
         _solution %= trajectories.size();
         setNavInfo();
         ((CardLayout)panelTrajectoryGraph.getLayout()).next(panelTrajectoryGraph);
+        panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(_solution).getPreferredSize());
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        int count = trajectories.size();
         JOptionPane.showMessageDialog(this, 
-                "The solving terminated successfully, finding "+ trajectories.size() +" solutions.",
+                "The solving terminated successfully\n"
+              + count 
+              + (count == 1 ? " solution was found." : " solutions were found."),
                 "Solver information",
                 JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_formWindowOpened
 
+    private void miSaveAsPNGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsPNGActionPerformed
+        saveImageAs("png");
+    }//GEN-LAST:event_miSaveAsPNGActionPerformed
+
+    private void miSaveAsGIFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsGIFActionPerformed
+        saveImageAs("gif");
+    }//GEN-LAST:event_miSaveAsGIFActionPerformed
+
+    private void miSaveAsJPGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsJPGActionPerformed
+        saveImageAs("jpg");
+    }//GEN-LAST:event_miSaveAsJPGActionPerformed
+
+    private void saveImageAs(String imageType) {
+        String upperImageType = imageType.toUpperCase();
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter(upperImageType+" images",imageType));
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            if (file.exists()) {
+                if (file.getName().endsWith("."+imageType)) {
+                    int confirm = JOptionPane.showConfirmDialog(this,
+                        "This file already exists.\n Override ?",
+                        "Override confirmation",
+                        JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.NO_OPTION) {
+                        return;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, 
+                            "The selected file is not a "+upperImageType+" file.",
+                            "Saving error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } else if (!file.getName().endsWith("."+imageType)) {
+                file = new File(file.getAbsolutePath()+"."+imageType);
+            }
+            
+            // Capture the panel as image
+            Dimension d = panelTrajectoryGraph.getPreferredSize();
+            BufferedImage image = new BufferedImage(
+                    (int)d.getWidth(), 
+                    (int)d.getHeight(),
+                    BufferedImage.TYPE_BYTE_BINARY);
+            
+            panelTrajectoryGraph.paint(image.getGraphics());
+            try {
+                ImageIO.write(image, imageType, file);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, 
+                        "An error occured while saving the image file.",
+                        "Saving error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
     private void setNavInfo() {
         lblNavInfo.setText("Solution  "+(_solution+1)+" / "+trajectories.size());
     }
@@ -145,7 +255,10 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel lblNavInfo;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenu menuSave;
+    private javax.swing.JMenu menuFile;
+    private javax.swing.JMenuItem miSaveAsGIF;
+    private javax.swing.JMenuItem miSaveAsJPG;
+    private javax.swing.JMenuItem miSaveAsPNG;
     private javax.swing.JPanel panelGraphics;
     private javax.swing.JPanel panelNav;
     private javax.swing.JPanel panelTrajectoryGraph;

@@ -6,6 +6,7 @@
 package gui.solver;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,10 +49,12 @@ public class TrajectoryGraphPanel extends JPanel {
     private void initLayout() {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.BOTH; // Streching
+        c.weightx = 1; // Resize weight on x axis
+        c.weighty = 1; // Resize weight on y axis
+        c.anchor = GridBagConstraints.CENTER; // Component display mode
+        c.ipadx = 20; // Padding on x axis
+        c.ipady = 20; // Padding on y axis
         
         // Add a blank panel at the top-left corner
         c.gridx = 0;
@@ -60,20 +63,20 @@ public class TrajectoryGraphPanel extends JPanel {
         blank.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.black));
         add(blank, c);
         
-        Border noLeftBorder = BorderFactory.createMatteBorder(1, 0, 1, 1, Color.black);
         JLabel label;
-        
+        Font labelFont = new Font("SansSerif", Font.PLAIN, 12);
+        Border noLeftBorder = BorderFactory.createMatteBorder(1, 0, 1, 1, Color.black);
         // Add the instants labels (top row)
         for (int i = 0; i < matrix.length; i++) {
             c.gridx = i+1;
             label = new JLabel("Instant "+i);
             label.setHorizontalAlignment(JLabel.CENTER);
             label.setBorder(noLeftBorder);
+            label.setFont(labelFont);
             add(label, c);
         }
         
         Border noTopBorder = BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black);
-        
         // Add the states labels (left column)
         c.gridx = 0;
         for (WorldState state : matrix[0]) {
@@ -81,6 +84,7 @@ public class TrajectoryGraphPanel extends JPanel {
             label = new JLabel(state.toString());
             label.setHorizontalAlignment(JLabel.CENTER);
             label.setBorder(noTopBorder);
+            label.setFont(labelFont);
             add(label, c);
         }
         
@@ -90,7 +94,8 @@ public class TrajectoryGraphPanel extends JPanel {
             List<WorldState> allStates = matrix[i];
             c.gridy = 1;
             for (WorldState state : allStates) {
-                add(new TrajectoryMatrixPanel(state.equals(trajectory.get(i).getState())), c);
+                TrajectoryMatrixPanel panel = new TrajectoryMatrixPanel(state.equals(trajectory.get(i).getState()));
+                add(panel, c);
                 c.gridy++;
             }
             c.gridx++;

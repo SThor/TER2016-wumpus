@@ -983,7 +983,7 @@ public class GeneralUI extends javax.swing.JFrame {
     }//GEN-LAST:event_epXmlScenarioKeyPressed
 
     private void miSolveCurrentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSolveCurrentActionPerformed
-        // Launcher the solver UI
+        // Launch the solver UI
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {

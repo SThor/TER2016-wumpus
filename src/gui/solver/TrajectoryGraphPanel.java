@@ -6,14 +6,15 @@
 package gui.solver;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 import model.Trajectory;
 import model.TrajectoryStep;
 import model.WorldState;
@@ -55,47 +56,44 @@ public class TrajectoryGraphPanel extends JPanel {
         // Add a blank panel at the top-left corner
         c.gridx = 0;
         c.gridy = 0;
-        add(new JPanel(), c);
+        JPanel blank = new JPanel();
+        blank.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.black));
+        add(blank, c);
+        
+        Border noLeftBorder = BorderFactory.createMatteBorder(1, 0, 1, 1, Color.black);
+        JLabel label;
         
         // Add the instants labels (top row)
         for (int i = 0; i < matrix.length; i++) {
             c.gridx = i+1;
-            add(new JLabel("Instant "+i), c);
+            label = new JLabel("Instant "+i);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setBorder(noLeftBorder);
+            add(label, c);
         }
+        
+        Border noTopBorder = BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black);
         
         // Add the states labels (left column)
         c.gridx = 0;
         for (WorldState state : matrix[0]) {
             c.gridy++;
-            add(new JLabel(state.toString()), c);
+            label = new JLabel(state.toString());
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setBorder(noTopBorder);
+            add(label, c);
         }
-        
-        List<LinePanel> panels = new ArrayList<>();
         
         // Array content (draw the matrix)
         c.gridx = 1;
-        for (List<WorldState> list : matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            List<WorldState> allStates = matrix[i];
             c.gridy = 1;
-            for (WorldState state : list) {
-                LinePanel toAdd = new LinePanel(null, null);
-                panels.add(toAdd);
-                add(toAdd, c);
+            for (WorldState state : allStates) {
+                add(new TrajectoryMatrixPanel(state.equals(trajectory.get(i).getState())), c);
                 c.gridy++;
             }
             c.gridx++;
-        }
-        
-        // Draw lines
-        if (panels.size() > 1) {
-            panels.get(0).setStartPoint(LinePanel.CENTER);
-            for (int i = 1; i < panels.size() - 1; i++) {
-                //TODO
-            }
-            
-            LinePanel last = panels.get(panels.size()-1);
-            LinePanel secondToLast = panels.get(panels.size()-2);
-            last.setStartPoint(LinePanel.opposite(secondToLast.getEndPoint()));
-            last.setEndPoint(LinePanel.CENTER);
         }
     }            
 }

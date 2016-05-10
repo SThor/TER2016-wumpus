@@ -8,6 +8,7 @@ package gui.solver;
 import ilog.concert.IloException;
 import java.awt.CardLayout;
 import java.util.List;
+import javax.swing.JOptionPane;
 import model.Trajectory;
 import solver.BacktrackSolver;
 
@@ -31,7 +32,7 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
         initComponents();
         
         for (Trajectory trajectory : trajectories) {
-            panelTrajectoryGraph.add(_solution.toString(), new TrajectoryGraphPanel(trajectory));
+            panelTrajectoryGraph.add(_solution.toString(), new TrajectoryGraphPanel(trajectory, solver.getInstantCount()));
         }
         
         btnNext.setEnabled(!trajectories.isEmpty());
@@ -63,6 +64,11 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Backtrack algorithm results");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         panelGraphics.setLayout(new java.awt.BorderLayout());
 
@@ -92,6 +98,7 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
 
         panelGraphics.add(panelNav, java.awt.BorderLayout.NORTH);
 
+        panelTrajectoryGraph.setPreferredSize(new java.awt.Dimension(500, 400));
         panelTrajectoryGraph.setLayout(new java.awt.CardLayout());
         panelGraphics.add(panelTrajectoryGraph, java.awt.BorderLayout.CENTER);
 
@@ -120,6 +127,13 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
         setNavInfo();
         ((CardLayout)panelTrajectoryGraph.getLayout()).next(panelTrajectoryGraph);
     }//GEN-LAST:event_btnNextActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        JOptionPane.showMessageDialog(this, 
+                "The solving terminated successfully, finding "+ trajectories.size() +" solutions.",
+                "Solver information",
+                JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_formWindowOpened
 
     private void setNavInfo() {
         lblNavInfo.setText("Solution  "+(_solution+1)+" / "+trajectories.size());

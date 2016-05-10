@@ -131,6 +131,7 @@ public class SolverChooser extends javax.swing.JDialog {
             }
         }
         // XXX: add new solver algorithm UI's here
+        dispose();
     }//GEN-LAST:event_btnStartActionPerformed
 
     private void cbSolversItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSolversItemStateChanged

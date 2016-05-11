@@ -1,6 +1,6 @@
 package gui.general;
 
-import gui.WumpusWorldFrame;
+import gui.wumpus.WumpusWorldFrame;
 import gui.general.componentModels.SysObjectTreeModel;
 import gui.general.componentModels.WorldListModel;
 import gui.solver.NoSolverException;
@@ -30,6 +30,7 @@ import model.Action;
 import model.Condition;
 import model.ObjectProperty;
 import model.SysObject;
+import model.Trajectory;
 import model.UniqueList;
 import model.World;
 import model.WumpusWorld;
@@ -65,7 +66,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private final SysObjectTreeModel objectTreeModel;
     private final WorldListModel<Integer> propValueListModel;
     private final WorldListModel<Action> actionListModel;
-    
+
     private WumpusWorldFrame wumpusFrame;
 
     /**
@@ -804,6 +805,10 @@ public class GeneralUI extends javax.swing.JFrame {
         }
 
         if (confirm) {
+            if (wumpusFrame != null) {
+                wumpusFrame.dispose();     
+                wumpusFrame = null;
+            }
             if (worldFile != null) {
                 xmlChooser.setCurrentDirectory(worldFile.getParentFile());
             }
@@ -1178,10 +1183,16 @@ public class GeneralUI extends javax.swing.JFrame {
     protected synchronized void xmlValueError(String message) {
         taFormula.setText("/!\\ Error in XML:\n" + message);
     }
-    
-    public void showWumpusFrame(WumpusWorld wumpusWorld){
-        wumpusFrame = new WumpusWorldFrame(scenario.getScenario(), wumpusWorld);
+
+    public void showWumpusFrame(WumpusWorld wumpusWorld) {
+        wumpusFrame = new WumpusWorldFrame(wumpusWorld);
         wumpusFrame.setVisible(true);
+    }
+    
+    public void setWumpusTrajectory(Trajectory trajectory){
+        if(wumpusFrame != null){
+            wumpusFrame.setTrajectory(trajectory);
+        }
     }
 
 // <editor-fold defaultstate="collapsed" desc="Variable declarations">  

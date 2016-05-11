@@ -125,7 +125,7 @@ public class SolverChooser extends javax.swing.JDialog {
             // TODO: Launch exhaustive solving interface
         } else if (selected instanceof BacktrackSolver) {
             try {
-                new BacktrackSolverResults((BacktrackSolver)selected).setVisible(true);
+                new BacktrackSolverResults((BacktrackSolver)selected, (GeneralUI) getParent()).setVisible(true);
             } catch (IloException ex) {
                 JOptionPane.showMessageDialog(this, "The solver encountered an internal error.", "Solver error", JOptionPane.ERROR_MESSAGE);
             }

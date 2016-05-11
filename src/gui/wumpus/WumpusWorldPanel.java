@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui;
+package gui.wumpus;
 
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.List;
+import model.WorldState;
 import model.WumpusWorld;
 import model.observations.Scenario;
 
@@ -18,7 +20,7 @@ import model.observations.Scenario;
  */
 public class WumpusWorldPanel extends javax.swing.JPanel {
 
-    private Scenario scenario;
+    private List<WorldState> stateList;
     private WumpusWorld wumpusWorld;
     private int instant = 0;
     private int cellHeight;
@@ -44,15 +46,14 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         //g2.drawString("It's a Wumpus World", 20, 20);
-        if (scenario != null && wumpusWorld != null) {
+        if (wumpusWorld != null) {
             computeConstants();
             paintGrid();
-            paintObjects();
+            if (stateList != null) {
+                paintObjects();
+            }
         }
-    }
 
-    public void setScenario(Scenario scenario) {
-        this.scenario = scenario;
     }
 
     public void setWumpusWorld(WumpusWorld wumpusWorld) {
@@ -136,6 +137,10 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
 
     private void paintPit(int x, int y) {
 
+    }
+
+    void setStateList(List<WorldState> stateList) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 

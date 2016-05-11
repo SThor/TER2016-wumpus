@@ -1,6 +1,11 @@
-package gui;
+package gui.wumpus;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultBoundedRangeModel;
+import model.Trajectory;
+import model.TrajectoryStep;
+import model.WorldState;
 import model.WumpusWorld;
 import model.observations.Scenario;
 
@@ -9,18 +14,32 @@ import model.observations.Scenario;
  * @author Paul Givel and Guillaume Hartenstein
  */
 public class WumpusWorldFrame extends javax.swing.JFrame {
-    private Scenario scenario;
-    private WumpusWorld wumpusWorld;
+    private List<WorldState> stateList;
+    private final WumpusWorld wumpusWorld;
+    private boolean solved;
     
     /**
      * Creates new form WumpusWorldFrame
      */
-    public WumpusWorldFrame(Scenario scenario, WumpusWorld wumpusWorld) {
+    public WumpusWorldFrame(WumpusWorld wumpusWorld) {
+        
+        
         this.wumpusWorld = wumpusWorld;
-        this.scenario = scenario;
         initComponents();
-        wumpusWorldPanel1.setWumpusWorld(wumpusWorld);
-        wumpusWorldPanel1.setScenario(scenario);
+        wumpusWorldPanel.setWumpusWorld(wumpusWorld);
+    }
+    
+    public void setTrajectory(Trajectory trajectory){
+        stateList = new ArrayList<>();
+        for (TrajectoryStep trajectoryStep : trajectory) {
+            WorldState state = trajectoryStep.getState();
+            if (!stateList.contains(state)) {
+                stateList.add(state);
+            }
+        }
+        wumpusWorldPanel.setStateList(stateList);
+        sliderInstant.setMaximum(stateList.size());
+        sliderInstant.setModel(new DefaultBoundedRangeModel(0, 1, 0, stateList.size()));
     }
 
     /**
@@ -33,7 +52,7 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         panelInstant = new javax.swing.JPanel();
-        wumpusWorldPanel1 = new gui.WumpusWorldPanel();
+        wumpusWorldPanel = new gui.wumpus.WumpusWorldPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,7 +66,7 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
             0,
             0,
             0,
-            scenario.size()-1)
+            3)
     );
     sliderInstant.addChangeListener(new javax.swing.event.ChangeListener() {
         public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -58,28 +77,28 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
 
     getContentPane().add(panelInstant, java.awt.BorderLayout.SOUTH);
 
-    javax.swing.GroupLayout wumpusWorldPanel1Layout = new javax.swing.GroupLayout(wumpusWorldPanel1);
-    wumpusWorldPanel1.setLayout(wumpusWorldPanel1Layout);
-    wumpusWorldPanel1Layout.setHorizontalGroup(
-        wumpusWorldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+    javax.swing.GroupLayout wumpusWorldPanelLayout = new javax.swing.GroupLayout(wumpusWorldPanel);
+    wumpusWorldPanel.setLayout(wumpusWorldPanelLayout);
+    wumpusWorldPanelLayout.setHorizontalGroup(
+        wumpusWorldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGap(0, 400, Short.MAX_VALUE)
     );
-    wumpusWorldPanel1Layout.setVerticalGroup(
-        wumpusWorldPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+    wumpusWorldPanelLayout.setVerticalGroup(
+        wumpusWorldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGap(0, 269, Short.MAX_VALUE)
     );
 
-    getContentPane().add(wumpusWorldPanel1, java.awt.BorderLayout.CENTER);
+    getContentPane().add(wumpusWorldPanel, java.awt.BorderLayout.CENTER);
 
     pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void sliderInstantStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderInstantStateChanged
-        wumpusWorldPanel1.setInstant(sliderInstant.getValue());
+        wumpusWorldPanel.setInstant(sliderInstant.getValue());
     }//GEN-LAST:event_sliderInstantStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel panelInstant;
     private final javax.swing.JSlider sliderInstant = new javax.swing.JSlider();
-    private gui.WumpusWorldPanel wumpusWorldPanel1;
+    private gui.wumpus.WumpusWorldPanel wumpusWorldPanel;
     // End of variables declaration//GEN-END:variables
 }

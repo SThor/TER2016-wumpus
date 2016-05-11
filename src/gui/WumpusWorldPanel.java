@@ -26,6 +26,9 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
     private int xShift;
     private int yShift;
     private int fontSize;
+    private int xLetterShift;
+    private int yLetterShift;
+    private Graphics2D g2;
 
     /**
      * Creates new form WumpusWorldPanel
@@ -37,14 +40,14 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
+        g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         //g2.drawString("It's a Wumpus World", 20, 20);
         if (scenario != null && wumpusWorld != null) {
             computeConstants();
-            paintGrid(g2);
-            paintObjects(g2);
+            paintGrid();
+            paintObjects();
         }
     }
 
@@ -82,7 +85,7 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void paintGrid(Graphics2D g2) {
+    private void paintGrid() {
         for (int i = 0; i < wumpusWorld.getHeight(); i++) {
             for (int j = 0; j < wumpusWorld.getWidth(); j++) {
                 int x = (j * cellWidth) + xShift;
@@ -100,21 +103,39 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
         xShift = (panelWidth - gridWidth) / 2;
         yShift = (panelHeight - gridHeight) / 2;
 
-        cellHeight = panelHeight/5;
-        cellWidth = panelWidth/5;
-        
+        cellHeight = panelHeight / 5;
+        cellWidth = panelWidth / 5;
+
         int min = Math.min(cellWidth, cellHeight);
         fontSize = (int) (min * 0.9);
+        xLetterShift = (cellWidth - fontSize / 2) / 2;
+        yLetterShift = (cellHeight - fontSize) / 2;
     }
 
-    private void paintObjects(Graphics2D g2) {
-        int agentX = 1;
-        int agentY = 0;
+    private void paintObjects() {
+        paintAgent(0, 0, true, true, true);
+//        paintWumpus();
+//        paintGold();
+//        paintPit();
+    }
+
+    private void paintAgent(int agentX, int agentY, boolean isAlive, boolean hasGold, boolean hasShot) {
         g2.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
-        int x = (int) ((agentX*cellWidth)+xShift+(cellWidth*0.3));
-        int y = (int) ((agentY*cellHeight)+yShift+(cellHeight*0.8));
+        int x = (int) ((agentX * cellWidth) + xShift + xLetterShift + (cellWidth * 0.3));
+        int y = (int) ((agentY * cellHeight) + yShift + yLetterShift + (cellHeight * 0.8));
         g2.drawString("A", x, y);
-        
+    }
+
+    private void paintWumpus(int x, int y, boolean isAlive) {
+
+    }
+
+    private void paintGold(int x, int y, boolean isPickedUp) {
+
+    }
+
+    private void paintPit(int x, int y) {
+
     }
 
 

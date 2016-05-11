@@ -7,7 +7,6 @@ import model.Trajectory;
 import model.TrajectoryStep;
 import model.WorldState;
 import model.WumpusWorld;
-import model.observations.Scenario;
 
 /**
  *
@@ -22,8 +21,6 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
      * Creates new form WumpusWorldFrame
      */
     public WumpusWorldFrame(WumpusWorld wumpusWorld) {
-        
-        
         this.wumpusWorld = wumpusWorld;
         initComponents();
         wumpusWorldPanel.setWumpusWorld(wumpusWorld);

@@ -12,7 +12,6 @@ import java.awt.RenderingHints;
 import java.util.List;
 import model.WorldState;
 import model.WumpusWorld;
-import model.observations.Scenario;
 
 /**
  *
@@ -54,6 +53,14 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
             }
         }
 
+    }
+
+    public int getCellHeight() {
+        return cellHeight;
+    }
+
+    public int getCellWidth() {
+        return cellWidth;
     }
 
     public void setWumpusWorld(WumpusWorld wumpusWorld) {
@@ -121,10 +128,7 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
     }
 
     private void paintAgent(int agentX, int agentY, boolean isAlive, boolean hasGold, boolean hasShot) {
-        g2.setFont(new Font(Font.MONOSPACED, Font.PLAIN, fontSize));
-        int x = (int) ((agentX * cellWidth) + xShift + xLetterShift + (cellWidth * 0.3));
-        int y = (int) ((agentY * cellHeight) + yShift + yLetterShift + (cellHeight * 0.8));
-        g2.drawString("A", x, y);
+        
     }
 
     private void paintWumpus(int x, int y, boolean isAlive) {
@@ -140,7 +144,7 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
     }
 
     void setStateList(List<WorldState> stateList) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("j'ai reçu la putain de liste !");
     }
 
 

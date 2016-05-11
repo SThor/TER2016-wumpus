@@ -5,18 +5,47 @@
  */
 package gui.wumpus;
 
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+
 /**
  *
  * @author silmathoron
  */
-public class AgentPanel extends javax.swing.JPanel {
+public class AgentPanel extends CellPanel {
+
+    private final boolean hasGold;
+    private final boolean hasShot;
+    private final boolean isAlive;
+    
 
     /**
      * Creates new form AgentPanel
      */
-    public AgentPanel() {
+    public AgentPanel(WumpusWorldPanel wumpusWorldPanel, int agentX, int agentY, boolean isAlive, boolean hasGold, boolean hasShot) {
+        super(wumpusWorldPanel, agentX, agentY);
+        this.isAlive = isAlive;
+        this.hasGold = hasGold;
+        this.hasShot = hasShot;
         initComponents();
     }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        g2.setFont(new Font(Font.MONOSPACED, Font.PLAIN, mainFontSize));
+        int x = 0;
+        int y = 0;
+        g2.drawString("A", x, y);
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -38,6 +67,10 @@ public class AgentPanel extends javax.swing.JPanel {
             .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void computeConstants() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

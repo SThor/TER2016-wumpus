@@ -9,12 +9,13 @@ package gui.wumpus;
  *
  * @author silmathoron
  */
-public class WumpusPanel extends javax.swing.JPanel {
+public class WumpusPanel extends CellPanel {
 
     /**
      * Creates new form WumpusPanel
      */
-    public WumpusPanel() {
+    public WumpusPanel(WumpusWorldPanel wumpusWorldPanel, int wumpusX, int wumpusY) {
+        super(wumpusWorldPanel, wumpusX, wumpusY);
         initComponents();
     }
 

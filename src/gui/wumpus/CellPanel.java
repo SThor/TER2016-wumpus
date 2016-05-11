@@ -5,17 +5,39 @@
  */
 package gui.wumpus;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+
 /**
  *
  * @author silmathoron
  */
-public class GoldPanel extends CellPanel {
-
+public class CellPanel extends javax.swing.JPanel {
+    Graphics2D g2;
+     WumpusWorldPanel wumpusWorldPanel;
+    int mainX;
+    int mainY;
+    
+    int mainFontSize;
+    int altFontSize;
+    int shiftXCenter;
+    int shiftYCenter;
+    int shiftX1;
+    int shiftY1;
+    int shiftX2;
+    int shiftY2;
+    int shiftX3;
+    int shiftY3;
+    
     /**
-     * Creates new form GoldPanel
+     * Creates new form CellPanel
      */
-    public GoldPanel(WumpusWorldPanel wumpusWorldPanel, int goldX, int goldY) {
-        super(wumpusWorldPanel, goldX, goldY);
+    public CellPanel(WumpusWorldPanel wumpusWorldPanel, int mainX, int mainY) {
+        this.wumpusWorldPanel = wumpusWorldPanel;
+        this.mainX = mainX;
+        this.mainY = mainY;
+        setPreferredSize(new Dimension(wumpusWorldPanel.getCellWidth(), wumpusWorldPanel.getCellHeight()));
+        computeConstants();
         initComponents();
     }
 
@@ -39,6 +61,10 @@ public class GoldPanel extends CellPanel {
             .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void computeConstants() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

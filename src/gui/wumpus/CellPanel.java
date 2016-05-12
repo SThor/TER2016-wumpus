@@ -5,40 +5,73 @@
  */
 package gui.wumpus;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import javax.swing.JLabel;
 
 /**
  *
  * @author silmathoron
  */
 public class CellPanel extends javax.swing.JPanel {
+
     Graphics2D g2;
-     WumpusWorldPanel wumpusWorldPanel;
+    WumpusWorldPanel wumpusWorldPanel;
     int mainX;
     int mainY;
-    
+
     int mainFontSize;
     int altFontSize;
-    int shiftXCenter;
-    int shiftYCenter;
-    int shiftX1;
-    int shiftY1;
-    int shiftX2;
-    int shiftY2;
-    int shiftX3;
-    int shiftY3;
-    
+
     /**
      * Creates new form CellPanel
+     * @param wumpusWorldPanel
+     * @param mainX
+     * @param mainY
+     * @param letter
      */
-    public CellPanel(WumpusWorldPanel wumpusWorldPanel, int mainX, int mainY) {
+    public CellPanel(WumpusWorldPanel wumpusWorldPanel, int mainX, int mainY, String letter) {
         this.wumpusWorldPanel = wumpusWorldPanel;
         this.mainX = mainX;
         this.mainY = mainY;
         setPreferredSize(new Dimension(wumpusWorldPanel.getCellWidth(), wumpusWorldPanel.getCellHeight()));
         computeConstants();
         initComponents();
+
+        mainLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, mainFontSize));
+        mainLabel.setForeground(Color.gray);
+        mainLabel.setText(letter);
+    }
+
+    public void setAlt(int position, Color color1, Color color2, String letter1, String letter2, boolean activated) {
+        JLabel altlabel;
+        switch (position) {
+            case 1:
+                altlabel = altLabel1;
+                break;
+            case 2:
+                altlabel = altLabel2;
+                break;
+            case 3:
+                altlabel = altLabel3;
+                break;
+            case 4:
+                altlabel = altLabel4;
+                break;
+            default:
+                altlabel = new JLabel();
+
+        }
+        altlabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, altFontSize));
+        if (activated) {
+            altlabel.setForeground(color1);
+            altlabel.setText(letter1);
+        } else {
+            altlabel.setForeground(color2);
+            altlabel.setText(letter2);
+        }
     }
 
     /**
@@ -50,15 +83,49 @@ public class CellPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        altLabel1 = new javax.swing.JLabel();
+        altLabel2 = new javax.swing.JLabel();
+        altLabel3 = new javax.swing.JLabel();
+        altLabel4 = new javax.swing.JLabel();
+        mainLabel = new javax.swing.JLabel();
+
+        setPreferredSize(new java.awt.Dimension(50, 50));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(altLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 380, Short.MAX_VALUE)
+                        .addComponent(altLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(altLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(altLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(mainLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(altLabel1)
+                    .addComponent(altLabel2))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(mainLabel)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(altLabel3)
+                    .addComponent(altLabel4))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -68,5 +135,10 @@ public class CellPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel altLabel1;
+    private javax.swing.JLabel altLabel2;
+    private javax.swing.JLabel altLabel3;
+    private javax.swing.JLabel altLabel4;
+    private javax.swing.JLabel mainLabel;
     // End of variables declaration//GEN-END:variables
 }

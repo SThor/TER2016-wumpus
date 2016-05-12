@@ -1,8 +1,5 @@
 package model;
 
-import java.awt.Point;
-import model.observations.Scenario;
-
 /**
  * Object used to generate a world for the wumpus problem, with a few fixed and
  * a few variable parameters
@@ -17,11 +14,11 @@ public class WumpusWorld {
     private int height = 2;
     private int width = 3;
     private final UniqueList<Integer> trueFalseList = new UniqueList<>();
-    private World wumpusWorld = new World();
-    private SysObject agent = new SysObject("agent", wumpusWorld);
-    private SysObject wumpus = new SysObject("wumpus", wumpusWorld);
-    private SysObject pit = new SysObject("pit", wumpusWorld);
-    private SysObject gold = new SysObject("gold", wumpusWorld);
+    private final World wumpusWorld = new World();
+    private final SysObject agent = new SysObject("agent", wumpusWorld);
+    private final SysObject wumpus = new SysObject("wumpus", wumpusWorld);
+    private final SysObject pit = new SysObject("pit", wumpusWorld);
+    private final SysObject gold = new SysObject("gold", wumpusWorld);
 
     public WumpusWorld() {
         trueFalseList.add(0);

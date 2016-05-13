@@ -5,13 +5,14 @@
  */
 package gui.solver;
 
+import gui.ImageExporter;
 import ilog.concert.IloException;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -189,61 +190,17 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void miSaveAsPNGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsPNGActionPerformed
-        saveImageAs("png");
+        ImageExporter.saveImage(this, panelTrajectoryGraph, "png");
     }//GEN-LAST:event_miSaveAsPNGActionPerformed
 
     private void miSaveAsGIFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsGIFActionPerformed
-        saveImageAs("gif");
+        ImageExporter.saveImage(this, panelTrajectoryGraph, "png");
     }//GEN-LAST:event_miSaveAsGIFActionPerformed
 
     private void miSaveAsJPGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsJPGActionPerformed
-        saveImageAs("jpg");
+        ImageExporter.saveImage(this, panelTrajectoryGraph, "png");
     }//GEN-LAST:event_miSaveAsJPGActionPerformed
 
-    private void saveImageAs(String imageType) {
-        String upperImageType = imageType.toUpperCase();
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter(upperImageType+" images",imageType));
-        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-            if (file.exists()) {
-                if (file.getName().endsWith("."+imageType)) {
-                    int confirm = JOptionPane.showConfirmDialog(this,
-                        "This file already exists.\n Override ?",
-                        "Override confirmation",
-                        JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.NO_OPTION) {
-                        return;
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                            "The selected file is not a "+upperImageType+" file.",
-                            "Saving error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            } else if (!file.getName().endsWith("."+imageType)) {
-                file = new File(file.getAbsolutePath()+"."+imageType);
-            }
-            
-            // Capture the panel as image
-            Dimension d = panelTrajectoryGraph.getPreferredSize();
-            BufferedImage image = new BufferedImage(
-                    (int)d.getWidth(), 
-                    (int)d.getHeight(),
-                    BufferedImage.TYPE_BYTE_BINARY);
-            
-            panelTrajectoryGraph.paint(image.getGraphics());
-            try {
-                ImageIO.write(image, imageType, file);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, 
-                        "An error occured while saving the image file.",
-                        "Saving error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
     
     private void setNavInfo() {
         lblNavInfo.setText("Solution  "+(_solution+1)+" / "+trajectories.size());

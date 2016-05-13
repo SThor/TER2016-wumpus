@@ -22,6 +22,7 @@ import model.exceptions.NoSuchPropertyException;
 import model.exceptions.NoSuchValueException;
 import model.importexport.ScenarioExport;
 import model.importexport.ScenarioImport;
+import model.observations.EmptyObservation;
 import model.observations.Observation;
 import model.observations.Scenario;
 import org.jdom2.JDOMException;
@@ -32,14 +33,14 @@ import org.jdom2.JDOMException;
  */
 class ScenarioModel {
     private final Scenario scenario;
-    private List<String> xmlSources;
+    private final List<String> xmlSources;
     private int instant;
     private final GeneralUI parent;
     private Thread setXMLThread;
     private World world;
     
     public ScenarioModel(Scenario scenario, GeneralUI parent, World world) {
-        if(scenario.isEmpty()) {
+        if (scenario.isEmpty()) {
             throw new IllegalArgumentException("Empty scenario");
         }
         this.scenario = scenario;
@@ -83,38 +84,17 @@ class ScenarioModel {
     }
     
     private void addInstant() {
-        scenario.add(instant, new Observation() {
-            @Override
-            public boolean isVerified() {
-                return true;
-            }
-            
-            @Override
-            public boolean isVerifiedIn(WorldState state) {
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "";
-            }
-
-            @Override
-            public IlcConstraint solverConstraint(IlcSolver solver, Map<SysObject, Map<String, IlcAnyVar>> worldMap) {
-                return null;
-            }
-        });
-        
+        scenario.add(instant, new EmptyObservation());
         xmlSources.add(instant, "");
     }
     
     public void setXML(final String xml) {
         xmlSources.set(instant, xml);
-        
+
         if(setXMLThread != null) {
             setXMLThread.interrupt();
         }
-        
+
         setXMLThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -147,7 +127,7 @@ class ScenarioModel {
                             e.getMessage());
                     return;
                 }
-                
+
                 if(!Thread.interrupted()) {
                     synchronized(scenario) {
                         scenario.set(instant, newObs);
@@ -156,7 +136,7 @@ class ScenarioModel {
                 }
             }
         });
-        
+
         SwingUtilities.invokeLater(setXMLThread);
     }
     
@@ -187,5 +167,9 @@ class ScenarioModel {
     
     public Scenario getScenario() {
         return scenario;
+    }
+    
+    public void setWorld(World world) {
+        this.world = world;
     }
 }

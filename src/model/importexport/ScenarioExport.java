@@ -8,6 +8,7 @@ import model.Action;
 import model.PropertyValue;
 import model.observations.Observation;
 import model.exceptions.UnknownObservationException;
+import model.observations.EmptyObservation;
 import model.observations.Operation;
 import model.observations.Scenario;
 import org.jdom2.Document;
@@ -74,6 +75,8 @@ public class ScenarioExport {
             return exportCondition((PropertyValue) observation);
         } else if (observation instanceof Action) {
             return exportAction((Action) observation);
+        } else if (observation instanceof EmptyObservation) {
+            return new Element("noObservation");
         } else {
             throw new UnknownObservationException();
         }

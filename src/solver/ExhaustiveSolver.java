@@ -8,6 +8,7 @@ package solver;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import model.Action;
@@ -152,6 +153,8 @@ public class ExhaustiveSolver extends Solver {
             }
             trajectories.addAll(toAdd);
         }
+        
+        Collections.sort(trajectories);
         
         return trajectories;
     }

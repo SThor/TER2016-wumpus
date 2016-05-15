@@ -11,6 +11,7 @@ import ilog.solver.IlcAnyVar;
 import ilog.solver.IlcConstraint;
 import ilog.solver.IlcSolver;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class BacktrackSolver extends Solver {
         if (transitionCons != null) {
             solver.add(transitionCons);
         } else {
-            return null; // FIXME
+            return null; // XXX
         }
         
         List<IlcAnyVar> flatVarList = new ArrayList<>();
@@ -150,6 +151,8 @@ public class BacktrackSolver extends Solver {
             trajectories.add(traj);
         }
         solver.endSearch();
+        
+        Collections.sort(trajectories); // Sort trajectories in ascending order of number of changes
         
         return trajectories;
     }

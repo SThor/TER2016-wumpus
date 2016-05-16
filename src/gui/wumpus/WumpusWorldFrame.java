@@ -1,5 +1,6 @@
 package gui.wumpus;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultBoundedRangeModel;
@@ -59,35 +60,30 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
         sliderInstant.setPaintLabels(true);
         sliderInstant.setPaintTicks(true);
         sliderInstant.setSnapToTicks(true);
-        sliderInstant.setModel(new DefaultBoundedRangeModel(
-            0,
-            0,
-            0,
-            3)
-    );
-    sliderInstant.addChangeListener(new javax.swing.event.ChangeListener() {
-        public void stateChanged(javax.swing.event.ChangeEvent evt) {
-            sliderInstantStateChanged(evt);
-        }
-    });
-    panelInstant.add(sliderInstant, java.awt.BorderLayout.CENTER);
+        sliderInstant.setModel(new DefaultBoundedRangeModel(0,0,0,3));
+        sliderInstant.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sliderInstantStateChanged(evt);
+            }
+        });
+        panelInstant.add(sliderInstant, java.awt.BorderLayout.CENTER);
 
-    getContentPane().add(panelInstant, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(panelInstant, java.awt.BorderLayout.SOUTH);
 
-    javax.swing.GroupLayout wumpusWorldPanelLayout = new javax.swing.GroupLayout(wumpusWorldPanel);
-    wumpusWorldPanel.setLayout(wumpusWorldPanelLayout);
-    wumpusWorldPanelLayout.setHorizontalGroup(
-        wumpusWorldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGap(0, 400, Short.MAX_VALUE)
-    );
-    wumpusWorldPanelLayout.setVerticalGroup(
-        wumpusWorldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGap(0, 269, Short.MAX_VALUE)
-    );
+        javax.swing.GroupLayout wumpusWorldPanelLayout = new javax.swing.GroupLayout(wumpusWorldPanel);
+        wumpusWorldPanel.setLayout(wumpusWorldPanelLayout);
+        wumpusWorldPanelLayout.setHorizontalGroup(
+            wumpusWorldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        wumpusWorldPanelLayout.setVerticalGroup(
+            wumpusWorldPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 269, Short.MAX_VALUE)
+        );
 
-    getContentPane().add(wumpusWorldPanel, java.awt.BorderLayout.CENTER);
+        getContentPane().add(wumpusWorldPanel, java.awt.BorderLayout.CENTER);
 
-    pack();
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void sliderInstantStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderInstantStateChanged

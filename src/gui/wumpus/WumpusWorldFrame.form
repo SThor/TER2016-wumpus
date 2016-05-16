@@ -39,7 +39,7 @@
             <Property name="paintTicks" type="boolean" value="true"/>
             <Property name="snapToTicks" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.BoundedRangeModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new DefaultBoundedRangeModel(&#xd;&#xa;0,&#xd;&#xa;0,&#xd;&#xa;0,&#xd;&#xa;3)&#xd;&#xa;" type="code"/>
+              <Connection code="new DefaultBoundedRangeModel(0,0,0,3)" type="code"/>
             </Property>
           </Properties>
           <Events>

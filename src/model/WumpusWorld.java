@@ -114,7 +114,7 @@ public class WumpusWorld {
         moveAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
         wumpusWorld.addPossibleAction(moveAgent);
     }
-    
+
     private void addFallAgent() {
         Action fallAgent = new Action("fallAgent");
         fallAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
@@ -123,7 +123,7 @@ public class WumpusWorld {
         fallAgent.addPostCondition(new PropertyValue(agent, "isAlive", 0));
         wumpusWorld.addPossibleAction(fallAgent);
     }
-    
+
     private void addFallWumpus() {
         Action fallWumpus = new Action("fallWumpus");
         fallWumpus.addPreCondition(new PropertyValue(wumpus, "isAlive", 1));
@@ -149,7 +149,7 @@ public class WumpusWorld {
         shootWumpus.addPostCondition(new PropertyValue(agent, "hasShot", 1));
         wumpusWorld.addPossibleAction(shootWumpus);
     }
-    
+
     private void addEatAgent() {
         Action eatAgent = new Action("eatAgent");
         eatAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
@@ -159,7 +159,7 @@ public class WumpusWorld {
         eatAgent.addPostCondition(new PropertyValue(agent, "isAlive", 0));
         wumpusWorld.addPossibleAction(eatAgent);
     }
-    
+
     private void addPickUpGold() {
         Action pickUpGold = new Action("pickUpGold");
         pickUpGold.addPreCondition(new PropertyValue(agent, "isAlive", 1));
@@ -178,5 +178,21 @@ public class WumpusWorld {
 
     public int getWidth() {
         return width;
+    }
+
+    public SysObject getAgent() {
+        return agent;
+    }
+
+    public SysObject getWumpus() {
+        return wumpus;
+    }
+
+    public SysObject getGold() {
+        return gold;
+    }
+
+    public SysObject getPit() {
+        return pit;
     }
 }

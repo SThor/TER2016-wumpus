@@ -8,8 +8,13 @@ package gui.wumpus;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -17,16 +22,17 @@ import javax.swing.JLabel;
  */
 public class CellPanel extends javax.swing.JPanel {
 
-    Graphics2D g2;
+    Graphics g;
     WumpusWorldPanel wumpusWorldPanel;
     int mainX;
     int mainY;
 
-    int mainFontSize;
-    int altFontSize;
+    int mainFontSize = 60;
+    int altFontSize = 20;
 
     /**
      * Creates new form CellPanel
+     *
      * @param wumpusWorldPanel
      * @param mainX
      * @param mainY
@@ -36,14 +42,13 @@ public class CellPanel extends javax.swing.JPanel {
         this.wumpusWorldPanel = wumpusWorldPanel;
         this.mainX = mainX;
         this.mainY = mainY;
-        setPreferredSize(new Dimension(wumpusWorldPanel.getCellWidth(), wumpusWorldPanel.getCellHeight()));
-        computeConstants();
         initComponents();
-
         mainLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, mainFontSize));
         mainLabel.setForeground(Color.gray);
         mainLabel.setText(letter);
     }
+
+
 
     public void setAlt(int position, Color color1, Color color2, String letter1, String letter2, boolean activated) {
         JLabel altlabel;
@@ -89,7 +94,7 @@ public class CellPanel extends javax.swing.JPanel {
         altLabel4 = new javax.swing.JLabel();
         mainLabel = new javax.swing.JLabel();
 
-        setPreferredSize(new java.awt.Dimension(50, 50));
+        setPreferredSize(new java.awt.Dimension(70, 70));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -100,16 +105,16 @@ public class CellPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(altLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 380, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                         .addComponent(altLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(altLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(altLabel4))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(mainLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(altLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(altLabel4)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,21 +124,15 @@ public class CellPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(altLabel1)
                     .addComponent(altLabel2))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(mainLabel)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(altLabel3)
                     .addComponent(altLabel4))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void computeConstants() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel altLabel1;
     private javax.swing.JLabel altLabel2;

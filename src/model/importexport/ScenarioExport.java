@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import model.Action;
+import model.Equality;
 import model.PropertyValue;
 import model.observations.Observation;
 import model.exceptions.UnknownObservationException;
@@ -72,7 +73,7 @@ public class ScenarioExport {
         if (observation instanceof Operation) {
             return exportOperation((Operation) observation);
         } else if (observation instanceof PropertyValue) {
-            return exportCondition((PropertyValue) observation);
+            return exportPropertyValue((PropertyValue) observation);
         } else if (observation instanceof Action) {
             return exportAction((Action) observation);
         } else if (observation instanceof EmptyObservation) {
@@ -96,12 +97,21 @@ public class ScenarioExport {
         return xmlOperation;
     }
 
-    private Element exportCondition(PropertyValue condition) {
-        Element xmlCondition = new Element("condition");
-        xmlCondition.setAttribute("object", condition.getObject().getName());
-        xmlCondition.setAttribute("property", condition.getPropertyName());
-        xmlCondition.setAttribute("value", condition.getWantedValue().toString());
-        return xmlCondition;
+    private Element exportPropertyValue(PropertyValue propertyValue) {
+        Element xmlPropertyValue = new Element("propertyValue");
+        xmlPropertyValue.setAttribute("object", propertyValue.getObject().getName());
+        xmlPropertyValue.setAttribute("property", propertyValue.getPropertyName());
+        xmlPropertyValue.setAttribute("value", propertyValue.getWantedValue().toString());
+        return xmlPropertyValue;
+    }
+    
+     private Element exportEquality(Equality equality) {
+        Element xmlEquality = new Element("equality");
+        xmlEquality.setAttribute("object1", equality.getObject().getName());
+        xmlEquality.setAttribute("property1", equality.getPropertyName());
+        xmlEquality.setAttribute("object2", equality.getSecondObject().getName());
+        xmlEquality.setAttribute("property2", equality.getSecondPropertyName());
+        return xmlEquality;
     }
 
     private Element exportAction(Action action) {

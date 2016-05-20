@@ -37,6 +37,10 @@ public class Trajectory implements Comparable<Trajectory>{
         return list.get(list.size()-1);
     }
 
+    public ArrayList<TrajectoryStep> getList() {
+        return list;
+    }
+    
     public int size() {
         return list.size();
     }

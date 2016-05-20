@@ -1,8 +1,5 @@
 package model;
 
-import java.awt.Point;
-import model.observations.Scenario;
-
 /**
  * Object used to generate a world for the wumpus problem, with a few fixed and
  * a few variable parameters
@@ -14,46 +11,23 @@ public class WumpusWorld {
 //    private int wumpusQty = 1;
 //    private int pitQty = 1;
 //    private int goldQty = 1;
-//    private List<Point> wumpusPosition = new ArrayList<>();
-//    private List<Point> pitPosition = new ArrayList<>();
-//    private List<Point> goldPosition = new ArrayList<>();
-    private Point wumpusPosition;
-    private Point pitPosition;
-    private Point goldPosition;
-    private Point agentPosition;
     private int height = 2;
     private int width = 3;
     private final UniqueList<Integer> trueFalseList = new UniqueList<>();
-    private World wumpusWorld = new World();
-    private SysObject agent = new SysObject("agent", wumpusWorld);
-    private SysObject wumpus = new SysObject("wumpus", wumpusWorld);
-    private SysObject pit = new SysObject("pit", wumpusWorld);
-    private SysObject gold = new SysObject("gold", wumpusWorld);
+    private final World wumpusWorld = new World();
+    private final SysObject agent = new SysObject("agent", wumpusWorld);
+    private final SysObject wumpus = new SysObject("wumpus", wumpusWorld);
+    private final SysObject pit = new SysObject("pit", wumpusWorld);
+    private final SysObject gold = new SysObject("gold", wumpusWorld);
 
     public WumpusWorld() {
         trueFalseList.add(0);
         trueFalseList.add(1);
     }
 
-    public void setAgentPosition(Point agentPosition) {
-        this.agentPosition = agentPosition;
-    }
-
     public void setDimensions(int width, int height) {
         this.height = height;
         this.width = width;
-    }
-
-    public void setWumpusPosition(Point wumpusPosition) {
-        this.wumpusPosition = wumpusPosition;
-    }
-
-    public void setPitPosition(Point pitPosition) {
-        this.pitPosition = pitPosition;
-    }
-
-    public void setGoldPosition(Point goldPosition) {
-        this.goldPosition = goldPosition;
     }
 
     public World generateWorld() {
@@ -64,10 +38,6 @@ public class WumpusWorld {
         generateActions();
 
         return wumpusWorld;
-    }
-
-    public Scenario generateScenario() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void generateAgent() {
@@ -99,9 +69,6 @@ public class WumpusWorld {
     private void generatePit() {
         pit.addProperty(generateXPositionProperty());
         pit.addProperty(generateYPositionProperty());
-
-        ObjectProperty propertyIsFull = new ObjectProperty(trueFalseList, "isFull");
-        pit.addProperty(propertyIsFull);
 
         wumpusWorld.addObject(pit);
     }
@@ -147,7 +114,7 @@ public class WumpusWorld {
         moveAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
         wumpusWorld.addPossibleAction(moveAgent);
     }
-    
+
     private void addFallAgent() {
         Action fallAgent = new Action("fallAgent");
         fallAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
@@ -156,7 +123,7 @@ public class WumpusWorld {
         fallAgent.addPostCondition(new PropertyValue(agent, "isAlive", 0));
         wumpusWorld.addPossibleAction(fallAgent);
     }
-    
+
     private void addFallWumpus() {
         Action fallWumpus = new Action("fallWumpus");
         fallWumpus.addPreCondition(new PropertyValue(wumpus, "isAlive", 1));
@@ -182,7 +149,7 @@ public class WumpusWorld {
         shootWumpus.addPostCondition(new PropertyValue(agent, "hasShot", 1));
         wumpusWorld.addPossibleAction(shootWumpus);
     }
-    
+
     private void addEatAgent() {
         Action eatAgent = new Action("eatAgent");
         eatAgent.addPreCondition(new PropertyValue(agent, "isAlive", 1));
@@ -192,7 +159,7 @@ public class WumpusWorld {
         eatAgent.addPostCondition(new PropertyValue(agent, "isAlive", 0));
         wumpusWorld.addPossibleAction(eatAgent);
     }
-    
+
     private void addPickUpGold() {
         Action pickUpGold = new Action("pickUpGold");
         pickUpGold.addPreCondition(new PropertyValue(agent, "isAlive", 1));
@@ -211,5 +178,21 @@ public class WumpusWorld {
 
     public int getWidth() {
         return width;
+    }
+
+    public SysObject getAgent() {
+        return agent;
+    }
+
+    public SysObject getWumpus() {
+        return wumpus;
+    }
+
+    public SysObject getGold() {
+        return gold;
+    }
+
+    public SysObject getPit() {
+        return pit;
     }
 }

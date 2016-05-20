@@ -121,7 +121,7 @@ public class WumpusWorldDialog extends javax.swing.JDialog {
         world = wumpusWorld.generateWorld();        
         ((GeneralUI) getParent()).setWorld(world);
         ((GeneralUI) getParent()).warnWorldSave();
-        System.out.println("je génère");
+        ((GeneralUI) getParent()).showWumpusFrame(wumpusWorld);
         dispose();
     }//GEN-LAST:event_btnGenerateActionPerformed
 

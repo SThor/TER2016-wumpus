@@ -11,6 +11,7 @@ import ilog.solver.IlcAnyVar;
 import ilog.solver.IlcConstraint;
 import ilog.solver.IlcSolver;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,10 @@ public class BacktrackSolver extends Solver {
         int i;
         // Add constraints for each observation => observational constraints
         for (i = 0; i < scenario.size(); i++) {
-            solver.add(scenario.get(i).solverConstraint(solver, worldMaps.get(i)));
+            IlcConstraint cons = scenario.get(i).solverConstraint(solver, worldMaps.get(i));
+            if (cons != null) {
+                solver.add(cons);
+            }
         }
         
         IlcConstraint transitionCons = null;
@@ -82,17 +86,21 @@ public class BacktrackSolver extends Solver {
             IlcConstraint instantTransConstraint = null;
             for (Action action : world.getPossibleActions()) {
                 IlcConstraint actionTransConstraint = action.transitionConstraint(solver, worldMaps.get(i-1), worldMaps.get(i));
-                if (instantTransConstraint == null) {
-                    instantTransConstraint = actionTransConstraint;
-                } else {
-                    instantTransConstraint = solver.or(instantTransConstraint, actionTransConstraint);
+                if (actionTransConstraint != null) {
+                    if (instantTransConstraint == null) {
+                        instantTransConstraint = actionTransConstraint;
+                    } else {
+                        instantTransConstraint = solver.or(instantTransConstraint, actionTransConstraint);
+                    }
                 }
             }
             
-            if (transitionCons == null) {
-                transitionCons = instantTransConstraint;
-            } else {
-                transitionCons = solver.and(transitionCons, instantTransConstraint);
+            if (instantTransConstraint != null) {
+                if (transitionCons == null) {
+                    transitionCons = instantTransConstraint;
+                } else {
+                    transitionCons = solver.and(transitionCons, instantTransConstraint);
+                }
             }
         }
         
@@ -119,7 +127,11 @@ public class BacktrackSolver extends Solver {
             transitionCons = solver.or(transitionCons, unchangedConstraint);
         }
         
-        solver.add(transitionCons);
+        if (transitionCons != null) {
+            solver.add(transitionCons);
+        } else {
+            return null; // XXX
+        }
         
         List<IlcAnyVar> flatVarList = new ArrayList<>();
         for (List<IlcAnyVar> list : varList) {
@@ -139,6 +151,8 @@ public class BacktrackSolver extends Solver {
             trajectories.add(traj);
         }
         solver.endSearch();
+        
+        Collections.sort(trajectories); // Sort trajectories in ascending order of number of changes
         
         return trajectories;
     }

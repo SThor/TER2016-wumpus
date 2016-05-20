@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import model.Trajectory;
-import model.TrajectoryStep;
 import model.WorldState;
 
 /**
@@ -32,8 +31,8 @@ public class TrajectoryGraphPanel extends JPanel {
         matrix = new ArrayList[instantCount];
         
         List<WorldState> stateList = new ArrayList<>();
-        for (TrajectoryStep trajectoryStep : trajectory) {
-            WorldState state = trajectoryStep.getState();
+        for (int i = 0; i < trajectory.size(); i++) {
+            WorldState state = trajectory.get(i).getState();
             if (!stateList.contains(state)) {
                 stateList.add(state);
             }
@@ -58,9 +57,9 @@ public class TrajectoryGraphPanel extends JPanel {
         // Add a blank panel at the top-left corner
         c.gridx = 0;
         c.gridy = 0;
-        JPanel blank = new JPanel();
-        blank.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.black));
-        add(blank, c);
+        JLabel lblChangeCount = new JLabel(" Number of changes: "+trajectory.getChangesCount());
+        lblChangeCount.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.black));
+        add(lblChangeCount, c);
         
         JLabel label;
         Font labelFont = new Font("SansSerif", Font.PLAIN, 12);

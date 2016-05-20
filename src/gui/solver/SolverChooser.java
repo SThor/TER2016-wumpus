@@ -7,13 +7,12 @@ package gui.solver;
 
 import gui.general.GeneralUI;
 import ilog.concert.IloException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.World;
 import model.observations.Scenario;
 import solver.Solvers;
 import solver.Solver;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import solver.BacktrackSolver;
 import solver.ExhaustiveSolver;
@@ -125,7 +124,7 @@ public class SolverChooser extends javax.swing.JDialog {
             // TODO: Launch exhaustive solving interface
         } else if (selected instanceof BacktrackSolver) {
             try {
-                new BacktrackSolverResults((BacktrackSolver)selected, (GeneralUI) getParent()).setVisible(true);
+                new BacktrackSolverResults((JFrame)getOwner(), (BacktrackSolver)selected).setVisible(true);
             } catch (IloException ex) {
                 JOptionPane.showMessageDialog(this, "The solver encountered an internal error.", "Solver error", JOptionPane.ERROR_MESSAGE);
             }

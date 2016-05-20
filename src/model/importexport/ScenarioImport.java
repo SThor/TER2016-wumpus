@@ -12,6 +12,7 @@ import model.World;
 import model.exceptions.NoSuchObjectException;
 import model.exceptions.UnknownObservationException;
 import model.observations.And;
+import model.observations.EmptyObservation;
 import model.observations.Not;
 import model.observations.Observation;
 import model.observations.Operation;
@@ -97,6 +98,8 @@ public class ScenarioImport {
                 return importCondition(xmlObservation);
             case "action":
                 return importAction(xmlObservation);
+            case "noObservation":
+                return new EmptyObservation();
             default:
                 throw new UnknownObservationException();
         }

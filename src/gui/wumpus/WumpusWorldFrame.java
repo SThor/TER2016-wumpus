@@ -29,7 +29,7 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
     
     public void setTrajectory(Trajectory trajectory){
         stateList = new ArrayList<>();
-        for (TrajectoryStep trajectoryStep : trajectory) {
+        for (TrajectoryStep trajectoryStep : trajectory.getList()) {
             WorldState state = trajectoryStep.getState();
             if (!stateList.contains(state)) {
                 stateList.add(state);

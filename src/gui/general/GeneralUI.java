@@ -35,6 +35,7 @@ import model.UniqueList;
 import model.World;
 import model.WumpusWorld;
 import model.exceptions.DuplicateElementException;
+import model.observations.EmptyObservation;
 import model.observations.Scenario;
 import org.jdom2.JDOMException;
 
@@ -52,7 +53,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private Condition _postCond;
 
     private World world;
-    private final ScenarioModel scenario;
+    private ScenarioModel scenario;
 
     private File worldFile;
     private File scenarioFile;
@@ -106,6 +107,9 @@ public class GeneralUI extends javax.swing.JFrame {
 
     public void setWorld(World world) {
         this.world = world;
+        Scenario s = new Scenario();
+        s.add(new EmptyObservation());
+        scenario = new ScenarioModel(s, this, world);
         unwarnWorldSave();
         objectTreeModel.setData(this.world);
         propValueListModel.setData(new UniqueList<Integer>());
@@ -113,6 +117,7 @@ public class GeneralUI extends javax.swing.JFrame {
         preCondListModel.setData(new UniqueList<Condition>());
         preCondListModel.setData(new UniqueList<Condition>());
         tabbedPane.setSelectedIndex(0);
+        sliderInstant.setMaximum(scenario.getMaxInstant());
     }
 
     /**

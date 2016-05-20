@@ -5,21 +5,15 @@
  */
 package gui.solver;
 
-import gui.general.GeneralUI;
+import gui.ImageExporter;
 import ilog.concert.IloException;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import model.Trajectory;
 import solver.BacktrackSolver;
 
@@ -27,41 +21,37 @@ import solver.BacktrackSolver;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class BacktrackSolverResults extends javax.swing.JFrame {
-
+public class BacktrackSolverResults extends JDialog {
     private Integer _solution;
     private final List<Trajectory> trajectories;
-    private final GeneralUI parent;
 
     /**
      * Creates new form BacktrackSolverResults
-     *
+     * @param parent
      * @param solver
      * @throws ilog.concert.IloException
      */
-    public BacktrackSolverResults(BacktrackSolver solver, GeneralUI parent) throws IloException {
-        //fixme ! with super(parent); for example. and then it needs some ((GeneralUI)getParent()) wherever I used parent.
-        this.parent = parent;
-
+    public BacktrackSolverResults(JFrame parent, BacktrackSolver solver) throws IloException {
+        super(parent, false);
         trajectories = solver.solve();
         _solution = 0;
-
+        
         initComponents();
-
+        
         for (Trajectory trajectory : trajectories) {
             TrajectoryGraphPanel graphPane = new TrajectoryGraphPanel(trajectory, solver.getInstantCount());
             panelTrajectoryGraph.add(_solution.toString(), new JScrollPane(graphPane));
         }
-
+        
         if (panelTrajectoryGraph.getComponentCount() > 0) {
             panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(0).getPreferredSize());
         } else {
             panelTrajectoryGraph.setPreferredSize(new Dimension(50, 50));
         }
-
+        
         btnNext.setEnabled(!trajectories.isEmpty());
         btnPrevious.setEnabled(!trajectories.isEmpty());
-
+        
         super.setLocationRelativeTo(null);
         super.pack();
     }
@@ -171,95 +161,48 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
     private void btnPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPreviousActionPerformed
         _solution--;
         if (_solution < 0) {
-            _solution = trajectories.size() - 1;
+            _solution = trajectories.size()-1;
         }
         setNavInfo();
-        ((CardLayout) panelTrajectoryGraph.getLayout()).previous(panelTrajectoryGraph);
+        ((CardLayout)panelTrajectoryGraph.getLayout()).previous(panelTrajectoryGraph);
         panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(_solution).getPreferredSize());
-
     }//GEN-LAST:event_btnPreviousActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
         _solution++;
         _solution %= trajectories.size();
         setNavInfo();
-        ((CardLayout) panelTrajectoryGraph.getLayout()).next(panelTrajectoryGraph);
+        ((CardLayout)panelTrajectoryGraph.getLayout()).next(panelTrajectoryGraph);
         panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(_solution).getPreferredSize());
-        warnTrajectory();
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         int count = trajectories.size();
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this, 
                 "The solving terminated successfully\n"
-                + count
-                + (count == 1 ? " solution was found." : " solutions were found."),
+              + count 
+              + (count == 1 ? " solution was found." : " solutions were found."),
                 "Solver information",
                 JOptionPane.INFORMATION_MESSAGE);
-        warnTrajectory();
     }//GEN-LAST:event_formWindowOpened
 
     private void miSaveAsPNGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsPNGActionPerformed
-        saveImageAs("png");
+        ImageExporter.saveImage(this, panelTrajectoryGraph, "png");
     }//GEN-LAST:event_miSaveAsPNGActionPerformed
 
     private void miSaveAsGIFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsGIFActionPerformed
-        saveImageAs("gif");
+        ImageExporter.saveImage(this, panelTrajectoryGraph, "png");
     }//GEN-LAST:event_miSaveAsGIFActionPerformed
 
     private void miSaveAsJPGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsJPGActionPerformed
-        saveImageAs("jpg");
+        ImageExporter.saveImage(this, panelTrajectoryGraph, "png");
     }//GEN-LAST:event_miSaveAsJPGActionPerformed
 
-    private void saveImageAs(String imageType) {
-        String upperImageType = imageType.toUpperCase();
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter(upperImageType + " images", imageType));
-        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-            if (file.exists()) {
-                if (file.getName().endsWith("." + imageType)) {
-                    int confirm = JOptionPane.showConfirmDialog(this,
-                            "This file already exists.\n Override ?",
-                            "Override confirmation",
-                            JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.NO_OPTION) {
-                        return;
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this,
-                            "The selected file is not a " + upperImageType + " file.",
-                            "Saving error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            } else if (!file.getName().endsWith("." + imageType)) {
-                file = new File(file.getAbsolutePath() + "." + imageType);
-            }
-
-            // Capture the panel as image
-            Dimension d = panelTrajectoryGraph.getPreferredSize();
-            BufferedImage image = new BufferedImage(
-                    (int) d.getWidth(),
-                    (int) d.getHeight(),
-                    BufferedImage.TYPE_BYTE_BINARY);
-
-            panelTrajectoryGraph.paint(image.getGraphics());
-            try {
-                ImageIO.write(image, imageType, file);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "An error occured while saving the image file.",
-                        "Saving error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
+    
     private void setNavInfo() {
-        lblNavInfo.setText("Solution  " + (_solution + 1) + " / " + trajectories.size());
+        lblNavInfo.setText("Solution  "+(_solution+1)+" / "+trajectories.size());
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrevious;
@@ -274,10 +217,4 @@ public class BacktrackSolverResults extends javax.swing.JFrame {
     private javax.swing.JPanel panelNav;
     private javax.swing.JPanel panelTrajectoryGraph;
     // End of variables declaration//GEN-END:variables
-
-    private void warnTrajectory() {
-        //fixme
-        //je t'ai mis cette ligne de code dans une méthode à part, pour qu'elle soit mise dans la classe abstraite        
-        parent.setWumpusTrajectory(trajectories.get(_solution));
-    }
 }

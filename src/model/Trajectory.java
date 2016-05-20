@@ -12,34 +12,65 @@ import java.util.Collection;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class Trajectory extends ArrayList<TrajectoryStep> {
-
+public class Trajectory implements Comparable<Trajectory>{
+    private int changesCount;
+    private ArrayList<TrajectoryStep> list;
+    
     private Trajectory(Collection<? extends TrajectoryStep> c) {
-        super(c);
+        list = new ArrayList<>(c);
+        changesCount = 0;
     }
     
     public Trajectory(WorldState startPoint) {
-        super();
-        add(new TrajectoryStep(startPoint, null));
+        list = new ArrayList<>();
+        list.add(new TrajectoryStep(startPoint, null));
+        changesCount = 0;
     }
     
     public Trajectory append(TrajectoryStep step) {
-        Trajectory res =  new Trajectory(this);
+        Trajectory res =  new Trajectory(list);
         res.add(step);
         return res;
     }
     
     public TrajectoryStep last() {
-        return get(size()-1);
+        return list.get(list.size()-1);
     }
 
+    public int size() {
+        return list.size();
+    }
+    
+    public TrajectoryStep get(int index) {
+        return list.get(index);
+    }
+    
+    public void add(TrajectoryStep e) {
+        WorldState last = last().getState();
+        list.add(e);
+        for (int i = 0; i < last.size(); i++) {
+            if (!last.get(i).equals(e.getState().get(i))) {
+                changesCount++;
+            }
+        }
+    }
+
+    public int getChangesCount() {
+        return changesCount;
+    }
+    
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        for (TrajectoryStep step : this) {
+        for (TrajectoryStep step : list) {
             str.append(step);
             str.append('\n');
         }
         return str.toString();
+    }
+    
+    @Override
+    public int compareTo(Trajectory o) {
+        return changesCount - o.changesCount;
     }
 }

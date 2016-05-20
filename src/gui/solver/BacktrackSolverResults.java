@@ -9,16 +9,11 @@ import gui.ImageExporter;
 import ilog.concert.IloException;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import model.Trajectory;
 import solver.BacktrackSolver;
 
@@ -26,16 +21,18 @@ import solver.BacktrackSolver;
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class BacktrackSolverResults extends javax.swing.JFrame {
+public class BacktrackSolverResults extends JDialog {
     private Integer _solution;
     private final List<Trajectory> trajectories;
 
     /**
      * Creates new form BacktrackSolverResults
+     * @param parent
      * @param solver
      * @throws ilog.concert.IloException
      */
-    public BacktrackSolverResults(BacktrackSolver solver) throws IloException {
+    public BacktrackSolverResults(JFrame parent, BacktrackSolver solver) throws IloException {
+        super(parent, false);
         trajectories = solver.solve();
         _solution = 0;
         

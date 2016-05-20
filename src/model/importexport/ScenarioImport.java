@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import model.Action;
+import model.Equality;
 import model.PropertyValue;
 import model.SysObject;
 import model.World;
@@ -94,12 +95,14 @@ public class ScenarioImport {
         switch (xmlObservation.getName()) {
             case "operation":
                 return importOperation(xmlObservation);
-            case "condition":
-                return importCondition(xmlObservation);
+            case "propertyValue":
+                return importPropertyValue(xmlObservation);
             case "action":
                 return importAction(xmlObservation);
             case "noObservation":
                 return new EmptyObservation();
+            case "equality":
+                return importEquality(xmlObservation);
             default:
                 throw new UnknownObservationException();
         }
@@ -138,11 +141,11 @@ public class ScenarioImport {
         return operation;
     }
 
-    private PropertyValue importCondition(Element xmlCondition) throws InterruptedException {
+    private PropertyValue importPropertyValue(Element xmlPropertyValue) throws InterruptedException {
         if(Thread.interrupted()) {
             throw new InterruptedException();
         }
-        String objectName = xmlCondition.getAttributeValue("object");
+        String objectName = xmlPropertyValue.getAttributeValue("object");
         SysObject object = null;
         for (int i = 0; i < world.getObjectCount(); i++) {
             SysObject objectTemp = world.getObjectAt(i);
@@ -157,8 +160,8 @@ public class ScenarioImport {
             throw new NoSuchObjectException(objectName);
         }
 
-        String propertyName = xmlCondition.getAttributeValue("property");
-        String value = xmlCondition.getAttributeValue("value");
+        String propertyName = xmlPropertyValue.getAttributeValue("property");
+        String value = xmlPropertyValue.getAttributeValue("value");
         Integer intValue = Integer.parseInt(value);
         return new PropertyValue(object, propertyName, intValue);
     }
@@ -168,6 +171,45 @@ public class ScenarioImport {
             throw new InterruptedException();
         }
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private Equality importEquality(Element xmlEquality) throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        String objectName = xmlEquality.getAttributeValue("object1");
+        SysObject object1 = null;
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            SysObject objectTemp = world.getObjectAt(i);
+            String tempName = objectTemp.getName();
+            if (tempName.equals(objectName)) {
+                object1 = objectTemp;
+                break;
+            }
+        }
+
+        if (object1 == null) {
+            throw new NoSuchObjectException(objectName);
+        }
+        
+        objectName = xmlEquality.getAttributeValue("object2");
+        SysObject object2 = null;
+        for (int i = 0; i < world.getObjectCount(); i++) {
+            SysObject objectTemp = world.getObjectAt(i);
+            String tempName = objectTemp.getName();
+            if (tempName.equals(objectName)) {
+                object2 = objectTemp;
+                break;
+            }
+        }
+
+        if (object2 == null) {
+            throw new NoSuchObjectException(objectName);
+        }
+        
+        String propertyName1 = xmlEquality.getAttributeValue("property1");
+        String propertyName2 = xmlEquality.getAttributeValue("property2");
+        return new Equality(object2, propertyName1, object2, propertyName2);
     }
 
 }

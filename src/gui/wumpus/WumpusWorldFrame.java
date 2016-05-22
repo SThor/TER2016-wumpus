@@ -52,7 +52,8 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
         panelInstant = new javax.swing.JPanel();
         wumpusWorldPanel = new gui.wumpus.WumpusWorldPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Wumpus World");
 
         panelInstant.setLayout(new java.awt.BorderLayout());
 

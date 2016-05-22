@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import model.Trajectory;
 import model.WorldState;
@@ -75,15 +76,18 @@ public class TrajectoryGraphPanel extends JPanel {
         }
         
         Border noTopBorder = BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black);
+        JTextArea textArea;
         // Add the states labels (left column)
         c.gridx = 0;
         for (WorldState state : matrix[0]) {
             c.gridy++;
-            label = new JLabel(state.toString());
-            label.setHorizontalAlignment(JLabel.CENTER);
-            label.setBorder(noTopBorder);
-            label.setFont(labelFont);
-            add(label, c);
+            textArea = new JTextArea(state.toString());
+            textArea.setEditable(false);
+            textArea.setWrapStyleWord(true);
+            textArea.setBorder(noTopBorder);
+            textArea.setOpaque(false);
+            textArea.setFont(labelFont);
+            add(textArea, c);
         }
         
         // Array content (draw the matrix)

@@ -7,6 +7,8 @@ package gui.solver;
 
 import gui.general.GeneralUI;
 import ilog.concert.IloException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.World;
 import model.observations.Scenario;
 import solver.Solvers;
@@ -120,16 +122,11 @@ public class SolverChooser extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        if(selected instanceof ExhaustiveSolver) {
-            // TODO: Launch exhaustive solving interface
-        } else if (selected instanceof BacktrackSolver) {
-            try {
-                new BacktrackSolverResults((JFrame)getOwner(), (BacktrackSolver)selected).setVisible(true);
-            } catch (IloException ex) {
-                JOptionPane.showMessageDialog(this, "The solver encountered an internal error.", "Solver error", JOptionPane.ERROR_MESSAGE);
-            }
+        try {
+            new SolverResults((JFrame)getOwner(), selected).setVisible(true);
+        } catch (IloException ex) {
+            JOptionPane.showMessageDialog(this, "The solver encountered an internal error.", "Solver error", JOptionPane.ERROR_MESSAGE);
         }
-        // XXX: add new solver algorithm UI's here
         dispose();
     }//GEN-LAST:event_btnStartActionPerformed
 

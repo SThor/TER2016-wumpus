@@ -16,7 +16,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
+import model.Action;
 import model.Trajectory;
+import model.TrajectoryStep;
 import model.WorldState;
 
 /**
@@ -25,21 +27,26 @@ import model.WorldState;
  */
 public class TrajectoryGraphPanel extends JPanel {
     private final Trajectory trajectory;
-    private final List<WorldState>[] matrix;
+    private final List<TrajectoryStep>[] matrix;
+    private final boolean showActions;
 
-    public TrajectoryGraphPanel(Trajectory trajectory, int instantCount) {
+    public TrajectoryGraphPanel(Trajectory trajectory, boolean showActions) {
         this.trajectory = trajectory;
-        matrix = new ArrayList[instantCount];
+        matrix = new ArrayList[trajectory.size()];
+        this.showActions = showActions;
         
         List<WorldState> stateList = new ArrayList<>();
+        List<TrajectoryStep> steps = new ArrayList<>();
         for (int i = 0; i < trajectory.size(); i++) {
-            WorldState state = trajectory.get(i).getState();
+            TrajectoryStep step = trajectory.get(i);
+            WorldState state = step.getState();
             if (!stateList.contains(state)) {
                 stateList.add(state);
+                steps.add(step);
             }
         }
         for (int i = 0; i < matrix.length; i++) {
-            matrix[i] = stateList;
+            matrix[i] = steps;
         }
         
         initLayout();
@@ -77,11 +84,17 @@ public class TrajectoryGraphPanel extends JPanel {
         
         Border noTopBorder = BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black);
         JTextArea textArea;
+        String text;
         // Add the states labels (left column)
         c.gridx = 0;
-        for (WorldState state : matrix[0]) {
+        for (TrajectoryStep step : matrix[0]) {
             c.gridy++;
-            textArea = new JTextArea(state.toString());
+            text = step.getState().toString();
+            if (showActions) {
+                Action a = step.getAction();
+                text += "\n("+ (a == null ? "No Action" : ("Action: "+a)) +")";
+            }
+            textArea = new JTextArea(text);
             textArea.setEditable(false);
             textArea.setWrapStyleWord(true);
             textArea.setBorder(noTopBorder);
@@ -93,10 +106,10 @@ public class TrajectoryGraphPanel extends JPanel {
         // Array content (draw the matrix)
         c.gridx = 1;
         for (int i = 0; i < matrix.length; i++) {
-            List<WorldState> allStates = matrix[i];
+            List<TrajectoryStep> allSteps = matrix[i];
             c.gridy = 1;
-            for (WorldState state : allStates) {
-                TrajectoryMatrixPanel panel = new TrajectoryMatrixPanel(state.equals(trajectory.get(i).getState()));
+            for (TrajectoryStep step : allSteps) {
+                TrajectoryMatrixPanel panel = new TrajectoryMatrixPanel(step.getState().equals(trajectory.get(i).getState()));
                 add(panel, c);
                 c.gridy++;
             }

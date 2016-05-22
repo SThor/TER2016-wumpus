@@ -45,40 +45,22 @@ public class WorldExport {
      * opening
      */
     public void exportAll() throws IOException {
-        root.addContent(exportObjects());
-        root.addContent(exportActions());
-        save(file);
-    }
-
-    private Element exportObjects() {
-        Element objects = new Element("objects");
-
         for (int i = 0; i < world.getObjectCount(); i++) {
-            objects.addContent(exportObject(world.getObjectAt(i)));
+            root.addContent(exportObject(world.getObjectAt(i)));
         }
-
-        return objects;
-    }
-
-    private Element exportActions() {
-        Element actions = new Element("actions");
-
         for (Action action : world.getPossibleActions()) {
-            actions.addContent(exportAction(action));
+            root.addContent(exportAction(action));
         }
-
-        return actions;
+        save(file);
     }
 
     private Element exportObject(SysObject object) {
         Element xmlObject = new Element("object");
         xmlObject.setAttribute("name", object.getName());
 
-        Element xmlProperties = new Element("properties");
         for (int i = 0; i < object.getPropertyCount(); i++) {
-            xmlProperties.addContent(exportProperty(object.getPropertyAt(i)));
+            xmlObject.addContent(exportProperty(object.getPropertyAt(i)));
         }
-        xmlObject.addContent(xmlProperties);
 
         return xmlObject;
     }
@@ -87,13 +69,11 @@ public class WorldExport {
         Element xmlProperty = new Element("property");
         xmlProperty.setAttribute("name", property.getName());
 
-        Element xmlValues = new Element("values");
         for (Integer value : property.getPossibleValues()) {
             Element xmlValue = new Element("value");
             xmlValue.setAttribute("name", value.toString());
-            xmlValues.addContent(xmlValue);
+            xmlProperty.addContent(xmlValue);
         }
-        xmlProperty.addContent(xmlValues);
 
         return xmlProperty;
     }

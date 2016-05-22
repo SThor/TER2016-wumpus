@@ -226,7 +226,7 @@ public class World {
                     return action;
                 }
             }
-            return new Action("No_Action");
+            return null;
         }
     }
 }

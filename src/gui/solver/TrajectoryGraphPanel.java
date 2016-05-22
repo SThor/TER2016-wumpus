@@ -90,9 +90,8 @@ public class TrajectoryGraphPanel extends JPanel {
         for (TrajectoryStep step : matrix[0]) {
             c.gridy++;
             text = step.getState().toString();
-            if (showActions) {
-                Action a = step.getAction();
-                text += "\n("+ (a == null ? "No Action" : ("Action: "+a)) +")";
+            if (showActions && step.getAction() != null) {
+                text += "\n(Action: "+ step.getAction() +")";
             }
             textArea = new JTextArea(text);
             textArea.setEditable(false);

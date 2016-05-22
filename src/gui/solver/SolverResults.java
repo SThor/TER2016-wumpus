@@ -15,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import model.Trajectory;
-import solver.BacktrackSolver;
 import solver.ExhaustiveSolver;
 import solver.Solver;
 

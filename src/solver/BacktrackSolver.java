@@ -186,8 +186,4 @@ public class BacktrackSolver extends Solver {
         
         return state;
     }
-    
-    public int getInstantCount() {
-        return worldMaps.size();
-    }
 }

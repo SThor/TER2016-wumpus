@@ -16,12 +16,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import model.Trajectory;
 import solver.BacktrackSolver;
+import solver.ExhaustiveSolver;
+import solver.Solver;
 
 /**
  *
  * @author Paul Givel and Guillaume Hartenstein
  */
-public class BacktrackSolverResults extends JDialog {
+public class SolverResults extends JDialog {
     private Integer _solution;
     private final List<Trajectory> trajectories;
 
@@ -31,7 +33,7 @@ public class BacktrackSolverResults extends JDialog {
      * @param solver
      * @throws ilog.concert.IloException
      */
-    public BacktrackSolverResults(JFrame parent, BacktrackSolver solver) throws IloException {
+    public SolverResults(JFrame parent, Solver solver) throws IloException {
         super(parent, false);
         trajectories = solver.solve();
         _solution = 0;
@@ -39,7 +41,7 @@ public class BacktrackSolverResults extends JDialog {
         initComponents();
         
         for (Trajectory trajectory : trajectories) {
-            TrajectoryGraphPanel graphPane = new TrajectoryGraphPanel(trajectory, solver.getInstantCount());
+            TrajectoryGraphPanel graphPane = new TrajectoryGraphPanel(trajectory, solver instanceof ExhaustiveSolver);
             panelTrajectoryGraph.add(_solution.toString(), new JScrollPane(graphPane));
         }
         

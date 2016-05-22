@@ -78,6 +78,7 @@ public class ExhaustiveSolver extends Solver {
             desc.append(formatter.format(possibleTrajectoriesCount));
             desc.append(" possible trajectories.\n");
         }
+        desc.append("Note that this algorithm is limited to single actions between two instants. Sequences of actions are not supported.");
         
         description = desc.toString();
     }

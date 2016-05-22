@@ -2,6 +2,7 @@ package model.importexport;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import model.Action;
 import model.PropertyValue;
 import model.ObjectProperty;
@@ -30,43 +31,43 @@ public class WorldImport {
         xmlFile = sxb.build(file.toFile());
         root = xmlFile.getRootElement();
 
-        importObjects(root.getChild("objects"));
-        importActions(root.getChild("actions"));
+        importObjects(root.getChildren("object"));
+        importActions(root.getChildren("action"));
 
         return world;
     }
 
-    private void importObjects(Element xmlObjects) {
-        for (Element xmlObject : xmlObjects.getChildren()) {
+    private void importObjects(List<Element> xmlObjects) {
+        for (Element xmlObject : xmlObjects) {
             String name = xmlObject.getAttributeValue("name");
             SysObject object = new SysObject(name, world);
-            importProperties(object, xmlObject.getChild("properties"));
+            importProperties(object, xmlObject.getChildren("property"));
 
             world.addObject(object);
         }
     }
 
-    private void importProperties(SysObject object, Element xmlPoperties) {
-        for (Element xmlProperty : xmlPoperties.getChildren()) {
+    private void importProperties(SysObject object, List<Element> xmlPoperties) {
+        for (Element xmlProperty : xmlPoperties) {
             String name = xmlProperty.getAttributeValue("name");
             ObjectProperty property = new ObjectProperty(name);
 
-            importPropertyValues(property, xmlProperty.getChild("values"));
+            importPropertyValues(property, xmlProperty.getChildren("value"));
 
             object.addProperty(property);
         }
     }
 
-    private void importPropertyValues(ObjectProperty property, Element xmlValues) {
-        for (Element xmlValue : xmlValues.getChildren()) {
+    private void importPropertyValues(ObjectProperty property, List<Element> xmlValues) {
+        for (Element xmlValue : xmlValues) {
             String value = xmlValue.getAttributeValue("name");
             Integer intValue = Integer.parseInt(value);
             property.addPossibleValue(intValue);
         }
     }
 
-    private void importActions(Element xmlActions) {
-        for (Element xmlAction : xmlActions.getChildren()) {
+    private void importActions(List<Element> xmlActions) {
+        for (Element xmlAction : xmlActions) {
             String name = xmlAction.getAttributeValue("name");
             Action action = new Action(name);
 

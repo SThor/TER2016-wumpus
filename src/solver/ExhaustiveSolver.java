@@ -140,7 +140,6 @@ public class ExhaustiveSolver extends Solver {
         
         List<Trajectory> toAdd;
         for (i = 1; i < scenario.size(); i++) {
-            Observation obs = scenario.get(i);
             toAdd = new ArrayList<>();
             for (Iterator<Trajectory> it = trajectories.iterator(); it.hasNext();) {
                 Trajectory traj = it.next();

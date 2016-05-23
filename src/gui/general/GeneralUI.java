@@ -37,6 +37,7 @@ import model.UniqueList;
 import model.World;
 import model.WumpusWorld;
 import model.exceptions.DuplicateElementException;
+import model.importexport.ScenarioExport;
 import model.observations.EmptyObservation;
 import model.observations.Scenario;
 import org.jdom2.JDOMException;
@@ -1144,13 +1145,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void saveScenarioXml(File file) {
         try {
-            Path path = Paths.get(file.getAbsolutePath());
-            Files.delete(path);
-            Files.createFile(path);
-            Files.write(path,
-                    epXmlScenario.getText().getBytes(),
-                    StandardOpenOption.WRITE);
-            scenarioFile = file;
+            new ScenarioExport(Paths.get(file.getAbsolutePath()), scenario.getScenario()).exportAll();
             unwarnScenarioSave();
         } catch (IOException ex) {
             promptError("Error while writing in file " + file.getName(), "Saving error");

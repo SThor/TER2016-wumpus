@@ -739,6 +739,7 @@ public class GeneralUI extends javax.swing.JFrame {
             } catch (DuplicateElementException e) {
                 promptError("The object \"" + name + "\" already exists in the world.",
                         "Cannot create new object");
+                btnAddObjectActionPerformed(evt);
             }
         }
     }//GEN-LAST:event_btnAddObjectActionPerformed
@@ -753,12 +754,13 @@ public class GeneralUI extends javax.swing.JFrame {
             } catch (DuplicateElementException e) {
                 promptError("The property \"" + name + "\" already exists in object \"" + _object + "\".",
                         "Cannot create new property");
+                btnAddPropActionPerformed(evt);
             }
         }
     }//GEN-LAST:event_btnAddPropActionPerformed
 
     private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
-        String message = "Name of the new value for property \"" + _property + "\" in object \"" + _object + "\":";
+        String message = "Number for the new value for property \"" + _property + "\" in object \"" + _object + "\":";
         String value = nameInput(message, "Adding a value");
         if (value != null) {
             try {
@@ -768,6 +770,11 @@ public class GeneralUI extends javax.swing.JFrame {
             } catch (DuplicateElementException e) {
                 promptError("The value \"" + value + "\" already exists in property \"" + _property + "\" of object \"" + _object + "\".",
                         "Cannot create new value");
+                btnAddValueActionPerformed(evt);
+                
+            } catch (NumberFormatException e) {
+                promptError("Please enter an integer value.", "Wrong input");
+                btnAddValueActionPerformed(evt);
             }
         }
     }//GEN-LAST:event_btnAddValueActionPerformed

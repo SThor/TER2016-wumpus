@@ -38,6 +38,7 @@ public class ScenarioImport {
 
     /**
      * Creates a new import object
+     *
      * @param world World in which the scenario import takes place
      */
     public ScenarioImport(World world) {
@@ -46,11 +47,15 @@ public class ScenarioImport {
 
     /**
      * Starts the importation of the scenario to the specified file
+     *
      * @param file Path to the xml origin file
      * @return A scenario built from the file
-     * @throws IOException Exception thrown if there is a problem reading the file
-     * @throws JDOMException Exception thrown if there is a problem with the xml structure of the file
-     * @throws java.lang.InterruptedException If the current thread has been interrupted
+     * @throws IOException Exception thrown if there is a problem reading the
+     * file
+     * @throws JDOMException Exception thrown if there is a problem with the xml
+     * structure of the file
+     * @throws java.lang.InterruptedException If the current thread has been
+     * interrupted
      */
     public Scenario importAll(Path file) throws IOException, JDOMException, InterruptedException {
         scenario = new Scenario();
@@ -65,31 +70,35 @@ public class ScenarioImport {
 
         return scenario;
     }
-    
+
     /**
      * Starts the importation of a single observation
+     *
      * @param observationString The xml observation to import
      * @return The observation built from the String
-     * @throws JDOMException Exception thrown if there is a problem with the xml structure of the string
-     * @throws IOException Exception thrown if there is a problem reading the string
-     * @throws java.lang.InterruptedException If the current thread has been interrupted
+     * @throws JDOMException Exception thrown if there is a problem with the xml
+     * structure of the string
+     * @throws IOException Exception thrown if there is a problem reading the
+     * string
+     * @throws java.lang.InterruptedException If the current thread has been
+     * interrupted
      */
-    public synchronized Observation importOne(String observationString) 
-    throws JDOMException, IOException, InterruptedException {
-        if(Thread.interrupted()) {
+    public synchronized Observation importOne(String observationString)
+            throws JDOMException, IOException, InterruptedException {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
         SAXBuilder sxb = new SAXBuilder();
         xmlFile = sxb.build(new StringReader(observationString));
         root = xmlFile.getRootElement();
-        
+
         Observation observation = importObservation(root);
 
         return observation;
     }
 
     private Observation importObservation(Element xmlObservation) throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
         switch (xmlObservation.getName()) {
@@ -109,16 +118,23 @@ public class ScenarioImport {
     }
 
     private Operation importOperation(Element xmlOperation) throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
         Operation operation;
         List<Observation> observations = new ArrayList<>();
         for (Element xmlObservation : xmlOperation.getChildren()) {
-            observations.add(importObservation(xmlObservation));
+            Observation observation = importObservation(xmlObservation);
+            if(observation == null){
+                return null;
+            }
+            observations.add(observation);
         }
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
+        }
+        if (observations.isEmpty()) {
+            return null;
         }
         Observation[] observationsArray = new Observation[observations.size()];
         for (int i = 0; i < observationsArray.length; i++) {
@@ -142,7 +158,7 @@ public class ScenarioImport {
     }
 
     private PropertyValue importPropertyValue(Element xmlPropertyValue) throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
         String objectName = xmlPropertyValue.getAttributeValue("object");
@@ -167,14 +183,14 @@ public class ScenarioImport {
     }
 
     private Action importAction(Element xmlAction) throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private Equality importEquality(Element xmlEquality) throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
         String objectName = xmlEquality.getAttributeValue("object1");
@@ -191,7 +207,7 @@ public class ScenarioImport {
         if (object1 == null) {
             throw new NoSuchObjectException(objectName);
         }
-        
+
         objectName = xmlEquality.getAttributeValue("object2");
         SysObject object2 = null;
         for (int i = 0; i < world.getObjectCount(); i++) {
@@ -206,10 +222,10 @@ public class ScenarioImport {
         if (object2 == null) {
             throw new NoSuchObjectException(objectName);
         }
-        
+
         String propertyName1 = xmlEquality.getAttributeValue("property1");
         String propertyName2 = xmlEquality.getAttributeValue("property2");
-        return new Equality(object2, propertyName1, object2, propertyName2);
+        return new Equality(object1, propertyName1, object2, propertyName2);
     }
 
 }

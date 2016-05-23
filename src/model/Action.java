@@ -294,7 +294,6 @@ public class Action implements Observation {
         }
         
         IlcConstraint transitionConstraint = solver.imply(preCondConstraint, postCondConstraint);
-        
         // Now we need to declare that all property not modified by this action must stay
         // equal between the two states
         for (Map.Entry<SysObject, Map<String, IlcAnyVar>> objectEntry : worldMapBefore.entrySet()) {
@@ -303,8 +302,8 @@ public class Action implements Observation {
             for (Map.Entry<String, IlcAnyVar> propEntry : objectMap.entrySet()) {
                 String propKey = propEntry.getKey();
                 IlcAnyVar var = propEntry.getValue();
-                // If the property is not concerned by the action, constrain to equality
-                if (!concernedProperties.contains(propKey)) {
+                // If the value of the property is not changed by the action, constrain to equality
+                if (!isValueCanged(objectKey, propKey)) {
                     transitionConstraint = solver.and(transitionConstraint, solver.eq(var, worldMapAfter.get(objectKey).get(propKey)));
                 }
             }
@@ -312,5 +311,40 @@ public class Action implements Observation {
         }
         
         return transitionConstraint;
+    }
+    
+    /**
+     * Checks wether the value of a property is modified by this action
+     * @param object
+     * @param property
+     * @return 
+     */
+    private boolean isValueCanged(SysObject object, String property) {
+        Integer preCondValue = null;
+        Integer postCondValue = null;
+        
+        for (Condition preCondition : preConditions) {
+            if (preCondition.getObject().equals(object) && preCondition.getPropertyName().equals(property)) {
+                if (preCondition instanceof Equality) {
+                    Equality eq = (Equality) preCondition;
+                    preCondValue = eq.getSecondObject().hashCode() + eq.getSecondPropertyName().hashCode();
+                } else if (preCondition instanceof PropertyValue) {
+                    preCondValue = ((PropertyValue)preCondition).getWantedValue();
+                }
+            }
+        }
+        
+        for (Condition postCondition : postConditions) {
+            if (postCondition.getObject().equals(object) && postCondition.getPropertyName().equals(property)) {
+                if (postCondition instanceof Equality) {
+                    Equality eq = (Equality) postCondition;
+                    postCondValue = eq.getSecondObject().hashCode() + eq.getSecondPropertyName().hashCode();
+                } else if (postCondition instanceof PropertyValue) {
+                    postCondValue = ((PropertyValue)postCondition).getWantedValue();
+                }
+            }
+        }
+        
+        return preCondValue != null && postCondValue != null && !preCondValue.equals(postCondValue);
     }
 }

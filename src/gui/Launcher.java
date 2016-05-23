@@ -59,8 +59,18 @@ public class Launcher {
         openDoor.addPostCondition(new PropertyValue(person, "position", 3));
         openDoor.addPostCondition(new PropertyValue(door, "isOpened", 1));
         
+        Action standUp = new Action("Stand_Up");
+        standUp.addPreCondition(new PropertyValue(person, "position", 2));
+        standUp.addPostCondition(new PropertyValue(person, "position", 1));
+        
+        Action moveToDoor = new Action("Move_To_Door");
+        moveToDoor.addPreCondition(new PropertyValue(person, "position", 1));
+        moveToDoor.addPostCondition(new PropertyValue(person, "position", 3));
+        
         world.addPossibleAction(openDoor);
         world.addPossibleAction(closeDoor);
+        world.addPossibleAction(standUp);
+        world.addPossibleAction(moveToDoor);
         
         //------------------//
         

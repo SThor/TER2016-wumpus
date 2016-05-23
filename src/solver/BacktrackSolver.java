@@ -67,94 +67,100 @@ public class BacktrackSolver extends Solver {
     @Override
     public List<Trajectory> solve() throws IloException {
         if (scenario.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
         
-        int i;
-        // Add constraints for each observation => observational constraints
-        for (i = 0; i < scenario.size(); i++) {
-            IlcConstraint cons = scenario.get(i).solverConstraint(solver, worldMaps.get(i));
-            if (cons != null) {
-                solver.add(cons);
+        try {
+        
+            int i;
+            // Add constraints for each observation => observational constraints
+            for (i = 0; i < scenario.size(); i++) {
+                IlcConstraint cons = scenario.get(i).solverConstraint(solver, worldMaps.get(i));
+                if (cons != null) {
+                    solver.add(cons);
+                }
             }
-        }
-        
-        IlcConstraint transitionCons = null;
-        // Add constraints for each transition (is there an action which allows the transition ?)
-        // => transitional constraints
-        for (i = 1; i < scenario.size(); i++) {
-            IlcConstraint instantTransConstraint = null;
-            for (Action action : world.getPossibleActions()) {
-                IlcConstraint actionTransConstraint = action.transitionConstraint(solver, worldMaps.get(i-1), worldMaps.get(i));
-                if (actionTransConstraint != null) {
-                    if (instantTransConstraint == null) {
-                        instantTransConstraint = actionTransConstraint;
+
+            IlcConstraint transitionCons = null;
+            // Add constraints for each transition (is there an action which allows the transition ?)
+            // => transitional constraints
+            for (i = 1; i < scenario.size(); i++) {
+                IlcConstraint instantTransConstraint = null;
+                for (Action action : world.getPossibleActions()) {
+                    IlcConstraint actionTransConstraint = action.transitionConstraint(solver, worldMaps.get(i-1), worldMaps.get(i));
+                    if (actionTransConstraint != null) {
+                        if (instantTransConstraint == null) {
+                            instantTransConstraint = actionTransConstraint;
+                        } else {
+                            instantTransConstraint = solver.or(instantTransConstraint, actionTransConstraint);
+                        }
+                    }
+                }
+
+                if (instantTransConstraint != null) {
+                    if (transitionCons == null) {
+                        transitionCons = instantTransConstraint;
                     } else {
-                        instantTransConstraint = solver.or(instantTransConstraint, actionTransConstraint);
+                        transitionCons = solver.and(transitionCons, instantTransConstraint);
                     }
                 }
             }
+
+            // Add the possibility of "unchanged"
+            IlcConstraint unchangedConstraint = null;
+            for (i = 1; i< worldMaps.size(); i++) {
+                for (Map.Entry<SysObject, Map<String, IlcAnyVar>> worldEntry : worldMaps.get(i-1).entrySet()) {
+                    SysObject objectKey = worldEntry.getKey();
+                    Map<String, IlcAnyVar> objectMap = worldEntry.getValue();
+                    for (Map.Entry<String, IlcAnyVar> objectEntry : objectMap.entrySet()) {
+                        String propKey = objectEntry.getKey();
+                        IlcAnyVar var = objectEntry.getValue();
+                        IlcConstraint constraint = solver.eq(var, worldMaps.get(i).get(objectKey).get(propKey));
+                        if (unchangedConstraint == null) {
+                            unchangedConstraint = constraint;
+                        } else {
+                            unchangedConstraint = solver.and(unchangedConstraint, constraint);
+                        }
+                    }
+                }
+            }
+
+            if (unchangedConstraint != null) {
+                transitionCons = solver.or(transitionCons, unchangedConstraint);
+            }
+
+            if (transitionCons != null) {
+                solver.add(transitionCons);
+            } else {
+                return new ArrayList<>();
+            }
+
+            List<IlcAnyVar> flatVarList = new ArrayList<>();
+            for (List<IlcAnyVar> list : varList) {
+                for (IlcAnyVar var : list) {
+                    flatVarList.add(var);
+                }
+            }
+
+            List<Trajectory> trajectories = new ArrayList<>();
+
+            solver.newSearch(solver.generate(flatVarList.toArray(new IlcAnyVar[flatVarList.size()])));
+            while (solver.next()) {
+                Trajectory traj = new Trajectory(mapToState(0));
+                for (i = 1; i < worldMaps.size(); i++) {
+                    traj.add(new TrajectoryStep(mapToState(i), null));
+                }
+                trajectories.add(traj);
+            }
+            solver.endSearch();
+
+            Collections.sort(trajectories); // Sort trajectories in ascending order of number of changes
+
+            return trajectories;
             
-            if (instantTransConstraint != null) {
-                if (transitionCons == null) {
-                    transitionCons = instantTransConstraint;
-                } else {
-                    transitionCons = solver.and(transitionCons, instantTransConstraint);
-                }
-            }
+        } catch (NullPointerException ex) {
+            return new ArrayList<>();
         }
-        
-        // Add the possibility of "unchanged"
-        IlcConstraint unchangedConstraint = null;
-        for (i = 1; i< worldMaps.size(); i++) {
-            for (Map.Entry<SysObject, Map<String, IlcAnyVar>> worldEntry : worldMaps.get(i-1).entrySet()) {
-                SysObject objectKey = worldEntry.getKey();
-                Map<String, IlcAnyVar> objectMap = worldEntry.getValue();
-                for (Map.Entry<String, IlcAnyVar> objectEntry : objectMap.entrySet()) {
-                    String propKey = objectEntry.getKey();
-                    IlcAnyVar var = objectEntry.getValue();
-                    IlcConstraint constraint = solver.eq(var, worldMaps.get(i).get(objectKey).get(propKey));
-                    if (unchangedConstraint == null) {
-                        unchangedConstraint = constraint;
-                    } else {
-                        unchangedConstraint = solver.and(unchangedConstraint, constraint);
-                    }
-                }
-            }
-        }
-        
-        if (unchangedConstraint != null) {
-            transitionCons = solver.or(transitionCons, unchangedConstraint);
-        }
-        
-        if (transitionCons != null) {
-            solver.add(transitionCons);
-        } else {
-            return null; // XXX
-        }
-        
-        List<IlcAnyVar> flatVarList = new ArrayList<>();
-        for (List<IlcAnyVar> list : varList) {
-            for (IlcAnyVar var : list) {
-                flatVarList.add(var);
-            }
-        }
-        
-        List<Trajectory> trajectories = new ArrayList<>();
-        
-        solver.newSearch(solver.generate(flatVarList.toArray(new IlcAnyVar[flatVarList.size()])));
-        while (solver.next()) {
-            Trajectory traj = new Trajectory(mapToState(0));
-            for (i = 1; i < worldMaps.size(); i++) {
-                traj.add(new TrajectoryStep(mapToState(i), null));
-            }
-            trajectories.add(traj);
-        }
-        solver.endSearch();
-        
-        Collections.sort(trajectories); // Sort trajectories in ascending order of number of changes
-        
-        return trajectories;
     }
 
     @Override

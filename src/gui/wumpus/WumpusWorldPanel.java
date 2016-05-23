@@ -1,5 +1,6 @@
 package gui.wumpus;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.List;
@@ -54,10 +55,13 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
 
     public void setStateList(List<WorldState> stateList) {
         this.stateList = stateList;
+        instant = 0;
         initComponents();
     }
 
     private void initComponents() {
+        removeAll();
+        panelHolder = null;
         if (wumpusWorld != null) {
             int worldHeight = wumpusWorld.getHeight();
             int worldWidth = wumpusWorld.getWidth();
@@ -66,6 +70,7 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
             for (int i = 0; i < worldHeight; i++) {
                 for (int j = 0; j < worldWidth; j++) {
                     panelHolder[i][j] = new JPanel();
+                    panelHolder[i][j].setLayout(new GridLayout(2, 2));
                     panelHolder[i][j].setBorder(new LineBorder(Color.BLACK));
                     add(panelHolder[i][j]);
                 }
@@ -126,12 +131,14 @@ public class WumpusWorldPanel extends javax.swing.JPanel {
                         }
                     }
                 }
-                panelHolder[xAgent][yAgent].add(new AgentPanel(this, xAgent, yAgent, agentAlive, hasGold, hasShot));
-                panelHolder[xWumpus][yWumpus].add(new WumpusPanel(this, xWumpus, yWumpus, wumpusAlive));
-                panelHolder[xGold][yGold].add(new GoldPanel(this, xGold, yGold, isPickedUp));
-                panelHolder[xPit][yPit].add(new PitPanel(this, xPit, yPit));
+                panelHolder[yAgent][xAgent].add(new AgentPanel(this, xAgent, yAgent, agentAlive, hasGold, hasShot));
+                panelHolder[yWumpus][xWumpus].add(new WumpusPanel(this, xWumpus, yWumpus, wumpusAlive));
+                panelHolder[yGold][xGold].add(new GoldPanel(this, xGold, yGold, isPickedUp));
+                panelHolder[yPit][xPit].add(new PitPanel(this, xPit, yPit));
             }
         }
+    revalidate();
+    repaint();
     }
 
 }

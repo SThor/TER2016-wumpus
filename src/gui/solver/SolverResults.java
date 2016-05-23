@@ -6,6 +6,7 @@
 package gui.solver;
 
 import gui.ImageExporter;
+import gui.general.GeneralUI;
 import ilog.concert.IloException;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -165,6 +166,7 @@ public class SolverResults extends JDialog {
             _solution = trajectories.size()-1;
         }
         setNavInfo();
+        ((GeneralUI)getParent()).setWumpusTrajectory(trajectories.get(_solution));
         ((CardLayout)panelTrajectoryGraph.getLayout()).previous(panelTrajectoryGraph);
         panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(_solution).getPreferredSize());
     }//GEN-LAST:event_btnPreviousActionPerformed
@@ -173,6 +175,7 @@ public class SolverResults extends JDialog {
         _solution++;
         _solution %= trajectories.size();
         setNavInfo();
+        ((GeneralUI)getParent()).setWumpusTrajectory(trajectories.get(_solution));
         ((CardLayout)panelTrajectoryGraph.getLayout()).next(panelTrajectoryGraph);
         panelTrajectoryGraph.setPreferredSize(panelTrajectoryGraph.getComponent(_solution).getPreferredSize());
     }//GEN-LAST:event_btnNextActionPerformed
@@ -184,7 +187,8 @@ public class SolverResults extends JDialog {
               + count 
               + (count == 1 ? " solution was found." : " solutions were found."),
                 "Solver information",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.INFORMATION_MESSAGE);        
+        ((GeneralUI)getParent()).setWumpusTrajectory(trajectories.get(_solution));
     }//GEN-LAST:event_formWindowOpened
 
     private void miSaveAsPNGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsPNGActionPerformed

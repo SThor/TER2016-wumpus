@@ -5,21 +5,17 @@
  */
 package gui.general;
 
-import ilog.solver.IlcAnyVar;
-import ilog.solver.IlcConstraint;
-import ilog.solver.IlcSolver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import javax.swing.SwingUtilities;
-import model.SysObject;
 import model.World;
-import model.WorldState;
 import model.exceptions.NoSuchObjectException;
 import model.exceptions.NoSuchPropertyException;
 import model.exceptions.NoSuchValueException;
+import model.exceptions.UnknownObservationException;
+import model.exceptions.UnknownOperationException;
 import model.importexport.ScenarioExport;
 import model.importexport.ScenarioImport;
 import model.observations.EmptyObservation;
@@ -100,12 +96,11 @@ public class ScenarioModel {
             public void run() {
                 Observation newObs;
                 try {
-                    //Thread.sleep(1000); // Wait 1 second before starting to process XML
                     ScenarioImport importer = new ScenarioImport(world);
                     newObs = importer.importOne(xml);
                 } catch (InterruptedException e) {
                     return;
-                } catch (JDOMException e) {
+                } catch (JDOMException | NumberFormatException | UnknownObservationException | UnknownOperationException | NullPointerException e) {
                     parent.xmlSyntaxError();
                     return;
                 } catch (IOException e) {

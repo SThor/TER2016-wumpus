@@ -12,8 +12,10 @@ import model.importexport.WorldImport;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JFileChooser;
@@ -35,6 +37,7 @@ import model.UniqueList;
 import model.World;
 import model.WumpusWorld;
 import model.exceptions.DuplicateElementException;
+import model.importexport.ScenarioExport;
 import model.observations.EmptyObservation;
 import model.observations.Scenario;
 import org.jdom2.JDOMException;
@@ -736,6 +739,7 @@ public class GeneralUI extends javax.swing.JFrame {
             } catch (DuplicateElementException e) {
                 promptError("The object \"" + name + "\" already exists in the world.",
                         "Cannot create new object");
+                btnAddObjectActionPerformed(evt);
             }
         }
     }//GEN-LAST:event_btnAddObjectActionPerformed
@@ -750,12 +754,13 @@ public class GeneralUI extends javax.swing.JFrame {
             } catch (DuplicateElementException e) {
                 promptError("The property \"" + name + "\" already exists in object \"" + _object + "\".",
                         "Cannot create new property");
+                btnAddPropActionPerformed(evt);
             }
         }
     }//GEN-LAST:event_btnAddPropActionPerformed
 
     private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
-        String message = "Name of the new value for property \"" + _property + "\" in object \"" + _object + "\":";
+        String message = "Number for the new value for property \"" + _property + "\" in object \"" + _object + "\":";
         String value = nameInput(message, "Adding a value");
         if (value != null) {
             try {
@@ -765,6 +770,11 @@ public class GeneralUI extends javax.swing.JFrame {
             } catch (DuplicateElementException e) {
                 promptError("The value \"" + value + "\" already exists in property \"" + _property + "\" of object \"" + _object + "\".",
                         "Cannot create new value");
+                btnAddValueActionPerformed(evt);
+                
+            } catch (NumberFormatException e) {
+                promptError("Please enter an integer value.", "Wrong input");
+                btnAddValueActionPerformed(evt);
             }
         }
     }//GEN-LAST:event_btnAddValueActionPerformed
@@ -969,9 +979,12 @@ public class GeneralUI extends javax.swing.JFrame {
                     int caretPos = document.createPosition(epXmlScenario.getCaretPosition()).getOffset();
                     String toInsert = null;
                     int lengthToRemove = 0;
-                    if (document.getText(caretPos - 4, 4).equals("cond")) {
+                    if (document.getText(caretPos - 4, 4).equals("prop")) {
                         lengthToRemove = 4;
-                        toInsert = "<condition object=\"\" property=\"\" value=\"\" />";
+                        toInsert = "<propertyValue object=\"\" property=\"\" value=\"\" />";
+                    } else if (document.getText(caretPos - 2, 2).equals("eq")) {
+                        lengthToRemove = 2;
+                        toInsert = "<equality object1=\"\" property1=\"\" object2=\"\" property2=\"\" />";
                     } else if (document.getText(caretPos - 3, 3).equals("and")) {
                         lengthToRemove = 3;
                         toInsert = "<operation type=\"and\">\n  \n</operation>";
@@ -989,7 +1002,7 @@ public class GeneralUI extends javax.swing.JFrame {
                         document.insertString(caretPos, toInsert, null);
                     }
                 } catch (BadLocationException ex) {
-                    promptError("Auto-completion error", "Error");
+                    System.err.println(ex);
                 }
             }
         }
@@ -1139,9 +1152,7 @@ public class GeneralUI extends javax.swing.JFrame {
 
     private void saveScenarioXml(File file) {
         try {
-            Files.write(Paths.get(file.getAbsolutePath()),
-                    epXmlScenario.getText().getBytes(),
-                    StandardOpenOption.WRITE);
+            new ScenarioExport(Paths.get(file.getAbsolutePath()), scenario.getScenario()).exportAll();
             scenarioFile = file;
             unwarnScenarioSave();
         } catch (IOException ex) {

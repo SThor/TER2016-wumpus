@@ -1,6 +1,5 @@
 package gui.wumpus;
 
-import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultBoundedRangeModel;
@@ -15,15 +14,13 @@ import model.WumpusWorld;
  */
 public class WumpusWorldFrame extends javax.swing.JFrame {
     private List<WorldState> stateList;
-    private final WumpusWorld wumpusWorld;
-    private boolean solved;
     
     /**
      * Creates new form WumpusWorldFrame
      */
     public WumpusWorldFrame(WumpusWorld wumpusWorld) {
-        this.wumpusWorld = wumpusWorld;
-        initComponents();
+        initComponents();        
+        sliderInstant.setLabelTable(sliderInstant.createStandardLabels(1));
         wumpusWorldPanel.setWumpusWorld(wumpusWorld);
     }
     
@@ -37,7 +34,8 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
         }
         wumpusWorldPanel.setStateList(stateList);
         sliderInstant.setMaximum(stateList.size());
-        sliderInstant.setModel(new DefaultBoundedRangeModel(0, 1, 0, stateList.size()));
+        sliderInstant.setModel(new DefaultBoundedRangeModel(0, 1, 0, stateList.size()));        
+        sliderInstant.setLabelTable(sliderInstant.createStandardLabels(1));
     }
 
     /**
@@ -52,7 +50,7 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
         panelInstant = new javax.swing.JPanel();
         wumpusWorldPanel = new gui.wumpus.WumpusWorldPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Wumpus World");
 
         panelInstant.setLayout(new java.awt.BorderLayout());
@@ -61,7 +59,7 @@ public class WumpusWorldFrame extends javax.swing.JFrame {
         sliderInstant.setPaintLabels(true);
         sliderInstant.setPaintTicks(true);
         sliderInstant.setSnapToTicks(true);
-        sliderInstant.setModel(new DefaultBoundedRangeModel(0,0,0,3));
+        sliderInstant.setModel(new DefaultBoundedRangeModel(0,0,0,1));
         sliderInstant.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 sliderInstantStateChanged(evt);

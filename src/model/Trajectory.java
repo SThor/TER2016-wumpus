@@ -16,9 +16,9 @@ public class Trajectory implements Comparable<Trajectory>{
     private int changesCount;
     private ArrayList<TrajectoryStep> list;
     
-    private Trajectory(Collection<? extends TrajectoryStep> c) {
+    private Trajectory(Collection<? extends TrajectoryStep> c, int changesCount) {
         list = new ArrayList<>(c);
-        changesCount = 0;
+        this.changesCount = changesCount;
     }
     
     public Trajectory(WorldState startPoint) {
@@ -28,7 +28,7 @@ public class Trajectory implements Comparable<Trajectory>{
     }
     
     public Trajectory append(TrajectoryStep step) {
-        Trajectory res =  new Trajectory(list);
+        Trajectory res =  new Trajectory(list, changesCount);
         res.add(step);
         return res;
     }

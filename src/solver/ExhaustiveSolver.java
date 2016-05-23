@@ -18,7 +18,6 @@ import model.Trajectory;
 import model.TrajectoryStep;
 import model.World;
 import model.WorldState;
-import model.observations.Observation;
 import model.observations.Scenario;
 
 /**

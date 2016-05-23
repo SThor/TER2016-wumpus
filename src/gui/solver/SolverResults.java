@@ -188,7 +188,10 @@ public class SolverResults extends JDialog {
               + (count == 1 ? " solution was found." : " solutions were found."),
                 "Solver information",
                 JOptionPane.INFORMATION_MESSAGE);        
-        ((GeneralUI)getParent()).setWumpusTrajectory(trajectories.get(_solution));
+        try {
+            ((GeneralUI)getParent()).setWumpusTrajectory(trajectories.get(_solution));
+        } catch (IndexOutOfBoundsException ex) {
+        }
     }//GEN-LAST:event_formWindowOpened
 
     private void miSaveAsPNGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSaveAsPNGActionPerformed

@@ -1188,7 +1188,11 @@ public class GeneralUI extends javax.swing.JFrame {
 
     protected synchronized void newFormulaAvailable(int instant) {
         if (scenario.getInstant() == instant) {
-            taFormula.setText(scenario.getFormula());
+            try {
+                taFormula.setText(scenario.getFormula());
+            } catch (NullPointerException ex) {
+                xmlSyntaxError();
+            }
         }
     }
 

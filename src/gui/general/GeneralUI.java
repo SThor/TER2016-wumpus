@@ -1146,6 +1146,7 @@ public class GeneralUI extends javax.swing.JFrame {
     private void saveScenarioXml(File file) {
         try {
             new ScenarioExport(Paths.get(file.getAbsolutePath()), scenario.getScenario()).exportAll();
+            scenarioFile = file;
             unwarnScenarioSave();
         } catch (IOException ex) {
             promptError("Error while writing in file " + file.getName(), "Saving error");

@@ -100,7 +100,7 @@ public class ScenarioModel {
                     newObs = importer.importOne(xml);
                 } catch (InterruptedException e) {
                     return;
-                } catch (JDOMException | NumberFormatException | UnknownObservationException | UnknownOperationException e) {
+                } catch (JDOMException | NumberFormatException | UnknownObservationException | UnknownOperationException | NullPointerException e) {
                     parent.xmlSyntaxError();
                     return;
                 } catch (IOException e) {

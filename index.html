@@ -22,7 +22,7 @@
       <h1>
 <a id="contexte" class="anchor" href="#contexte" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contexte</h1>
 
-<p>Ce programme a été réalisé lors d'un projet T.E.R. ( Travaux d'Études et de Recherche ) de deux mois à l'Institut de Recherche en Informatique de Toulouse (<a href="irit.fr">IRIT</a>). Il a été réalisé en binôme par Paul Givel (<a href="https://github.com/SThor" class="user-mention">@SThor</a>) et Guillaume Hartenstein (<a href="https://github.com/wierin" class="user-mention">@wierin</a>) sous la direction de <a href="https://www.irit.fr/%7EFlorence.Bannay/">Florence Dupin de Saint-Cyr - Bannay</a>, à partir de travaux effectué par elle-même et <a href="http://www.lamsade.dauphine.fr/%7Elang/Jerome-french.html">Jérôme Lang</a>. </p>
+<p>Ce programme a été réalisé lors d'un projet T.E.R. ( Travaux d'Études et de Recherche ) de deux mois à l'Institut de Recherche en Informatique de Toulouse (<a href="irit.fr">IRIT</a>). Il a été réalisé en binôme par Paul Givel (<a href="https://github.com/SThor" class="user-mention">@SThor</a>) et Guillaume Hartenstein (<a href="https://github.com/wierin" class="user-mention">@wierin</a>) sous la direction de <a href="https://www.irit.fr/%7EFlorence.Bannay/">Florence Dupin de Saint-Cyr - Bannay</a>, à partir de travaux effectués par elle-même et <a href="http://www.lamsade.dauphine.fr/%7Elang/Jerome-french.html">Jérôme Lang</a>. </p>
 
 <h2>
 <a id="sujet-de-recherche-scientifique" class="anchor" href="#sujet-de-recherche-scientifique" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Sujet de recherche scientifique</h2>
@@ -33,18 +33,18 @@
 
 <p>Il s’agit donc de coder un opérateur d'extrapolation : c'est un opérateur qui permet de déduire les trajectoires les plus plausibles expliquant un scénario. Et de l'appliquer à la recherche de causalité et donc de responsabilités dans un scénario.</p>
 
-<p>Chaque système étudié étant différent, il faut pouvoir définir quels objets seront dans le système ainsi que leur propriétés ou états — par exemple, si l’on étudie une porte, celle-ci pourra être ouverte ou fermée. L’ensemble des états des objets du système forme un état global qui peut être étudié pour déduire de manière probabiliste l’action qui s’est déroulé au moment où le système était dans cet état.</p>
+<p>Chaque système étudié étant différent, il faut pouvoir définir quels objets seront dans le système ainsi que leur propriétés ou états — par exemple, si l’on étudie une porte, celle-ci pourra être ouverte ou fermée. L’ensemble des états des objets du système forme un état global qui peut être étudié pour déduire de manière probabiliste l’action qui s’est déroulée au moment où le système était dans cet état.</p>
 
 <h2>
 <a id="hunt-the-wumpus" class="anchor" href="#hunt-the-wumpus" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>“Hunt the Wumpus”</h2>
 
-<p>Le titre de ce projet, “Qui a tué le wumpus”, vient d’un problème courant en Intelligence Artificielle. Ce problème est à l’origine basé sur l’un des premiers jeu informatiques, créé dans les années 70.</p>
+<p>Le titre de ce projet, “Qui a tué le wumpus”, vient d’un problème courant en Intelligence Artificielle. Ce problème est à l’origine basé sur l’un des premiers jeux informatiques, créé dans les années 70.</p>
 
-<p>Le joueur, par l’intermédiaire de commandes textuelles, se déplace dans un réseau de cavernes, où se trouve aussi, caché, un monstre : le Wumpus. Il y a de plus des fosses ainsi que des chauves-souris. Si le joueur entre dans une pièce où se trouve le Wumpus ou bien une fosse, le personnage meurt, et le joueur perd la partie. Pour l’aider, lorsqu’il se trouve dans une pièce adjacente à l’un ou l’autre des objets possibles, cela est indiqué : l’odeur du Wumpus, le bruit des chauves-souris, la brise des fosses. Le joueur doit donc par déduction trouver la salle dans laquelle est le Wumpus, et, sans y entrer, lui décocher une flèche.</p>
+<p>Le joueur, par l’intermédiaire de commandes textuelles, se déplace dans un réseau de cavernes, où se trouve aussi, caché, un monstre : le Wumpus. De plus, il y a des fosses ainsi que des chauves-souris. Si le joueur entre dans une pièce où se trouve le Wumpus ou bien une fosse, le personnage meurt, et le joueur perd la partie. Pour l’aider, lorsqu’il se trouve dans une pièce adjacente à l’un ou l’autre des objets possibles, cela est indiqué : l’odeur du Wumpus, le bruit des chauves-souris, la brise des fosses. Le joueur doit donc par déduction trouver la salle dans laquelle est le Wumpus, et, sans y entrer, lui décocher une flèche.</p>
 
-<p>De nombreuses versions de ce jeu ont par la suite été créées, en réalisant par exemple une interface graphique ou en modifiant légèrement les règles. Aujourd’hui, il existe de nombreuses références à ce jeu dans des jeux, jeu-vidéos et logiciels, mais celle qui nous intéresse est un problème d’Intelligence Artificielle décrit par Stuart Russel et Peter Norvig dans <a href="https://en.wikipedia.org/wiki/Artificial_Intelligence:_A_Modern_Approach">Artificial Intelligence : A Modern Approach</a>.</p>
+<p>De nombreuses versions de ce jeu ont par la suite été créées, en réalisant par exemple une interface graphique ou en modifiant légèrement les règles. Aujourd’hui, il existe de nombreuses références à "Hunt the Wumpus" dans divers jeux, jeux-vidéos et logiciels, mais celle qui nous intéresse est un problème d’Intelligence Artificielle décrit par Stuart Russel et Peter Norvig dans <a href="https://en.wikipedia.org/wiki/Artificial_Intelligence:_A_Modern_Approach">Artificial Intelligence : A Modern Approach</a>.</p>
 
-<p>Dans la version décrite dans ce livre, le terrain sur lequel évolue l’agent est une grille rectangulaire, de taille variable. Une autre modification importante est le remplacement des chauves-souris par un lingot d’or, qui est l’objectif principal de l’agent. Notre version s’éloigne encore légèrement de l’original.</p>
+<p>Dans la version décrite dans ce livre, le terrain sur lequel évolue l’agent est une grille rectangulaire, de taille variable. Une autre modification importante est le remplacement des chauves-souris par un lingot d’or, qui est l’objectif principal de l’agent. Notre version s’éloigne encore légèrement de l’originale.</p>
 
 <h1>
 <a id="utilisation" class="anchor" href="#utilisation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Utilisation</h1>
@@ -65,7 +65,7 @@
 <li>Le second type est vérifié lorsqu'une propriété d'un premier objet et une propriété d'un second objet prennent la même valeur.</li>
 </ul>
 </li>
-<li>L'onglet <code>Scenario</code> permet quand à lui d'effectuer des observations sur le monde qui vient d'être défini, selon la syntaxe <code>xml</code> décrite dans la partie suivante.
+<li>L'onglet <code>Scenario</code> permet quant à lui d'effectuer des observations sur le monde qui vient d'être défini, selon la syntaxe <code>xml</code> décrite dans la partie suivante.
 Enfin, une fois le monde et les observations définis, il est possible de le "résoudre" par l'intermédiaire du menu <code>solver</code>. Une fenêtre permettant de choisir l'algorithme désiré, avec un petit texte explicatif pour chaque algorithme, s'ouvre, et l'on peut résoudre le monde. Cela ouvre une nouvelle fenêtre montrant les différentes trajectoires possibles, depuis laquelle il est possible d'exporter ces trajectoires sous forme d'image.</li>
 </ul>
 
@@ -78,7 +78,7 @@ Enfin, une fois le monde et les observations définis, il est possible de le "r�
 <h3>
 <a id="syntaxe-du-monde" class="anchor" href="#syntaxe-du-monde" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Syntaxe du monde</h3>
 
-<p>La balise racine doit être appelée <code>&lt;world&gt;</code>. Elle doit comporter deux types de balises, <code>&lt;objects&gt;</code> et `.</p>
+<p>La balise racine doit être appelée <code>&lt;world&gt;</code>. Elle doit comporter deux types de balises, <code>&lt;objects&gt;</code> et <code>&lt;actions&gt;</code>.</p>
 
 <p>Chaque balise <code>&lt;object&gt;</code> possède un attribut <code>name</code> correspondant au nom de cet objet. Une  balise <code>&lt;object&gt;</code> comporte de plus un ensemble de balises <code>&lt;property&gt;</code>. Chaque balise <code>&lt;property&gt;</code> possède un attribut <code>name</code> correspondant au nom de cette propriété. Elle comporte aussi un ensemble de balises <code>&lt;value&gt;</code>, chacune ayant encore une fois un attribut <code>name</code> correspondant à une valeur possible de la propriété.</p>
 
@@ -90,27 +90,27 @@ Enfin, une fois le monde et les observations définis, il est possible de le "r�
 <li>
 <code>property</code>correspond au nom de la propriété visée</li>
 <li>
-<code>wanted_value</code> correspond à la valeur attendue pour cette propriété
+<code>wanted_value</code> correspond à la valeur attendue pour cette propriété.
 Une balise <code>&lt;equality&gt;</code> possède quatre attributs :</li>
 <li>
 <code>object1</code> correspond au nom du premier objet visé</li>
 <li>
-<code>property1</code>correspond au nom de la propriété de l'objet visée</li>
+<code>property1</code> correspond au nom de la propriété visée de l'objet</li>
 <li>
 <code>object2</code> correspond au nom du second objet visé</li>
 <li>
-<code>property2</code>correspond au nom de la propriété de l'objet visée</li>
+<code>property2</code> correspond au nom de la propriété visée de l'objet</li>
 </ul>
 
 <h3>
 <a id="syntaxe-des-observations" class="anchor" href="#syntaxe-des-observations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Syntaxe des observations</h3>
 
-<p>Pour les observations, il y a deux cas. Si l'on parle du fichier <code>xml</code> contenant l'ensemble du scénario, il faut la balise racine <code>&lt;scenario&gt;</code>. Ce fichier comporte à l'intérieur de cette balise un ensemble de balises d'observations, qui chacune correspond à un instant. Dans l'éditeur de scénario interne au logiciel, pour chaque instant c'est une de ces balises qui doit être définie.</p>
+<p>Pour les observations, il y a deux cas. Si l'on parle du fichier <code>xml</code> contenant l'ensemble du scénario, il faut la balise racine <code>&lt;scenario&gt;</code>. Ce fichier comporte à l'intérieur de cette balise un ensemble de balises d'observations, qui chacune correspond à un instant. Le second cas est celui-ci : dans l'éditeur de scénario interne au logiciel, pour chaque instant c'est une de ces balises d'observation qui doit être définie.</p>
 
 <p>Il existe plusieurs types de balises d'observations :</p>
 
 <ul>
-<li>la balise <code>&lt;noObservation&gt;</code>. Elle peut être utile car l'ensemble des instant du scénario n'est constitué que des observations. Pour avoir un instant sans observations, cette balise est donc nécessaire.</li>
+<li>la balise <code>&lt;noObservation&gt;</code>. Elle peut être utile car l'ensemble des instants du scénario n'est constitué que des observations. Pour avoir un instant sans observations, cette balise est donc nécessaire.</li>
 <li>la balise <code>&lt;propertyValue&gt;</code> telle que définie pour les conditions des actions</li>
 <li>la balise <code>&lt;action&gt;</code> pour observer une action. <strong>Attention, cette fonctionnalité n'est pas complètement implémentée, n'est pas utilisable et provoquera une exception.</strong>
 </li>
@@ -118,9 +118,9 @@ Une balise <code>&lt;equality&gt;</code> possède quatre attributs :</li>
 
 <ul>
 <li>
-<code>or</code> correspond à un ou logique entre les différentes balises contenues</li>
+<code>or</code> correspond à un <code>ou</code> logique entre les différentes balises contenues</li>
 <li>
-<code>and</code>correspond à un et logique entre ces balises</li>
+<code>and</code>correspond à un <code>et</code> logique entre ces balises</li>
 <li>
 <code>not</code> correspond à la négation de la balise contenue. <strong>Attention, pour ce type, il ne faut qu'une seule balise à l'intérieur de l'opération.</strong>
 </li>

@@ -31,7 +31,7 @@ public class Not extends Operation{
 
     @Override
     public String toString() {
-        return "¬ "+observations.get(0);
+        return "¬("+observations.get(0)+")";
     }
 
     @Override

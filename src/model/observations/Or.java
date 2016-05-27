@@ -39,12 +39,14 @@ public class Or extends Operation{
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
+        str.append('(');
         for (Iterator<Observation> iterator = observations.iterator(); iterator.hasNext();) {
             str.append(iterator.next());
             if(iterator.hasNext()) {
                 str.append(" ∨ ");
             }
         }
+        str.append(')');
         return str.toString();
     }
 
